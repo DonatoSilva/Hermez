@@ -1,0 +1,19 @@
+---
+interface Props {
+    class?: string;
+    id?: string;
+    method?: string;
+    action?: string;
+}
+
+const {
+    class: className = "flex flex-col gap-4",
+    id,
+    method,
+    action,
+} = Astro.props as Props;
+---
+
+<form class={className} id={id} method={method} action={action}>
+    <slot />
+</form>

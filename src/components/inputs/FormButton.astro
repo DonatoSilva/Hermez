@@ -1,0 +1,46 @@
+---
+type ButtonType = "submit" | "reset" | "button";
+
+interface Props {
+    type?: ButtonType;
+    text: string;
+    class?: string;
+    id?: string;
+    name?: string;
+}
+
+const {
+    type = "button",
+    text,
+    id,
+    name,
+    class: className,
+} = Astro.props as Props;
+---
+
+<div>
+    <button type={type} id={id} name={name} , class={className}>
+        {text}
+    </button>
+</div>
+
+<style>
+    button {
+        @apply bg-H-blue-900 text-white rounded-lg px-4 py-2;
+    }
+    button:hover {
+        @apply font-semibold rounded-md;
+    }
+
+    div {
+        transition: border-color 0.2s ease-in-out;
+        transition: padding 0.2s ease-in-out;
+        box-sizing: border-box;
+
+        &:hover {
+            border: 1px solid #d9d9d9;
+            border-radius: 0.5rem;
+            @apply p-1 rounded-lg;
+        }
+    }
+</style>

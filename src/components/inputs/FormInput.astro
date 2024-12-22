@@ -1,0 +1,45 @@
+---
+type InputType = "text" | "password" | "email" | "number" | "tel" | "url";
+
+interface Props {
+    type: InputType;
+    label: string;
+    name?: string;
+    id?: string;
+    placeholder?: string;
+}
+
+const {
+    label,
+    placeholder = "",
+    type = "text",
+    name,
+    id,
+} = Astro.props as Props;
+---
+
+<div>
+    <label for={id}>{label}</label>
+    <input name={name} id={id} type={type} placeholder={placeholder} />
+</div>
+
+<style>
+    * {
+        color: #1e1e1e;
+        font-size: 16px;
+    }
+
+    input {
+        padding: 0.5rem;
+        border: 1px solid #d9d9d9;
+        border-radius: 0.5rem;
+
+        @apply w-full mt-1;
+
+        &:focus {
+            outline: none;
+
+            @apply border-2 border-H-blue-900;
+        }
+    }
+</style>

@@ -1,0 +1,51 @@
+---
+import Form from "@components/Form.astro";
+import FormButton from "@components/inputs/FormButton.astro";
+import FormInput from "@components/inputs/FormInput.astro";
+import Title from "@header/Title.astro";
+import Layout from "@layouts/Layout.astro";
+---
+
+/// TODO: Add validation to the form inputs
+<Layout>
+    <Title />
+    <div class="h-5/6">
+        <h1 class="mb-4 text-center text-2xl text-H-blue-900 font-semibold">
+            Iniciar sesión
+        </h1>
+        <hr class="my-4 bg-H-blue-300" />
+        <Form class="flex flex-col gap-4 mx-3">
+            <FormInput
+                name="cell"
+                id="cell"
+                type="tel"
+                label="Celular"
+                placeholder="Numero de celular"
+            />
+            <FormInput
+                name="password"
+                id="passsword"
+                type="password"
+                label="Contraseña"
+                placeholder="Contraseña"
+            />
+            <FormButton type="submit" class="w-full" text="Iniciar sesión" />
+        </Form>
+    </div>
+</Layout>
+
+<style>
+    div {
+        @apply flex flex-col justify-center;
+    }
+</style>
+
+<script>
+    const form = document.querySelector("form") as HTMLFormElement;
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        setTimeout(() => {
+            location.href = "/";
+        }, 1000);
+    });
+</script>

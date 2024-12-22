@@ -1,0 +1,40 @@
+---
+interface Props {
+    date: string;
+    name: string;
+    price: number;
+}
+
+const { date, name, price } = Astro.props;
+
+function formatPrice(price: number): string {
+    return price.toLocaleString("es-ES");
+}
+---
+
+<div class="card-container">
+    <div class="flex flex-col gap-1">
+        <h3 class="date">{date}</h3>
+        <p class="nameDomicile">{name}</p>
+    </div>
+    <div class="flex flex-col gap-1 justify-center items-center h-full">
+        <p class="price">{formatPrice(price)}</p>
+    </div>
+</div>
+<style>
+    .card-container {
+        @apply grid grid-cols-[1fr_auto] gap-1 w-full text-H-blue-900;
+
+        .date {
+            @apply text-xl text-H-blue-900;
+        }
+
+        .price {
+            @apply text-2xl font-bold;
+        }
+
+        .nameDomicile {
+            @apply text-H-blue-700 font-light text-sm;
+        }
+    }
+</style>

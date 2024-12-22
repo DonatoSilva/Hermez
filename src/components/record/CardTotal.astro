@@ -1,0 +1,54 @@
+---
+interface Props {
+    count: number;
+    total: Array<number>;
+    telephone: string;
+}
+
+const { count, total, telephone } = Astro.props;
+
+const totalPrices: string =
+    "$" +
+    total
+        .reduce((acc, curr) => {
+            return acc + curr;
+        }, 0)
+        .toLocaleString("es-ES");
+---
+
+<div class="cardTotal flex flex-col relative">
+    <div class="countDomiciles">
+        {count}
+    </div>
+    <div>
+        <div class="cardBody">
+            <h2 class="text-5xl font-semibold text-H-blue-900">
+                {totalPrices}
+            </h2>
+            <p class="text-sm text-center text-H-blue-500">
+                Acumulado en domicilios
+            </p>
+        </div>
+    </div>
+    <div class="cardTelephone absolute -bottom-3">{telephone}</div>
+</div>
+
+<style>
+    .cardTotal {
+        @apply mb-14 mt-7;
+    }
+
+    .cardBody {
+        @apply flex flex-col items-center border border-H-blue-300 py-4 px-10 rounded-lg;
+    }
+
+    .countDomiciles {
+        @apply text-sm w-max px-3.5 py-2 text-white rounded-md font-light bg-H-blue-900 absolute right-0 -mr-5 -mt-5;
+    }
+
+    .cardTelephone {
+        @apply bg-H-blue-900 text-white px-2 rounded-md;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+</style>

@@ -5,18 +5,25 @@
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>Control de domicilios</title>
 	</head>
 	<body>
-		<slot />
+		<div class="H-container">
+			<slot />
+		</div>
 	</body>
 </html>
 
 <style>
 	html,
 	body {
+		@apply bg-H-black;
 		margin: 0;
 		width: 100%;
 		height: 100%;
+	}
+
+	.H-container {
+		@apply min-h-screen max-w-md mx-auto bg-H-blue-100 rounded-lg py-9 px-8;
 	}
 </style>
