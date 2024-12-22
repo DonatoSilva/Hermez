@@ -8,7 +8,7 @@ import Layout from "@layouts/Layout.astro";
 
 <Layout>
     <Title />
-    <div class="h-5/6">
+    <div>
         <Form>
             <FormInput
                 name="search"
@@ -27,11 +27,7 @@ import Layout from "@layouts/Layout.astro";
     </div>
 </Layout>
 
-<style>
-    div {
-        @apply flex flex-col justify-center;
-    }
-</style>
+<style></style>
 
 <script>
     const btnSearch = document.querySelector("#btnSearch") as HTMLButtonElement;

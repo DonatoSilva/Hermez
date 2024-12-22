@@ -6,11 +6,10 @@ import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
 ---
 
-/// TODO: Add validation to the form inputs
 <Layout>
     <Title />
-    <div class="h-5/6">
-        <h1 class="mb-4 text-center text-2xl text-H-blue-900 font-semibold">
+    <div class="">
+        <h1 class="text-center text-2xl text-H-blue-900 font-semibold">
             Iniciar sesión
         </h1>
         <hr class="my-4 bg-H-blue-300" />
@@ -34,11 +33,7 @@ import Layout from "@layouts/Layout.astro";
     </div>
 </Layout>
 
-<style>
-    div {
-        @apply flex flex-col justify-center;
-    }
-</style>
+<style></style>
 
 <script>
     const form = document.querySelector("form") as HTMLFormElement;
