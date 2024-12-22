@@ -3,9 +3,15 @@ interface Props {
     count: number;
     total: Array<number>;
     telephone: string;
+    text?: string;
 }
 
-const { count, total, telephone } = Astro.props;
+const {
+    count,
+    total,
+    telephone,
+    text = "Acumulado en domicilios",
+} = Astro.props;
 
 const totalPrices: string =
     "$" +
@@ -26,7 +32,7 @@ const totalPrices: string =
                 {totalPrices}
             </h2>
             <p class="text-sm text-center text-H-blue-500">
-                Acumulado en domicilios
+                {text}
             </p>
         </div>
     </div>
