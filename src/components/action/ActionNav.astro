@@ -1,0 +1,123 @@
+---
+
+---
+
+<style>
+    .menu-toggle {
+        @apply fixed bottom-0 right-2/4 translate-x-1/2 px-4 py-2 text-white bg-H-blue-900 border-none rounded-md;
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        z-index: 1000;
+    }
+
+    .floating-menu {
+        @apply fixed bottom-0 right-2/4 translate-x-1/2 p-4 text-white bg-H-blue-900 border-none rounded-md;
+        width: 100%;
+        max-width: 150px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 65px;
+        transition: bottom 0.4s;
+        bottom: -100%;
+        z-index: 1000;
+
+        a {
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            padding: 3px 0;
+        }
+
+        ul {
+            width: 100%;
+
+            li {
+                &:hover {
+                    border-bottom: #fff 1px solid;
+                }
+            }
+        }
+
+        &.open {
+            bottom: 0;
+        }
+    }
+
+    .menu-icon {
+        display: inline-block;
+        margin-left: 10px;
+        margin-top: -2px;
+        width: fit-content;
+        height: 100%;
+
+        div {
+            width: 25px;
+            height: 2px;
+            background-color: #fff;
+            margin-top: 6px;
+            transition: 0.4s;
+            border-radius: 5px;
+        }
+    }
+
+    .menu-icon.open {
+        .bar1 {
+            transform: rotate(-45deg) translate(-4px, 6px);
+        }
+
+        .bar2 {
+            opacity: 0;
+        }
+
+        .bar3 {
+            transform: rotate(45deg) translate(-4px, -8px);
+        }
+    }
+</style>
+
+<div class="">
+    <div id="floatingMenu" class="floating-menu">
+        <ul class="text-center">
+            <slot name="itemsNav" />
+        </ul>
+    </div>
+    <button id="menuToggle" class="menu-toggle text-2xl font-semibold">
+        JS
+        <div class="menu-icon">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+    </button>
+</div>
+
+<script>
+    function toggleNav() {
+        const menuToggle = document.getElementById(
+            "menuToggle",
+        ) as HTMLButtonElement;
+        const floatingMenu = document.getElementById(
+            "floatingMenu",
+        ) as HTMLDivElement;
+        const menuIcon = document.querySelector(".menu-icon") as HTMLDivElement;
+
+        menuToggle.addEventListener("click", () => {
+            floatingMenu.classList.toggle("open");
+            menuIcon.classList.toggle("open");
+        });
+
+        document.addEventListener("click", (e) => {
+            if (
+                !floatingMenu.contains(e.target as Node) &&
+                !menuToggle.contains(e.target as Node)
+            ) {
+                floatingMenu.classList.remove("open");
+                menuIcon.classList.remove("open");
+            }
+        });
+    }
+
+    document.addEventListener("astro:after-swap", toggleNav);
+    document.addEventListener("DOMContentLoaded", toggleNav);
+</script>

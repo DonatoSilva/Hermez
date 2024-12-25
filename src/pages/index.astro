@@ -4,9 +4,11 @@ import FormButton from "@components/inputs/FormButton.astro";
 import FormInput from "@components/inputs/FormInput.astro";
 import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
+
+const li = null;
 ---
 
-<Layout>
+<Layout li={li} title="Busqueda de domicilios">
     <Title />
     <div>
         <Form>
@@ -27,15 +29,25 @@ import Layout from "@layouts/Layout.astro";
     </div>
 </Layout>
 
-<style></style>
-
 <script>
-    const btnSearch = document.querySelector("#btnSearch") as HTMLButtonElement;
+    import { navigate } from "astro:transitions/client";
 
-    btnSearch.addEventListener("click", (e) => {
-        e.preventDefault();
-        setTimeout(() => {
-            location.href = "/record";
-        }, 1000);
-    });
+    function Search() {
+        const btnSearch = document.querySelector(
+            "#btnSearch",
+        ) as HTMLButtonElement;
+
+        if (!btnSearch) return;
+        console.log("Button:", btnSearch);
+
+        btnSearch.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            setTimeout(() => {
+                navigate("/record");
+            }, 1000);
+        });
+    }
+
+    document.addEventListener("astro:page-load", Search);
 </script>

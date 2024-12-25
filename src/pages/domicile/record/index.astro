@@ -1,6 +1,7 @@
 ---
 import CardHistory from "@components/record/CardHistory.astro";
 import CardTotal from "@components/record/CardTotal.astro";
+import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
 
 const dataCardHistory = [
@@ -77,6 +78,7 @@ const prices = dataCardHistory.map(({ price }) => price);
 ---
 
 <Layout>
+    <Title size="md" />
     <section class="flex flex-col justify-center items-center">
         <CardTotal
             count={count}

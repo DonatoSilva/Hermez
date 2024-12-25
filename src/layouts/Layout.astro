@@ -1,3 +1,15 @@
+---
+import ActionNav from "@components/action/ActionNav.astro";
+import { ClientRouter } from "astro:transitions";
+
+interface LayoutProps {
+	title?: string;
+	Li?: Array<{ text: string; href: string }>;
+}
+
+const { title = "Hermez Domicilio", Li = [] } = Astro.props as LayoutProps;
+---
+
 <!doctype html>
 <html lang="es">
 	<head>
@@ -5,12 +17,26 @@
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Control de domicilios</title>
+		<title>{title}</title>
+		<ClientRouter />
 	</head>
 	<body>
 		<div class="H-container">
 			<slot />
 		</div>
+		<ActionNav>
+			<Fragment slot="itemsNav">
+				{
+					Li && Li.length > 0
+						? Li.map((item) => (
+								<li>
+									<a href={item.href}>{item.text}</a>
+								</li>
+							))
+						: "Error: Sin opciones"
+				}
+			</Fragment>
+		</ActionNav>
 	</body>
 </html>
 

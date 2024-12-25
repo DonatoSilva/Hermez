@@ -13,7 +13,7 @@ import Layout from "@layouts/Layout.astro";
             Iniciar sesión
         </h1>
         <hr class="my-4 bg-H-blue-300" />
-        <Form class="flex flex-col gap-4 mx-3">
+        <Form id="formLogin" class="flex flex-col gap-4 mx-3">
             <FormInput
                 name="cell"
                 id="cell"
@@ -36,11 +36,23 @@ import Layout from "@layouts/Layout.astro";
 <style></style>
 
 <script>
-    const form = document.querySelector("form") as HTMLFormElement;
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        setTimeout(() => {
-            location.href = "/";
-        }, 1000);
-    });
+    import { navigate } from "astro:transitions/client";
+
+    function Login() {
+        const form = document.querySelector("#formLogin") as HTMLFormElement;
+
+        if (!form) return;
+        console.log("Form:", form);
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            setTimeout(() => {
+                navigate("/");
+            }, 1000);
+        });
+    }
+
+    document.addEventListener("astro:after-swap", Login);
+    document.addEventListener("DOMContentLoaded", Login);
 </script>

@@ -1,17 +1,32 @@
 ---
+interface Props {
+    size?: "sm" | "md" | "lg";
+}
 
+const { size = "lg" } = Astro.props;
 ---
 
-<div class="max-h-min">
-    <p>Domicilios</p>
-    <h1>Hermez</h1>
-</div>
+<a href="/" transition:name="title" class="max-h-min">
+    <div class="max-h-min">
+        <p
+            class={`text-H-blue-700 font-normal leading-none ${
+                size === "sm" || size === "md" ? "text-xs" : "text-sm"
+            }`}
+        >
+            Domicilios
+        </p>
+        <h1
+            class={`text-H-blue-900 font-bold leading-[0.7] max-h-min ${
+                size === "sm"
+                    ? "text-3xl"
+                    : size === "md"
+                      ? "text-5xl"
+                      : "text-7xl"
+            }`}
+        >
+            Hermez
+        </h1>
+    </div>
+</a>
 
-<style>
-    p {
-        @apply text-H-blue-700 text-sm font-normal leading-none;
-    }
-    h1 {
-        @apply text-H-blue-900 font-bold text-7xl leading-[0.7] max-h-min;
-    }
-</style>
+<style></style>
