@@ -44,7 +44,11 @@ const li = null;
             e.preventDefault();
 
             setTimeout(() => {
-                navigate("/record");
+                navigate(
+                    "/record/" +
+                        (document.querySelector("#search") as HTMLInputElement)
+                            .value,
+                );
             }, 1000);
         });
     }

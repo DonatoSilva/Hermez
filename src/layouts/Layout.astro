@@ -1,5 +1,4 @@
 ---
-import ActionNav from "@components/action/ActionNav.astro";
 import { ClientRouter } from "astro:transitions";
 
 interface LayoutProps {
@@ -24,19 +23,6 @@ const { title = "Hermez Domicilio", Li = [] } = Astro.props as LayoutProps;
 		<div class="H-container">
 			<slot />
 		</div>
-		<ActionNav>
-			<Fragment slot="itemsNav">
-				{
-					Li && Li.length > 0
-						? Li.map((item) => (
-								<li>
-									<a href={item.href}>{item.text}</a>
-								</li>
-							))
-						: "Error: Sin opciones"
-				}
-			</Fragment>
-		</ActionNav>
 	</body>
 </html>
 
