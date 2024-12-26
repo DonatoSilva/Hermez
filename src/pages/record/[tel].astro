@@ -12,9 +12,9 @@ type RecordType = {
     price: number;
 };
 
-const value = 8000;
-
 export const getStaticPaths = (() => {
+    const value = 8000;
+
     const dataCardHistory: { telephone: string; record: RecordType[] }[] = [
         {
             telephone: "3187778672",
