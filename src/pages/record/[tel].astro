@@ -97,6 +97,24 @@ export const getStaticPaths = (() => {
                     name: "Donato Silva",
                     price: value,
                 },
+                {
+                    id: 14,
+                    date: "28/12/2024",
+                    name: "Esteban David",
+                    price: value,
+                },
+                {
+                    id: 15,
+                    date: "29/12/2024",
+                    name: "Donato Silva",
+                    price: value,
+                },
+                {
+                    id: 16,
+                    date: "30/12/2024",
+                    name: "Esteban David",
+                    price: value,
+                },
             ],
         },
     ];
@@ -124,7 +142,7 @@ const prices: number = record.reduce((acc, { price }) => acc + price, 0);
         </h2>
         <div class="flex flex-col gap-4 mt-6">
             {
-                record.map(({ date, name, price }, index) => (
+                record.reverse().map(({ date, name, price }, index) => (
                     <>
                         <CardHistory date={date} name={name} price={price} />
 
