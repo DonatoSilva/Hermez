@@ -10,16 +10,30 @@ import Layout from "@layouts/Layout.astro";
     <Title />
     <div class="">
         <h1 class="text-center text-2xl text-H-blue-900 font-semibold">
-            Iniciar sesión
+            Registarse
         </h1>
         <hr class="my-4 bg-H-blue-300" />
-        <Form id="formLogin" class="flex flex-col gap-4 mx-3">
+        <Form id="formSignUp" class="flex flex-col gap-4 mx-3">
             <FormInput
-                name="email"
-                id="email"
-                type="email"
-                label="Correo"
-                placeholder="Correo electrónico"
+                name="names"
+                id="names"
+                type="text"
+                label="Nombres"
+                placeholder="Ingrese sus nombres"
+            />
+            <FormInput
+                name="surnames"
+                id="surnames"
+                type="text"
+                label="Apellidos"
+                placeholder="Ingrese sus apellidos"
+            />
+            <FormInput
+                name="cell"
+                id="cell"
+                type="tel"
+                label="Celular"
+                placeholder="Numero de celular"
             />
             <FormInput
                 name="password"
@@ -28,15 +42,14 @@ import Layout from "@layouts/Layout.astro";
                 label="Contraseña"
                 placeholder="Contraseña"
             />
-            <div class="grid grid-cols-2 gap-4">
-                <FormButton
-                    type="button"
-                    href="/domicile/signUp"
-                    class="w-full text-H-blue-900 bg-white"
-                    text="Registrarse"
-                />
-                <FormButton type="submit" class="" text="Iniciar sesión" />
-            </div>
+            <FormInput
+                name="Vpassword"
+                id="Vpasssword"
+                type="password"
+                label="Confirmar Contraseña"
+                placeholder="Contraseña"
+            />
+            <FormButton type="submit" class="w-full" text="Registrar me" />
         </Form>
     </div>
 </Layout>
