@@ -128,13 +128,19 @@ export const getStaticPaths = (() => {
 const { telephone, record } = Astro.props;
 
 const count: number = record.length;
-const prices: number = record.reduce((acc, { price }) => acc + price, 0);
+const prices: number =
+    record.reduce((acc, { price }) => acc + price, 0) - 100000; ///obono realizado el dia 20/01/2025
 ---
 
 <Layout>
     <Title size="md" />
     <section class="flex flex-col justify-center items-center">
-        <CardTotal count={count} total={[prices]} telephone={telephone} />
+        <CardTotal
+            text="Acumulado en domicilios, menos abono de $100.000"
+            count={count}
+            total={[prices]}
+            telephone={telephone}
+        />
     </section>
     <section>
         <h2 class="text-2xl text-H-blue-900 font-bold">
