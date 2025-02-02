@@ -10,15 +10,14 @@ export const loginDomicile = defineAction({
         password: z.string().min(8),
         remenber: z.boolean().optional()
     }),
-    handler: async ({ email, password, remenber }, { cookies }) => {
+    handler: async ({ email, password, remenber }) => {
         if (!email || !password) {
             return { message: "Empty fields ", code: 400 };
         }
 
         try {
             const domicile = await signInWithEmailAndPassword(firebase.auth, email, password)
-            console.log(domicile)
-            return { message: "Perfect", code: 202 }
+            return JSON.stringify(domicile)
         } catch (error) {
             const firebaseError = error as AuthError
 
@@ -30,7 +29,9 @@ export const loginDomicile = defineAction({
                 throw new Error("wrong password");
             }
 
+
             console.log(JSON.stringify(error));
+            throw new Error(JSON.stringify(error));
         }
     },
 })

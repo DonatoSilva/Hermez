@@ -68,7 +68,7 @@ if (domicileCurrent !== null) {
         "button[type=submit]",
     ) as HTMLButtonElement;
 
-    function Login() {
+    async function Login() {
         if (!form) return;
         const email = form?.querySelector("#email") as HTMLInputElement;
         const password = form?.querySelector("#password") as HTMLInputElement;
@@ -103,11 +103,13 @@ if (domicileCurrent !== null) {
             const { data, error } = await actions.loginDomicile(formData);
 
             if (error) {
-                alert(error?.message);
+                const res = await JSON.parse(error?.message);
+                alert(res.code);
                 btnIniciarSesion.disabled = false;
                 return;
             }
 
+            alert(data?.toString);
             navigate("/", { history: "replace" });
         });
     }
