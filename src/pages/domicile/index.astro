@@ -4,6 +4,13 @@ import FormButton from "@components/inputs/FormButton.astro";
 import FormInput from "@components/inputs/FormInput.astro";
 import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
+import { firebase } from "src/firebase/config";
+
+const domicileCurrent = firebase.auth.currentUser;
+
+if (domicileCurrent !== null) {
+    return Astro.redirect("/");
+}
 ---
 
 <Layout>
@@ -23,11 +30,19 @@ import Layout from "@layouts/Layout.astro";
             />
             <FormInput
                 name="password"
-                id="passsword"
+                id="password"
                 type="password"
                 label="Contraseña"
                 placeholder="Contraseña"
             />
+            <div class="flex gap-2">
+                <input
+                    class="min-w-4"
+                    type="checkbox"
+                    name="remenber"
+                    id="remenber"
+                /> Recuerda me
+            </div>
             <div class="grid grid-cols-2 gap-4">
                 <FormButton
                     type="button"
@@ -44,20 +59,56 @@ import Layout from "@layouts/Layout.astro";
 <style></style>
 
 <script>
+    import { actions } from "astro:actions";
     import { navigate } from "astro:transitions/client";
+    import { isEmpty, validateEmail } from "src/scritps/validateInput";
+
+    const form = document.querySelector("#formLogin") as HTMLFormElement;
+    const btnIniciarSesion = form?.querySelector(
+        "button[type=submit]",
+    ) as HTMLButtonElement;
 
     function Login() {
-        const form = document.querySelector("#formLogin") as HTMLFormElement;
-
         if (!form) return;
-        console.log("Form:", form);
+        const email = form?.querySelector("#email") as HTMLInputElement;
+        const password = form?.querySelector("#password") as HTMLInputElement;
 
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            setTimeout(() => {
-                navigate("/");
-            }, 1000);
+            const inputs = [
+                { input: email, alertText: "Ingrese su correo electrónico" },
+                { input: password, alertText: "Ingrese su contraseña" },
+            ];
+
+            for (const { input, alertText } of inputs) {
+                if (!isEmpty(input, alertText)) return;
+            }
+
+            if (!validateEmail(email.value.trim())) {
+                alert("Por favor, ingrese un correo válido");
+                email.focus();
+                return;
+            }
+
+            if (password.value.trim().length <= 8) {
+                alert("La contraseña debe tener minimo 8 caracteres");
+                password.focus();
+                return;
+            }
+
+            btnIniciarSesion.disabled = true;
+            const formData = new FormData(form);
+
+            const { data, error } = await actions.loginDomicile(formData);
+
+            if (error) {
+                alert(error?.message);
+                btnIniciarSesion.disabled = false;
+                return;
+            }
+
+            navigate("/", { history: "replace" });
         });
     }
 

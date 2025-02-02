@@ -29,6 +29,13 @@ import Layout from "@layouts/Layout.astro";
                 placeholder="Ingrese sus apellidos"
             />
             <FormInput
+                name="email"
+                id="email"
+                type="email"
+                label="Correo Electrónico"
+                placeholder="Ingrese su correo electrónico"
+            />
+            <FormInput
                 name="cell"
                 id="cell"
                 type="tel"
@@ -37,19 +44,32 @@ import Layout from "@layouts/Layout.astro";
             />
             <FormInput
                 name="password"
-                id="passsword"
+                id="password"
                 type="password"
                 label="Contraseña"
                 placeholder="Contraseña"
             />
             <FormInput
                 name="Vpassword"
-                id="Vpasssword"
+                id="Vpassword"
                 type="password"
                 label="Confirmar Contraseña"
                 placeholder="Contraseña"
             />
-            <FormButton type="submit" class="w-full" text="Registrar me" />
+            <div class="grid grid-cols-2 gap-4">
+                <FormButton
+                    type="button"
+                    href="/domicile"
+                    class="w-full text-H-blue-900 bg-white"
+                    text="Iniciar sesión"
+                />
+                <FormButton
+                    type="submit"
+                    id="summitButton"
+                    class=""
+                    text="Registrar me"
+                />
+            </div>
         </Form>
     </div>
 </Layout>
@@ -57,23 +77,66 @@ import Layout from "@layouts/Layout.astro";
 <style></style>
 
 <script>
+    import { actions } from "astro:actions";
     import { navigate } from "astro:transitions/client";
+    import { validateEmail, isEmpty } from "src/scritps/validateInput";
 
-    function Login() {
-        const form = document.querySelector("#formLogin") as HTMLFormElement;
+    const form = document.querySelector("#formSignUp") as HTMLFormElement;
+    const submitButton = form?.querySelector(
+        "#summitButton",
+    ) as HTMLButtonElement;
+
+    function Registrer() {
+        const names = form?.querySelector("#names") as HTMLInputElement;
+        const surnames = form?.querySelector("#surnames") as HTMLInputElement;
+        const email = form?.querySelector("#email") as HTMLInputElement;
+        const cell = form?.querySelector("#cell") as HTMLInputElement;
+        const password = form?.querySelector("#password") as HTMLInputElement;
+        const Vpassword = form?.querySelector("#Vpassword") as HTMLInputElement;
 
         if (!form) return;
-        console.log("Form:", form);
 
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            setTimeout(() => {
-                navigate("/");
-            }, 1000);
+            const inputs = [
+                { input: names, alertText: "Ingrese sus nombres" },
+                { input: surnames, alertText: "Ingrese sus apellidos" },
+                { input: email, alertText: "Ingrese su correo electrónico" },
+                { input: cell, alertText: "Ingrese su número de celular" },
+                { input: password, alertText: "Ingrese su contraseña" },
+                { input: Vpassword, alertText: "Confirme su contraseña" },
+            ];
+
+            for (const { input, alertText } of inputs) {
+                if (!isEmpty(input, alertText)) return;
+            }
+
+            if (!validateEmail(email.value.trim())) {
+                alert("Por favor, ingrese un correo válido");
+                return;
+            }
+
+            if (password.value.trim().length <= 8) {
+                alert("La contraseña debe tener mínimo 8 caracteres");
+                return;
+            }
+
+            submitButton.disabled = true;
+            const formData = new FormData(form);
+
+            const { data, error } = await actions.register(formData);
+
+            if (error) {
+                alert(error.message);
+                submitButton.disabled = false;
+            } else {
+                alert("Registro correcto 🥳✨");
+                navigate("/", { history: "replace" });
+            }
         });
     }
 
-    document.addEventListener("astro:after-swap", Login);
-    document.addEventListener("DOMContentLoaded", Login);
+    document.addEventListener("astro:after-swap", Registrer);
+    document.addEventListener("DOMContentLoaded", Registrer);
 </script>
