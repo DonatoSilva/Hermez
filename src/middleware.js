@@ -10,6 +10,7 @@ export const onRequest = defineMiddleware(
         const domicile = firebase.auth.currentUser
 
         locals.isLoggedIn = isLoggedIn;
+
         if (isLoggedIn) {
             locals.domicile = {
                 email: domicile.email,
