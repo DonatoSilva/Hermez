@@ -4,13 +4,6 @@ import FormButton from "@components/inputs/FormButton.astro";
 import FormInput from "@components/inputs/FormInput.astro";
 import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
-import { firebase } from "src/firebase/config";
-
-const domicileCurrent = firebase.auth.currentUser;
-
-if (domicileCurrent !== null) {
-    return Astro.redirect("/");
-}
 ---
 
 <Layout>
@@ -109,7 +102,6 @@ if (domicileCurrent !== null) {
                 return;
             }
 
-            alert(data?.toString);
             navigate("/", { history: "replace" });
         });
     }
