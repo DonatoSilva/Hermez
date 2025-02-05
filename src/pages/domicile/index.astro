@@ -28,14 +28,14 @@ import Layout from "@layouts/Layout.astro";
                 label="Contraseña"
                 placeholder="Contraseña"
             />
-            <div class="flex gap-2">
+            <label id="componentCkeck" class="flex gap-2">
                 <input
                     class="min-w-4"
                     type="checkbox"
                     name="remenber"
                     id="remenber"
                 /> Recuerda me
-            </div>
+            </label>
             <div class="grid grid-cols-2 gap-4">
                 <FormButton
                     type="button"
@@ -49,21 +49,26 @@ import Layout from "@layouts/Layout.astro";
     </div>
 </Layout>
 
-<style></style>
+<style>
+    #componentCkeck {
+        user-select: none;
+    }
+</style>
 
 <script>
     import { actions } from "astro:actions";
-    import { navigate } from "astro:transitions/client";
     import { isEmpty, validateEmail } from "src/scritps/validateInput";
 
-    const form = document.querySelector("#formLogin") as HTMLFormElement;
-    const btnIniciarSesion = form?.querySelector(
-        "button[type=submit]",
-    ) as HTMLButtonElement;
-
     async function Login() {
+        const form = document.querySelector("#formLogin") as HTMLFormElement;
+
         if (!form) return;
-        const email = form?.querySelector("#email") as HTMLInputElement;
+
+        const btnIniciarSesion = form.querySelector(
+            "button[type=submit]",
+        ) as HTMLButtonElement;
+
+        const email = form.querySelector("#email") as HTMLInputElement;
         const password = form?.querySelector("#password") as HTMLInputElement;
 
         form.addEventListener("submit", async (e) => {
@@ -102,10 +107,9 @@ import Layout from "@layouts/Layout.astro";
                 return;
             }
 
-            navigate("/", { history: "replace" });
+            window.location.replace("/");
         });
     }
 
-    document.addEventListener("astro:after-swap", Login);
-    document.addEventListener("DOMContentLoaded", Login);
+    document.addEventListener("astro:page-load", Login);
 </script>

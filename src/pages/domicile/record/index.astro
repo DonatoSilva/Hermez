@@ -4,61 +4,20 @@ import CardTotal from "@components/record/CardTotal.astro";
 import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
 
+const params = Astro.url.searchParams;
+const searchValue = params.get("search");
+
+if (!searchValue?.trim()) {
+    return Astro.redirect("/");
+}
+
+const isNumber = /^\d+$/.test(searchValue);
+
+if (!isNumber) {
+    return Astro.redirect("/");
+}
+
 const dataCardHistory = [
-    {
-        id: 1,
-        date: "12/12/2021",
-        name: "Donato Silva",
-        price: 20000,
-    },
-    {
-        id: 2,
-        date: "12/12/2021",
-        name: "Juan Silva",
-        price: 20000,
-    },
-    {
-        id: 3,
-        date: "12/12/2021",
-        name: "Esteban Reyes",
-        price: 20000,
-    },
-    {
-        id: 4,
-        date: "12/12/2021",
-        name: "Juan Silva",
-        price: 20000,
-    },
-    {
-        id: 5,
-        date: "12/12/2021",
-        name: "Esteban Reyes",
-        price: 20000,
-    },
-    {
-        id: 6,
-        date: "12/12/2021",
-        name: "Juan Silva",
-        price: 20000,
-    },
-    {
-        id: 7,
-        date: "12/12/2021",
-        name: "Esteban Reyes",
-        price: 20000,
-    },
-    {
-        id: 8,
-        date: "12/12/2021",
-        name: "Juan Silva",
-        price: 20000,
-    },
-    {
-        id: 9,
-        date: "12/12/2021",
-        name: "Esteban Reyes",
-        price: 20000,
-    },
     {
         id: 10,
         date: "12/12/2021",

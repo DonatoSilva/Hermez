@@ -40,9 +40,19 @@ const li = null;
             e.preventDefault();
 
             btnSearch.disabled = true;
+            const searchValue = search.value?.trim();
 
-            if (search.value?.trim() === "") {
+            if (searchValue === "") {
                 alert("El campo de busqueda no puede estar vació");
+                btnSearch.disabled = false;
+                return;
+            }
+
+            const isNumber = /^\d+$/.test(searchValue);
+
+            if (!isNumber) {
+                alert("Por favor, ingrese un número válido");
+                search.value = "";
                 btnSearch.disabled = false;
                 return;
             }

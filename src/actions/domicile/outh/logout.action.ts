@@ -5,6 +5,12 @@ import { firebase } from "src/firebase/config";
 export const logout = defineAction({
     accept: 'json',
     handler: async (_, { cookies }) => {
-        return await signOut(firebase.auth)
+        try {
+            return await signOut(firebase.auth)
+        } catch (error) {
+            const e = JSON.stringify(error)
+            console.log(error)
+            throw new Error(e);
+        }
     },
 })

@@ -78,15 +78,14 @@ import Layout from "@layouts/Layout.astro";
 
 <script>
     import { actions } from "astro:actions";
-    import { navigate } from "astro:transitions/client";
     import { validateEmail, isEmpty } from "src/scritps/validateInput";
 
-    const form = document.querySelector("#formSignUp") as HTMLFormElement;
-    const submitButton = form?.querySelector(
-        "#summitButton",
-    ) as HTMLButtonElement;
-
     function Registrer() {
+        const form = document.querySelector("#formSignUp") as HTMLFormElement;
+        const submitButton = form?.querySelector(
+            "#summitButton",
+        ) as HTMLButtonElement;
+
         const names = form?.querySelector("#names") as HTMLInputElement;
         const surnames = form?.querySelector("#surnames") as HTMLInputElement;
         const email = form?.querySelector("#email") as HTMLInputElement;
@@ -132,7 +131,7 @@ import Layout from "@layouts/Layout.astro";
                 submitButton.disabled = false;
             } else {
                 alert("Registro correcto 🥳✨");
-                navigate("/", { history: "replace" });
+                window.location.replace("/");
             }
         });
     }

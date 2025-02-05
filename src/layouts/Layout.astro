@@ -25,23 +25,7 @@ const { isLoggedIn } = Astro.locals;
 		<div class="H-container">
 			<slot />
 		</div>
-		{
-			isLoggedIn ? (
-				<ActionNav>
-					<Fragment slot="itemsNav">
-						{Li && Li.length > 0
-							? Li.map((item) => (
-									<li>
-										<a href={item.href}>{item.text}</a>
-									</li>
-								))
-							: "Error: Sin opciones"}
-					</Fragment>
-				</ActionNav>
-			) : (
-				""
-			)
-		}
+		{isLoggedIn ? <ActionNav /> : ""}
 	</body>
 </html>
 
