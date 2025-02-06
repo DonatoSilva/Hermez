@@ -43,7 +43,6 @@ export const createClient = defineAction({
                 domicileID: currentDomicile.uid
             })
 
-
             return {
                 message: "client created successfully",
                 ok: true,
@@ -51,8 +50,7 @@ export const createClient = defineAction({
                 code: 204
             }
         } catch (error) {
-            const e = JSON.stringify(error)
-            throw new Error(e);
+            throw error;
         }
     },
 

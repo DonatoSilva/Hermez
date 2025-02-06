@@ -1,13 +1,12 @@
 import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
-import { collection } from "firebase/firestore";
-import { doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { firebase } from "src/firebase/config";
-
 
 export const addDelivery = defineAction({
     accept: 'json',
     input: z.object({
+
         recordID: z.string(),
         deliveryDate: z.string(),
         deliveryPrice: z.number(),
