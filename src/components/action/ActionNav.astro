@@ -96,6 +96,47 @@ const displayName = Astro.locals.domicile?.displayName;
 </Modal>
 
 <style>
+    dialog {
+        width: 100%;
+        height: 70%;
+        @apply rounded-md py-4 px-8;
+
+        ::backdrop {
+            background-color: @apply bg-H-blue-100/50;
+        }
+    }
+
+    dialog[open] {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    dialog.closing {
+        animation: slideOut 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translate(0%, 100%); /* Abajo del viewport */
+        }
+        to {
+            opacity: 1;
+            transform: translate(0%, 0); /* Posición final */
+        }
+    }
+
+    @keyframes slideOut {
+        from {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+
+        to {
+            opacity: 0;
+            transform: translate(0%, -100%);
+        }
+    }
+
     .menu-toggle {
         @apply fixed bottom-0 right-2/4 translate-x-1/2 px-4 py-2 text-white bg-H-blue-900 border-none rounded-md;
 
@@ -433,9 +474,40 @@ const displayName = Astro.locals.domicile?.displayName;
         alert("Cliente creado correctamente");
     }
 
+    function openModal() {
+        const modal = document.querySelector("#modal") as HTMLDialogElement;
+        modal.showModal();
+        console.log("open");
+    }
+
+    function closeModal() {
+        const modal = document.querySelector("#modal") as HTMLDialogElement;
+        modal.classList.add("closing");
+        modal.addEventListener("animationend", () => {
+            const isClosing = modal.classList.contains("closing");
+
+            if (isClosing) {
+                console.log("end");
+                modal.classList.remove("closing");
+                modal.close();
+            }
+        });
+    }
+
     function toggleNav() {
         const nav = document.querySelector("#NavAdmin") as HTMLDivElement;
         const optLogOut = nav?.querySelector("#LogOut");
+        const optCreateClient = nav?.querySelector("#createClient");
+        const btnCloseModal = document.querySelector("#btnCloseModal");
+
+        optCreateClient?.addEventListener("click", () => {
+            openModal();
+        });
+
+        btnCloseModal?.addEventListener("click", () => {
+            console.log("close");
+            closeModal();
+        });
 
         initModals();
 
