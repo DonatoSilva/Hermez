@@ -3,7 +3,6 @@ import { createClient, removeClient, getClient } from './client'
 import { removeDelivery, getDeliveries } from './domicile/deliverie'
 import { createRecord, getRecords } from './client/record'
 
-
 export const server = {
   domicile: {
     auth: {
