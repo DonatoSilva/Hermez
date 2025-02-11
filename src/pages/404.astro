@@ -1,6 +1,18 @@
 ---
 import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
+
+const params = Astro.url.searchParams;
+const error = params.get("error");
+
+let title = "Página no encontrada";
+let message = "La página que buscas no existe. Por favor, verifica la URL.";
+
+if (error === "ClientNotFound") {
+    title = "Cliente no encontrado";
+    message =
+        "El cliente que buscas no existe. Por favor, verifica el número de telefono.";
+}
 ---
 
 <Layout>
@@ -12,11 +24,11 @@ import Layout from "@layouts/Layout.astro";
             class="w-1/2 mx-auto"
         />
         <h1 class="text-2xl text-H-blue-900 font-semibold">
-            404 - Página no encontrada
+            404 - {title}
         </h1>
         <hr class="my-4 bg-H-blue-300" />
         <p class="text-H-blue-900">
-            La página que buscas no existe. <br /> Por favor, verifica la URL.
+            {message}
         </p>
     </div>
 </Layout>

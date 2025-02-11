@@ -1,4 +1,4 @@
-export * from "./logout.action"
+export * from "./logout.action";
 export * from "./register.action";
-export * from "./loginDomicile.action";
+export * from "./logIn.action";
 

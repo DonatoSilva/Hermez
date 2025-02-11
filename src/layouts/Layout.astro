@@ -4,10 +4,9 @@ import { ClientRouter } from "astro:transitions";
 
 interface LayoutProps {
 	title?: string;
-	Li?: Array<{ text: string; href: string }>;
 }
 
-const { title = "Hermez Domicilio", Li = [] } = Astro.props as LayoutProps;
+const { title = "Hermez Domicilio" } = Astro.props as LayoutProps;
 const { isLoggedIn } = Astro.locals;
 ---
 

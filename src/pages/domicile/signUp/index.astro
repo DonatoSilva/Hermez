@@ -124,7 +124,8 @@ import Layout from "@layouts/Layout.astro";
             submitButton.disabled = true;
             const formData = new FormData(form);
 
-            const { data, error } = await actions.register(formData);
+            const { data, error } =
+                await actions.domicile.auth.register(formData);
 
             if (error) {
                 alert(error.message);

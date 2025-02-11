@@ -1,17 +1,42 @@
 ---
+import FormButton from "../inputs/FormButton.astro";
+import FormInput from "../inputs/FormInput.astro";
+import Modal from "./Modal.astro";
 // Obtener Url
 const pathName = new URL(Astro.request.url).pathname;
 const isRecordClient = pathName == "/record";
+
+const displayName = Astro.locals.domicile?.displayName;
 ---
 
 <div id="NavAdmin" class="">
     <div id="floatingMenu" class="floating-menu">
         <ul class="text-center">
-            <a id="LogOut">Cerrar Sesión</a>
+            {
+                isRecordClient ? (
+                    <>
+                        <a id="createRecord" data-is-modal="createRecordModal">
+                            Agregar domicilio
+                        </a>
+                        <a id="deleteClient" data-is-modal="deleteClientModal">
+                            Eliminar cliente
+                        </a>
+                    </>
+                ) : (
+                    ""
+                )
+            }
+
+            <a id="createClient" data-is-modal="createClientModal"
+                >Crear cliente</a
+            >
+            <a href="/domicile/record">Mi historial</a>
+            <a id="LogOut">Cerrar sesión</a>
         </ul>
     </div>
-    <button id="menuToggle" class="menu-toggle text-2xl font-semibold">
-        JS
+
+    <button id="menuToggle" class="menu-toggle text-xl font-semibold">
+        {displayName}
         <div class="menu-icon">
             <div class="bar1"></div>
             <div class="bar2"></div>
@@ -20,9 +45,60 @@ const isRecordClient = pathName == "/record";
     </button>
 </div>
 
+<Modal
+    id="createClientModal"
+    title="Crear cliente"
+    description="Nos alegra que quieras agregar un nuevo cliente a nuestra familia. Por favor, ingrese los datos del cliente para agregarlo a la base de datos."
+>
+    <form class="flex flex-col gap-4">
+        <FormInput
+            name="displayName"
+            type="text"
+            label="Nombre"
+            placeholder="Nombre del cliente"
+        />
+        <FormInput
+            name="phoneNumber"
+            type="tel"
+            label="Teléfono"
+            placeholder="Teléfono del cliente"
+        />
+        <FormButton type="submit" text="Crear" />
+    </form>
+</Modal>
+
+<Modal
+    id="deleteClientModal"
+    title="Eliminar cliente"
+    description="¿Estás seguro de querer eliminar este cliente?"
+>
+    <form class="flex flex-col gap-4">
+        <FormButton type="submit" text="Eliminar" />
+    </form>
+</Modal>
+
+<Modal
+    id="createRecordModal"
+    title="Crear domicilio"
+    description="¿Estás seguro de querer crear un nuevo domicilio?"
+>
+    <form class="flex flex-col gap-4">
+        <FormInput name="deliveryDate" type="date" label="Fecha de entrega" />
+        <FormInput
+            name="deliveryPrice"
+            type="number"
+            label="Precio de entrega"
+            placeholder="Ingresa el precio del domicilio"
+        />
+        <FormInput name="paidStatus" type="checkbox" label="Pagado" />
+        <FormButton type="submit" text="Crear" />
+    </form>
+</Modal>
+
 <style>
     .menu-toggle {
         @apply fixed bottom-0 right-2/4 translate-x-1/2 px-4 py-2 text-white bg-H-blue-900 border-none rounded-md;
+
         display: flex;
         align-items: center;
         margin-bottom: 10px;
@@ -32,7 +108,7 @@ const isRecordClient = pathName == "/record";
     .floating-menu {
         @apply fixed bottom-0 right-2/4 translate-x-1/2 p-4 text-white bg-H-blue-900 border-none rounded-md;
         width: 100%;
-        max-width: 150px;
+        max-width: min-content;
         display: flex;
         align-items: center;
         margin-bottom: 65px;
@@ -45,8 +121,29 @@ const isRecordClient = pathName == "/record";
             cursor: pointer;
             text-decoration: none;
             display: block;
-            width: 100%;
-            padding: 3px 0;
+            min-width: max-content;
+            @apply mt-2;
+
+            &:after {
+                content: "";
+                display: block;
+                margin: 8px auto 0px auto;
+                border-radius: 5px;
+                width: 30%;
+                height: 1px;
+                background-color: #fff;
+                transition: 0.4s;
+            }
+
+            &:hover {
+                font-weight: bold;
+                transition: 0.4s;
+
+                &:after {
+                    width: 100%;
+                    height: 2px;
+                }
+            }
         }
 
         ul {
@@ -99,13 +196,251 @@ const isRecordClient = pathName == "/record";
 <script>
     import { actions } from "astro:actions";
     import { navigate } from "astro:transitions/client";
+    import { validateInput } from "src/scritps/validateInput";
+
+    function openModal(modal: HTMLDialogElement) {
+        modal.showModal();
+
+        const btnCloseModal = modal.querySelector(".btnCloseModal");
+        btnCloseModal?.addEventListener("click", () => {
+            closeModal(modal);
+        });
+    }
+
+    function closeModal(modal: HTMLDialogElement) {
+        modal.classList.add("closing");
+        modal.addEventListener("animationend", () => {
+            const isClosing = modal.classList.contains("closing");
+
+            if (isClosing) {
+                modal.classList.remove("closing");
+                modal.close();
+            }
+        });
+    }
+
+    function initModals() {
+        const nav = document.querySelector("#NavAdmin") as HTMLDivElement;
+        const btnModals = nav?.querySelectorAll("[data-is-modal]");
+
+        btnModals?.forEach((btnModal) => {
+            const dataIsModal = btnModal.getAttribute("data-is-modal");
+            btnModal.addEventListener("click", () => {
+                const modal = document.querySelector(
+                    `#${dataIsModal}`,
+                ) as HTMLDialogElement;
+                openModal(modal);
+            });
+        });
+
+        ///logic for create client modal
+        const modalCreateClient = document.querySelector(
+            "#createClientModal",
+        ) as HTMLDialogElement;
+
+        const formCreateClient = modalCreateClient?.querySelector("form");
+
+        formCreateClient?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            createClient(formCreateClient);
+        });
+
+        ///logic for delete client modal
+        const modalDeleteClient = document.querySelector(
+            "#deleteClientModal",
+        ) as HTMLDialogElement;
+
+        const formDeleteClient = modalDeleteClient?.querySelector("form");
+
+        formDeleteClient?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            deleteClient(formDeleteClient);
+        });
+
+        ///logic for add record modal
+        const modalCreateRecord = document.querySelector(
+            "#createRecordModal",
+        ) as HTMLDialogElement;
+
+        const formCreateRecord = modalCreateRecord?.querySelector("form");
+
+        formCreateRecord?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            createRecord(formCreateRecord);
+        });
+    }
+
+    async function createRecord(form: HTMLFormElement) {
+        const deliveryDate = form.querySelector(
+            'input[name="deliveryDate"]',
+        ) as HTMLInputElement;
+        const deliveryPrice = form.querySelector(
+            'input[name="deliveryPrice"]',
+        ) as HTMLInputElement;
+        const paidStatus = form.querySelector(
+            'input[name="paidStatus"]',
+        ) as HTMLInputElement;
+
+        const inputs = [
+            {
+                input: deliveryDate,
+                alertText: "La fecha de entrega es requerida",
+            },
+            {
+                input: deliveryPrice,
+                alertText: "El precio de entrega es requerido",
+            },
+            {
+                input: paidStatus,
+                alertText: "El estado de pago es requerido",
+            },
+        ];
+
+        for (const { input, alertText } of inputs) {
+            if (!validateInput(input, alertText)) return;
+        }
+
+        const createDateCorrect = (fechaInput: string) => {
+            const offsetMinutos = new Date().getTimezoneOffset();
+
+            const [year, month, day] = fechaInput.split("-").map(Number);
+
+            const fecha = new Date(year, month - 1, day, 12, 0, 0);
+
+            fecha.setMinutes(fecha.getMinutes() - offsetMinutos);
+
+            return fecha;
+        };
+
+        const phoneNumber = new URL(window.location.href).searchParams.get(
+            "search",
+        );
+
+        if (!phoneNumber) {
+            alert("No se pudo obtener el número de teléfono");
+            return;
+        }
+
+        const fecha = createDateCorrect(deliveryDate.value).toISOString();
+
+        const { data, error } = await actions.client.record.createRecord({
+            phoneNumber: phoneNumber,
+            deliveryDate: fecha,
+            deliveryPrice: parseInt(deliveryPrice.value),
+            paidStatus: paidStatus.checked,
+        });
+
+        if (!data?.ok) {
+            alert(data?.message);
+            return;
+        }
+
+        if (error) {
+            console.log(error);
+            alert(error);
+            return;
+        }
+
+        if (data?.ok) {
+            alert("Domicilio creado correctamente");
+            const modalCreateRecord = form.closest("dialog");
+            closeModal(modalCreateRecord as HTMLDialogElement);
+            navigate(window.location.href);
+            return;
+
+            /* TODO: Se puede hacer una insert del cardHistory deber de recargar la pagina, para reducir el consumo de recursos. Tambien se podria hacer un re-render optimizta del componente. */
+        }
+
+        alert("Algo salio mal");
+    }
+
+    async function deleteClient(form: HTMLFormElement) {
+        const phoneNumber = new URL(window.location.href).searchParams.get(
+            "search",
+        );
+
+        if (!phoneNumber) {
+            alert("No se pudo obtener el número de teléfono");
+            return;
+        }
+
+        if (phoneNumber.valueOf().length != 10) {
+            alert("El numero debe tener 10 digitos");
+            return;
+        }
+
+        const { data, error } = await actions.client.removeClient({
+            phoneNumber: phoneNumber!.trim(),
+        });
+
+        if (data?.code == 403) {
+            alert("No se pudo eliminar el cliente: " + data?.message);
+            return;
+        }
+
+        if (error) {
+            alert(error.message);
+            return;
+        }
+
+        if (data?.ok) {
+            alert("Cliente eliminado correctamente");
+            const modalDeleteClient = form.closest("dialog");
+            closeModal(modalDeleteClient as HTMLDialogElement);
+            navigate("/");
+        }
+    }
+
+    async function createClient(form: HTMLFormElement) {
+        const displayName = form.querySelector(
+            "input[name='displayName']",
+        ) as HTMLInputElement;
+        const phoneNumber = form.querySelector(
+            "input[name='phoneNumber']",
+        ) as HTMLInputElement;
+
+        const inputs = [
+            {
+                input: displayName,
+                alertText: "El nombre del cliente es requerido",
+            },
+            {
+                input: phoneNumber,
+                alertText: "El teléfono del cliente es requerido",
+            },
+        ];
+
+        for (const { input, alertText } of inputs) {
+            if (!validateInput(input, alertText)) return;
+        }
+
+        const formData = new FormData(form);
+
+        const { data, error } = await actions.client.createClient(formData);
+
+        if (!data?.ok) {
+            if (data?.message == "client already exists") {
+                alert("El cliente ya existe");
+            }
+
+            const modalCreateClient = form.closest("dialog");
+            closeModal(modalCreateClient as HTMLDialogElement);
+            return;
+        }
+
+        const modalCreateClient = form.closest("dialog");
+        closeModal(modalCreateClient as HTMLDialogElement);
+        alert("Cliente creado correctamente");
+    }
 
     function toggleNav() {
         const nav = document.querySelector("#NavAdmin") as HTMLDivElement;
         const optLogOut = nav?.querySelector("#LogOut");
 
+        initModals();
+
         optLogOut?.addEventListener("click", () => {
-            actions
+            actions.domicile.auth
                 .logout()
                 .then(() => {
                     navigate("/");

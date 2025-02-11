@@ -1,5 +1,13 @@
 ---
-type InputType = "text" | "password" | "email" | "number" | "tel" | "url";
+type InputType =
+    | "text"
+    | "password"
+    | "email"
+    | "number"
+    | "tel"
+    | "url"
+    | "date"
+    | "checkbox";
 
 interface Props {
     type: InputType;
@@ -7,6 +15,8 @@ interface Props {
     name?: string;
     id?: string;
     placeholder?: string;
+    value?: string;
+    checked?: boolean;
 }
 
 const {
@@ -15,13 +25,30 @@ const {
     type = "text",
     name,
     id,
+    value,
+    checked,
 } = Astro.props as Props;
 ---
 
-<div>
-    <label for={id}>{label}</label>
-    <input name={name} id={id} type={type} placeholder={placeholder} />
-</div>
+{
+    type !== "checkbox" ? (
+        <label for={id}>
+            {label}
+            <input
+                name={name}
+                id={id}
+                type={type}
+                placeholder={placeholder}
+                value={value}
+            />
+        </label>
+    ) : (
+        <label for={id}>
+            <input name={name} id={id} type={type} checked={checked} />
+            {label}
+        </label>
+    )
+}
 
 <style>
     * {
@@ -29,17 +56,32 @@ const {
         font-size: 16px;
     }
 
-    input {
-        padding: 0.5rem;
-        border: 1px solid #d9d9d9;
-        border-radius: 0.5rem;
+    label {
+        &:has(input[type="checkbox"]) {
+            @apply w-fit h-min flex flex-row items-center justify-start gap-2;
+            user-select: none;
+            &:hover {
+                @apply cursor-pointer;
+            }
 
-        @apply w-full mt-1;
+            input {
+                @apply w-4 h-4;
+            }
+        }
 
-        &:focus {
-            outline: none;
+        input {
+            padding: 0.5rem;
 
-            @apply border-2 border-H-blue-900;
+            border: 1px solid #d9d9d9;
+            border-radius: 0.5rem;
+
+            @apply w-full;
+
+            &:focus {
+                outline: none;
+
+                @apply border-2 border-H-blue-900;
+            }
         }
     }
 </style>

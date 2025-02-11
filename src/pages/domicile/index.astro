@@ -4,6 +4,9 @@ import FormButton from "@components/inputs/FormButton.astro";
 import FormInput from "@components/inputs/FormInput.astro";
 import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
+
+const email = Astro.cookies.get("email")?.value ?? "";
+const remenber = !!email;
 ---
 
 <Layout>
@@ -20,6 +23,7 @@ import Layout from "@layouts/Layout.astro";
                 type="email"
                 label="Correo"
                 placeholder="Correo electrónico"
+                value={email}
             />
             <FormInput
                 name="password"
@@ -28,14 +32,13 @@ import Layout from "@layouts/Layout.astro";
                 label="Contraseña"
                 placeholder="Contraseña"
             />
-            <label id="componentCkeck" class="flex gap-2">
-                <input
-                    class="min-w-4"
-                    type="checkbox"
-                    name="remenber"
-                    id="remenber"
-                /> Recuerda me
-            </label>
+            <FormInput
+                type="checkbox"
+                label="Recordarme"
+                name="remenber"
+                id="remenber"
+                checked={remenber}
+            />
             <div class="grid grid-cols-2 gap-4">
                 <FormButton
                     type="button"
@@ -49,11 +52,7 @@ import Layout from "@layouts/Layout.astro";
     </div>
 </Layout>
 
-<style>
-    #componentCkeck {
-        user-select: none;
-    }
-</style>
+<style></style>
 
 <script>
     import { actions } from "astro:actions";
@@ -98,7 +97,7 @@ import Layout from "@layouts/Layout.astro";
             btnIniciarSesion.disabled = true;
             const formData = new FormData(form);
 
-            const { data, error } = await actions.loginDomicile(formData);
+            const { data, error } = await actions.domicile.auth.logIn(formData);
 
             if (error) {
                 const res = await JSON.parse(error?.message);
@@ -107,7 +106,7 @@ import Layout from "@layouts/Layout.astro";
                 return;
             }
 
-            window.location.replace("/");
+            window.location.reload();
         });
     }
 

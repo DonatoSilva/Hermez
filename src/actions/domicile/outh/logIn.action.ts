@@ -3,14 +3,25 @@ import { z } from "astro:schema";
 import { signInWithEmailAndPassword, type AuthError } from "firebase/auth";
 import { firebase } from "src/firebase/config";
 
-export const loginDomicile = defineAction({
+export const logIn = defineAction({
     accept: 'form',
     input: z.object({
         email: z.string().email(),
         password: z.string().min(8),
         remenber: z.boolean().optional()
     }),
-    handler: async ({ email, password, remenber }) => {
+    handler: async ({ email, password, remenber }, { cookies }) => {
+        if (remenber) {
+            cookies.set('email', email, {
+                expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+                path: '/',
+            })
+        } else {
+            cookies.delete('email', {
+                path: '/',
+            })
+        }
+
         if (!email || !password) {
             return { message: "Empty fields ", code: 400 };
         }

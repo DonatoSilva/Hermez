@@ -4,11 +4,9 @@ import FormButton from "@components/inputs/FormButton.astro";
 import FormInput from "@components/inputs/FormInput.astro";
 import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
-
-const li = null;
 ---
 
-<Layout li={li} title="Busqueda de domicilios">
+<Layout title="Busqueda de domicilios">
     <Title />
     <div>
         <Form>
@@ -26,6 +24,7 @@ const li = null;
 
 <script>
     import { navigate } from "astro:transitions/client";
+    import { validateInput } from "src/scritps/validateInput";
 
     function Search() {
         const btnSearch = document.querySelector(
@@ -40,19 +39,12 @@ const li = null;
             e.preventDefault();
 
             btnSearch.disabled = true;
-            const searchValue = search.value?.trim();
-
-            if (searchValue === "") {
-                alert("El campo de busqueda no puede estar vació");
-                btnSearch.disabled = false;
-                return;
-            }
-
-            const isNumber = /^\d+$/.test(searchValue);
-
-            if (!isNumber) {
-                alert("Por favor, ingrese un número válido");
-                search.value = "";
+            if (
+                !validateInput(
+                    search,
+                    "El campo de busqueda no puede estar vació",
+                )
+            ) {
                 btnSearch.disabled = false;
                 return;
             }
