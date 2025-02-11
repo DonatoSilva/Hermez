@@ -31,8 +31,7 @@ export const getDeliveries = defineAction({
             }
 
         } catch (error) {
-            const e = JSON.stringify(error);
-            throw new Error(e);
+            throw error;
         }
     }
 })
