@@ -51,8 +51,7 @@ export const createClient = defineAction({
                 code: 204
             }
         } catch (error) {
-            const e = JSON.stringify(error)
-            throw new Error(e);
+            throw error;
         }
     },
 
