@@ -1,19 +1,9 @@
 ---
-import CardHistory from "@components/record/CardHistory.astro";
-import CardTotal from "@components/record/CardTotal.astro";
 import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
+import Content from "@components/record/Content.astro";
 import { actions } from "astro:actions";
 import { firebase } from "src/firebase/config";
-
-const dataCardHistory = [
-    {
-        id: 10,
-        date: "12/12/2021",
-        name: "Juan Silva",
-        price: 20000,
-    },
-];
 
 const currentDomicile = firebase.auth.currentUser;
 
@@ -29,56 +19,31 @@ if (error) {
 }
 
 if (!data) return Astro.redirect("/404?error=ServerError");
+
 if (data.message === "domicile-not-found")
     return Astro.redirect("/404?error=DomicileNotFound");
 
 const domicile = data.domicile;
 
 if (!domicile) return Astro.redirect("/404?error=DataNotFound");
-const { cell: phoneNumber, names, surnames } = domicile;
+const { phoneNumber, names, deliveries } = domicile;
 
-const count = 0;
-const prices = dataCardHistory.map(({ price }) => price);
+const count = deliveries?.length || 0;
+const prices = deliveries?.map(({ deliveryPrice }) => deliveryPrice) || [];
+const isEmpty = count === 0;
 ---
 
 <Layout>
     <div>
         <Title size="md" />
-        <section class="flex flex-col max-h-fit justify-center items-center">
-            <CardTotal
-                count={count}
-                total={prices}
-                telephone={phoneNumber}
-                text={"Bienvenido " +
-                    currentDomicile?.displayName +
-                    ", Acumulado"}
-            />
-        </section>
-
-        <section>
-            <h2 class="text-2xl text-H-blue-900 font-bold">
-                Historial de domicilios
-            </h2>
-            <div class="flex flex-col gap-4 mt-6">
-                <!-- {
-                    dataCardHistory.map(({ date, name, price }, index) => (
-                        <>
-                            <CardHistory
-                                date={date}
-                                name={name}
-                                price={price}
-                            />
-
-                            {index < dataCardHistory.length - 1 ? (
-                                <hr class="border-t-2 w-20 mx-auto border-H-blue-300" />
-                            ) : (
-                                ""
-                            )}
-                        </>
-                    ))
-                } -->
-            </div>
-        </section>
+        <Content
+            count={count}
+            prices={prices}
+            phoneNumber={phoneNumber}
+            displayName={names}
+            isEmpty={isEmpty}
+            deliveries={deliveries}
+        />
     </div>
 </Layout>
 

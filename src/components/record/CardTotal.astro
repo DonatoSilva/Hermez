@@ -1,35 +1,78 @@
 ---
 interface Props {
-    count: number;
-    total: Array<number>;
+    deliveries: {
+        deliveryPrice: number;
+        paidStatus: string;
+    }[];
     telephone: string;
     text?: string;
 }
 
-const {
-    count,
-    total,
-    telephone,
-    text = "Acumulado en domicilios",
-} = Astro.props;
+const { deliveries, telephone, text = "Acumulado en domicilios" } = Astro.props;
 
-const totalPrices: string =
-    "$" +
-    total
-        .reduce((acc, curr) => {
-            return acc + curr;
-        }, 0)
-        .toLocaleString("es-ES");
+const count = deliveries?.length || 0;
+const valuePaid: number[] = [];
+const valuePending: number[] = [];
+
+deliveries?.forEach(({ deliveryPrice, paidStatus }) => {
+    if (paidStatus === "paid") {
+        valuePaid.push(deliveryPrice);
+    } else {
+        valuePending.push(deliveryPrice);
+    }
+});
+
+let Paid: string = "";
+let Pending: string = "";
+
+if (valuePaid.length > 0) {
+    Paid =
+        "$" +
+        valuePaid
+            .reduce((acc, curr) => {
+                return acc + curr;
+            }, 0)
+            .toLocaleString("es-CO");
+} else {
+    Paid = "$0.000";
+}
+
+if (valuePending.length > 0) {
+    Pending =
+        "$" +
+        valuePending
+            .reduce((acc, curr) => {
+                return acc + curr;
+            }, 0)
+            .toLocaleString("es-CO");
+} else {
+    Pending = "$0.000";
+}
 ---
 
 <div class="cardTotal flex flex-col relative">
+    <div class="toggleStatus">
+        <div class="toggleStatus-firt">
+            <div class="toggleStatus-select"></div>
+            <div class="toggleStatus-container">
+                <div data-value={Paid}>Pagado</div>
+                <div class="line"></div>
+                <div data-value={Pending} class="select">Pendiente</div>
+            </div>
+        </div>
+    </div>
+
     <div class="countDomiciles">
         {count}
     </div>
     <div>
         <div class="cardBody">
-            <h2 class="text-5xl font-semibold text-H-blue-900">
-                {totalPrices}
+            <h2
+                class="text-5xl font-semibold text-H-blue-900"
+                id="priceValue"
+                data-pending-value={Pending}
+            >
+                {Pending}
             </h2>
             <p class="text-sm text-center text-H-blue-500">
                 {text}
@@ -57,4 +100,117 @@ const totalPrices: string =
         left: 50%;
         transform: translateX(-50%);
     }
+
+    .toggleStatus {
+        position: absolute;
+        border-radius: 8px;
+        transform: translateY(-50%);
+        left: -8%;
+        @apply bg-H-blue-900 text-white px-1.5 py-1;
+
+        .toggleStatus-firt {
+            position: relative;
+
+            .toggleStatus-container {
+                display: flex;
+                flex-direction: row;
+                gap: 8px;
+
+                div {
+                    cursor: pointer;
+                    @apply px-2 rounded-md;
+                    transition: color 0.2s ease-in-out;
+
+                    &.select {
+                        cursor: default;
+                        font-weight: 600;
+                        @apply text-H-blue-900;
+                    }
+
+                    &.line {
+                        width: 1px;
+                        min-height: 100%;
+                        border: none;
+                        background-color: #fbfbfe;
+                        pointer-events: none;
+                        cursor: default;
+                        @apply bg-H-blue-100 p-0;
+                    }
+                }
+            }
+
+            .toggleStatus-select {
+                position: absolute;
+                width: 2px;
+                min-height: 100%;
+                z-index: -1;
+                transition: left 0.2s ease-in-out;
+                @apply bg-H-blue-300 rounded-md;
+            }
+        }
+    }
 </style>
+
+<script>
+    function init() {
+        const toggleStatus = document.querySelector(".toggleStatus");
+        const toggleStatusFirt =
+            toggleStatus?.querySelector(".toggleStatus-firt");
+        const toggleStatusContainer = toggleStatusFirt?.querySelector(
+            ".toggleStatus-container",
+        );
+        let toggleStatusSelect = toggleStatusFirt?.querySelector(
+            ".toggleStatus-select",
+        ) as HTMLDivElement;
+
+        let windthSelect: number = 0;
+        let positionSelect: number = 0;
+
+        updateStatus();
+
+        toggleStatusSelect.style.width = `${windthSelect}px`;
+        toggleStatusSelect.style.left = `${positionSelect}px`;
+
+        toggleStatusContainer?.addEventListener("click", (event) => {
+            const selectItem = toggleStatusContainer?.querySelector(
+                ".select",
+            ) as HTMLDivElement;
+            const elementClicked = event.target as HTMLDivElement;
+
+            if (
+                elementClicked.classList.contains("select") ||
+                elementClicked.classList.contains("line")
+            )
+                return;
+
+            selectItem?.classList.remove("select");
+            elementClicked.classList.add("select");
+
+            const priceValue = elementClicked.getAttribute("data-value");
+
+            updateStatus();
+            updatePrice(priceValue || "0");
+
+            toggleStatusSelect.style.left = `${positionSelect}px`;
+            toggleStatusSelect.style.width = `${windthSelect}px`;
+        });
+
+        function updatePrice(value: string) {
+            const priceValue = document.getElementById("priceValue");
+            if (priceValue) {
+                priceValue.textContent = value;
+            }
+        }
+
+        function updateStatus() {
+            const selectItem = toggleStatusContainer?.querySelector(
+                ".select",
+            ) as HTMLDivElement;
+
+            windthSelect = selectItem?.clientWidth || 0;
+            positionSelect = selectItem?.offsetLeft || 0;
+        }
+    }
+
+    document.addEventListener("astro:page-load", init);
+</script>

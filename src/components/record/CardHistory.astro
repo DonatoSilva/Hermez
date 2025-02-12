@@ -3,22 +3,33 @@ interface Props {
     date: string;
     name: string;
     price: number;
+    status: string;
 }
 
-const { date, name, price } = Astro.props;
+const { date, name, price, status } = Astro.props;
+
+const colorStatus = status === "paid" ? "bg-green-500/80" : "bg-red-500/80";
+const textStatus = status === "paid" ? "Pagado" : "Pendiente";
 
 function formatPrice(price: number): string {
-    return price.toLocaleString("es-ES");
+    return price.toLocaleString("es-CO");
 }
 ---
 
-<div class="card-container">
-    <div class="flex flex-col gap-1">
-        <h3 class="date">{date}</h3>
-        <p class="nameDomicile">{name}</p>
-    </div>
-    <div class="flex flex-col gap-1 justify-center items-center h-full">
-        <p class="price">{formatPrice(price)}</p>
+<div>
+    <div class="card-container">
+        <div class="flex flex-col gap-1">
+            <p class="nameDomicile">{name}</p>
+            <h3 class="date">{date}</h3>
+            <span
+                class={colorStatus +
+                    " text-xs rounded-full px-3 py-1 text-white max-w-min"}
+                >{textStatus}</span
+            >
+        </div>
+        <div class="flex flex-col justify-center items-center h-full">
+            <p class="price text-xl text-H-blue-900">{formatPrice(price)}</p>
+        </div>
     </div>
 </div>
 <style>
@@ -34,7 +45,7 @@ function formatPrice(price: number): string {
         }
 
         .nameDomicile {
-            @apply text-H-blue-700 font-normal text-sm;
+            @apply text-H-blue-700 font-normal text-base;
         }
     }
 </style>

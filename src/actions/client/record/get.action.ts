@@ -38,14 +38,6 @@ export const getRecords = defineAction({
             const records = await getDocs(query(subCollectionRef, orderBy('deliveryDate', 'desc')))
 
 
-            /// lanzar un error si no hay registros es un problema que se soluciona de esta manera
-            /* if (records.empty) {
-                throw new ActionError({
-                    message: "IsEmpty",
-                    code: "NOT_FOUND"
-                })
-            } */
-
             if (records.empty) {
                 return {
                     records: [],
@@ -57,19 +49,6 @@ export const getRecords = defineAction({
             const domicileRef = collection(firebase.db, 'domiciles')
             const domicile = await getDocs(domicileRef)
 
-            //// esta forma no es la mas optima en recursos pues se obtiene todo el domicilio y se filtra al final pasando por cilos anidados
-            /*  const domicileRef = collection(firebase.db, 'domiciles')
-            const domicile = await getDocs(domicileRef)
-
-            const recordsData = records.docs.map((doc) => {
-                return {
-                    domicileID: doc.data().domicileID,
-                    deliveryPrice: doc.data().deliveryPrice,
-                    deliveryDate: doc.data().deliveryDate,
-                    fullName: domicile.docs.find((domicile: any) => domicile.uid == doc.data().domicileUid)?.data().names + " " + domicile.docs.find((domicile: any) => domicile.uid == doc.data().domicileUid)?.data().surnames
-                }
-             }) */
-
             const namesDomiciles: any = {}
 
             const recordsData: any[] = records.docs.map((doc) => {
@@ -78,7 +57,10 @@ export const getRecords = defineAction({
                 if (namesDomiciles[doc.data().domicileUid]) {
                     fullName = namesDomiciles[doc.data().domicileUid]
                 } else {
-                    fullName = domicile.docs.find((domicile: any) => domicile.uid == doc.data().domicileUid)?.data().names + " " + domicile.docs.find((domicile: any) => domicile.uid == doc.data().domicileUid)?.data().surnames
+                    const name = domicile.docs.find((domicile: any) => domicile.uid == doc.data().domicileUid)?.data().names.split(" ")[0]
+                    const surname = domicile.docs.find((domicile: any) => domicile.uid == doc.data().domicileUid)?.data().surnames.split(" ")[0]
+
+                    fullName = name + " " + surname
                     namesDomiciles[doc.data().domicileUid] = fullName
                 }
 
@@ -86,6 +68,7 @@ export const getRecords = defineAction({
                     domicileID: doc.data().domicileID,
                     deliveryPrice: doc.data().deliveryPrice,
                     deliveryDate: doc.data().deliveryDate,
+                    paidStatus: doc.data().paidStatus,
                     fullName: fullName
                 }
 

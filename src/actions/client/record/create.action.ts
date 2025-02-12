@@ -44,7 +44,7 @@ export const createRecord = defineAction({
 
             await setDoc(doc(subCollectionRef, recordID), {
                 recordID: recordID,
-                deliveryDate: deliveryDate,
+                deliveryDate: Timestamp.fromDate(new Date(deliveryDate)),
                 deliveryPrice: deliveryPrice,
                 paidStatus: paidStatusValue,
                 clientNumber: phoneNumber
