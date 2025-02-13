@@ -240,9 +240,16 @@ const displayName = Astro.locals.domicile?.displayName;
 
         const formCreateClient = modalCreateClient?.querySelector("form");
 
-        formCreateClient?.addEventListener("submit", (e) => {
+        formCreateClient?.addEventListener("submit", async (e) => {
             e.preventDefault();
-            createClient(formCreateClient);
+
+            const btnSubmit = formCreateClient?.querySelector(
+                "button[type='submit']",
+            ) as HTMLButtonElement;
+
+            btnSubmit.disabled = true;
+            await createClient(formCreateClient);
+            btnSubmit.disabled = false;
         });
 
         ///logic for delete client modal
@@ -252,9 +259,15 @@ const displayName = Astro.locals.domicile?.displayName;
 
         const formDeleteClient = modalDeleteClient?.querySelector("form");
 
-        formDeleteClient?.addEventListener("submit", (e) => {
+        formDeleteClient?.addEventListener("submit", async (e) => {
             e.preventDefault();
-            deleteClient(formDeleteClient);
+            const btnSubmit = formDeleteClient?.querySelector(
+                "button[type='submit']",
+            ) as HTMLButtonElement;
+
+            btnSubmit.disabled = true;
+            await deleteClient(formDeleteClient);
+            btnSubmit.disabled = false;
         });
 
         ///logic for add record modal
@@ -264,9 +277,16 @@ const displayName = Astro.locals.domicile?.displayName;
 
         const formCreateRecord = modalCreateRecord?.querySelector("form");
 
-        formCreateRecord?.addEventListener("submit", (e) => {
+        formCreateRecord?.addEventListener("submit", async (e) => {
             e.preventDefault();
-            createRecord(formCreateRecord);
+
+            const btnSubmit = formCreateRecord?.querySelector(
+                "button[type='submit']",
+            ) as HTMLButtonElement;
+
+            btnSubmit.disabled = true;
+            await createRecord(formCreateRecord);
+            btnSubmit.disabled = false;
         });
     }
 
@@ -436,8 +456,6 @@ const displayName = Astro.locals.domicile?.displayName;
     function toggleNav() {
         const nav = document.querySelector("#NavAdmin") as HTMLDivElement;
         const optLogOut = nav?.querySelector("#LogOut");
-
-        initModals();
 
         initModals();
 

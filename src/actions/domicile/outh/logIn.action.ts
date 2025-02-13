@@ -1,6 +1,6 @@
 import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
-import { signInWithEmailAndPassword, type AuthError } from "firebase/auth";
+import { browserLocalPersistence, setPersistence, signInWithEmailAndPassword, type AuthError } from "firebase/auth";
 import { firebase } from "src/firebase/config";
 
 export const logIn = defineAction({
@@ -27,7 +27,9 @@ export const logIn = defineAction({
         }
 
         try {
-            const domicile = await signInWithEmailAndPassword(firebase.auth, email, password)
+            const domicile = await setPersistence(firebase.auth, browserLocalPersistence).then(() => {
+                return signInWithEmailAndPassword(firebase.auth, email, password)
+            })
             return JSON.stringify(domicile)
         } catch (error) {
             const firebaseError = error as AuthError
