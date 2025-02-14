@@ -198,26 +198,7 @@ const displayName = Astro.locals.domicile?.displayName;
     import { navigate } from "astro:transitions/client";
     import { validateInput } from "src/scritps/validateInput";
 
-    function openModal(modal: HTMLDialogElement) {
-        modal.showModal();
-
-        const btnCloseModal = modal.querySelector(".btnCloseModal");
-        btnCloseModal?.addEventListener("click", () => {
-            closeModal(modal);
-        });
-    }
-
-    function closeModal(modal: HTMLDialogElement) {
-        modal.classList.add("closing");
-        modal.addEventListener("animationend", () => {
-            const isClosing = modal.classList.contains("closing");
-
-            if (isClosing) {
-                modal.classList.remove("closing");
-                modal.close();
-            }
-        });
-    }
+    import { openModal, closeModal } from "src/scritps/modal/modalActions";
 
     function initModals() {
         const nav = document.querySelector("#NavAdmin") as HTMLDivElement;

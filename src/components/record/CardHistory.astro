@@ -80,11 +80,85 @@ const isCurrentDomicile = !!Astro.locals.domicile;
             </div>
         </div>
     </div>
+    <script define:vars={{ recordID }} is:inline>
+        /**
+         * open modal
+         * @param {HTMLDialogElement} modal
+         */
+        function openModal(modal) {
+            modal.showModal();
+
+            const btnCloseModal = modal.querySelector(".btnCloseModal");
+            btnCloseModal?.addEventListener("click", () => {
+                closeModal(modal);
+            });
+        }
+
+        /**
+         * close modal
+         * @param {HTMLDialogElement} modal
+         */
+        function closeModal(modal) {
+            modal.classList.add("closing");
+            modal.addEventListener("animationend", () => {
+                const isClosing = modal.classList.contains("closing");
+
+                if (isClosing) {
+                    modal.classList.remove("closing");
+                    modal.close();
+                }
+            });
+        }
+
+        const cardHistory = document.querySelector(
+            `[data-record-id="${recordID}"]`,
+        );
+
+        const edit = cardHistory?.querySelector(".edit");
+        const bash = cardHistory?.querySelector(".bash");
+
+        bash?.addEventListener("click", () => {
+            const deleteModal = document.querySelector("#deleteRecordModal");
+
+            deleteModal?.setAttribute("data-record-id", recordID);
+            openModal(deleteModal);
+        });
+
+        edit?.addEventListener("click", () => {
+            alert(
+                "editar todavia no esta disponible - 2025-02-14 / Esteban busca mas errores este es por que no me quedo mas ideas",
+            );
+        });
+
+        /* Es la estructura basica que consegui para la animacion de eliminacion de la tarjeta, 
+        no soy consiente si es la mejor manera de hacerlo, pero funciona.
+        
+        cardHistory?.addEventListener("click", () => {
+            cardHistory.style.height = cardHistory.clientHeight + "px";
+
+            const existUserElement = cardHistory.querySelector("symbol");
+
+            cardHistory.classList.add("deleting");
+            cardHistory.addEventListener("animationend", () => {
+                if (existUserElement) {
+                    cardHistory.style.display = "none";
+                    console.log("existUserElement");
+                    return;
+                }
+                console.log("remove");
+                cardHistory.remove();
+            });
+        }); */
+    </script>
 </div>
 
 <style>
     .card-history {
         @apply border;
+
+        transition:
+            opacity 0.3s ease-in,
+            height 0.3s ease;
 
         .card-header {
             .text-status,
@@ -157,20 +231,17 @@ const isCurrentDomicile = !!Astro.locals.domicile;
                 }
             }
         }
+
+        &.deleting {
+            animation: animatedDeleted 0.3s ease-in-out;
+            animation-delay: 0.2s;
+        }
+    }
+
+    @keyframes animatedDeleted {
+        to {
+            opacity: 0;
+            height: 0;
+        }
     }
 </style>
-
-<script define:vars={{ recordID }}>
-    const cardHistory = document.querySelector(
-        `[data-record-id="${recordID}"]`,
-    );
-    const edit = cardHistory?.querySelector(".edit");
-
-    edit?.addEventListener("click", () => {
-        deleteRecord();
-    });
-
-    const deleteRecord = () => {
-        console.log(recordID);
-    };
-</script>

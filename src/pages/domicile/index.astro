@@ -9,9 +9,9 @@ const email = Astro.cookies.get("email")?.value ?? "";
 const remenber = !!email;
 ---
 
-<Layout>
+<Layout title="Iniciar sesión" class="flex flex-col">
     <Title />
-    <div class="">
+    <div class="flex flex-col justify-center flex-1">
         <h1 class="text-center text-2xl text-H-blue-900 font-semibold">
             Iniciar sesión
         </h1>
