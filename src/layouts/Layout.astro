@@ -4,9 +4,11 @@ import ActionNav from "@components/action/ActionNav.astro";
 
 interface LayoutProps {
 	title?: string;
+	class?: string;
 }
 
-const { title = "Hermez Domicilio" } = Astro.props as LayoutProps;
+const { title = "Hermez Domicilio", class: className } =
+	Astro.props as LayoutProps;
 const { isLoggedIn } = Astro.locals;
 ---
 
@@ -21,7 +23,7 @@ const { isLoggedIn } = Astro.locals;
 		<ClientRouter />
 	</head>
 	<body>
-		<div class="H-container">
+		<div class={`H-container ${className}`}>
 			<slot />
 		</div>
 		{isLoggedIn ? <ActionNav /> : ""}
@@ -37,6 +39,6 @@ const { isLoggedIn } = Astro.locals;
 	}
 
 	.H-container {
-		@apply grid auto-rows-auto h-full min-h-fit max-w-md mx-auto bg-H-blue-100 rounded-lg py-9 px-8;
+		@apply h-full min-h-fit max-w-md mx-auto bg-H-blue-100 rounded-lg py-9 px-8;
 	}
 </style>

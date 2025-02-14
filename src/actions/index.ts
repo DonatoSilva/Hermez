@@ -1,7 +1,7 @@
 import { logIn, logout, register } from "./domicile/outh";
 import { createClient, removeClient, getClient } from './client'
 import { removeDelivery, getDeliveries } from './domicile/deliverie'
-import { createRecord, getRecords } from './client/record'
+import { createRecord, getRecords, removeRecord } from './client/record'
 
 export const server = {
   domicile: {
@@ -21,7 +21,8 @@ export const server = {
     getClient,
     record: {
       createRecord,
-      getRecords
+      getRecords,
+      removeRecord
     }
   },
 

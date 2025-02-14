@@ -8,9 +8,9 @@ import Layout from "@layouts/Layout.astro";
 const isDomiciliario = !!Astro.locals.domicile;
 ---
 
-<Layout title="Busqueda de domicilios">
+<Layout title="Busqueda de domicilios" class="flex flex-col">
     <Title />
-    <div>
+    <div class="search-container">
         <Form>
             <FormInput
                 name="search"
@@ -24,16 +24,28 @@ const isDomiciliario = !!Astro.locals.domicile;
     </div>
     {
         !isDomiciliario ? (
-            <div class="w-full flex justify-center items-center">
-                <h2 class="text-H-blue-300 hover:text-H-blue-900">
+            <div class="w-full flex justify-center items-center my-4 link-login-domiciliario">
+                <a
+                    href="/domicile/"
+                    class="text-H-blue-300 hover:text-H-blue-900"
+                >
                     ¿Eres Domiciliario?
-                </h2>
+                </a>
             </div>
         ) : (
             ""
         )
     }
 </Layout>
+
+<style>
+    .search-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+</style>
 
 <script>
     import { navigate } from "astro:transitions/client";

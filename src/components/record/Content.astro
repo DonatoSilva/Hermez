@@ -26,8 +26,10 @@ const { phoneNumber, displayName, isEmpty, deliveries } = Astro.props;
     />
 </section>
 <section>
-    <h2 class="text-2xl text-H-blue-900 font-bold">Historial de domicilios</h2>
-    <div class="flex flex-col gap-8 mt-4">
+    <h2 class="text-2xl text-H-blue-900 font-bold mb-8">
+        Historial de domicilios
+    </h2>
+    <div class="flex flex-col gap-6 mt-4">
         {
             isEmpty ? (
                 <div class="flex justify-center items-center">
@@ -80,13 +82,111 @@ const { phoneNumber, displayName, isEmpty, deliveries } = Astro.props;
 </section>
 
 <Modal
-    id="delete-record"
+    id="deleteRecordModal"
     title="Eliminar domicilio"
     description="Estas seguro de querer eliminar este domicilio?"
 >
-    <FormButton
-        type="button"
-        class="bg-H-blue-900 text-white px-4 py-2 rounded-md"
-        text="Eliminar"
-    />
+    <div class="flex flex-col gap-2">
+        <FormButton
+            id="btnDeleteRecord"
+            type="button"
+            class="bg-H-blue-900 text-white px-4 py-2 rounded-md"
+            text="Eliminar"
+        />
+        <FormButton
+            id="btnCancelDeleteRecord"
+            type="button"
+            class="text-H-blue-900 bg-white px-4 py-2 rounded-md"
+            text="Cancelar"
+        />
+    </div>
 </Modal>
+
+<script>
+    import { actions } from "astro:actions";
+    import { openModal, closeModal } from "src/scritps/modal/modalActions";
+
+    document.addEventListener("astro:page-load", () => {
+        const deleteRecordModal = document.querySelector(
+            "#deleteRecordModal",
+        ) as HTMLDialogElement;
+        const btnDeleteRecord = deleteRecordModal?.querySelector(
+            "#btnDeleteRecord",
+        ) as HTMLButtonElement;
+        const btnCancelDeleteRecord = deleteRecordModal?.querySelector(
+            "#btnCancelDeleteRecord",
+        ) as HTMLButtonElement;
+
+        btnDeleteRecord?.addEventListener("click", async () => {
+            const recordID = deleteRecordModal?.getAttribute("data-record-id");
+            const phoneNumber = document
+                .querySelector("#phoneNumber")
+                ?.textContent?.trim();
+
+            if (!recordID) {
+                alert("No se pudo obtener la direccion url del domicilio");
+                return;
+            }
+
+            if (!phoneNumber) {
+                alert("No se pudo obtener el numero de telefono");
+                return;
+            }
+
+            const { data, error } = await actions.client.record.removeRecord({
+                recordID,
+                phoneNumber,
+            });
+
+            if (error) {
+                alert(error.message);
+                cleanModal(false);
+                return;
+            }
+
+            cleanModal(true);
+        });
+
+        btnCancelDeleteRecord?.addEventListener("click", () => {
+            cleanModal(false);
+        });
+
+        function cleanModal(isDelete: boolean) {
+            const recordID = deleteRecordModal?.getAttribute("data-record-id");
+            const cardHistory = document.querySelector(
+                `[data-record-id="${recordID}"]`,
+            ) as HTMLDivElement;
+
+            deleteRecordModal?.removeAttribute("data-record-id");
+            closeModal(deleteRecordModal);
+
+            deleteRecordModal?.addEventListener(
+                "animationend",
+                deleteCardHistory,
+                {
+                    once: true,
+                },
+            );
+
+            function deleteCardHistory() {
+                if (!isDelete) return;
+
+                cardHistory.style.height = cardHistory.clientHeight + "px";
+                const existUserElement = cardHistory.querySelector("symbol");
+
+                cardHistory?.classList.add("deleting");
+
+                cardHistory?.addEventListener("animationend", () => {
+                    if (existUserElement) {
+                        cardHistory.style.display = "none";
+                        return;
+                    }
+
+                    cardHistory?.remove();
+                });
+
+                console.log("animationend");
+            }
+        }
+    });
+</script>
