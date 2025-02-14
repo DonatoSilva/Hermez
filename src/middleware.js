@@ -24,7 +24,7 @@ export const onRequest = defineMiddleware(
 
         // Redirecciones condicionales
         if (privateRoutes.some(route => currentPath.startsWith(route)) && !locals.domicile) {
-            return redirect("/");
+            return redirect("/domicile/");
         }
 
         if (privateRoutes.some(route => currentPath.startsWith(route)) && locals.domicile) {

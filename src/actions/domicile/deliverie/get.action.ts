@@ -1,6 +1,6 @@
 import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
-import { getDoc, doc, getDocs, collection, orderBy, query } from "firebase/firestore";
+import { getDoc, doc, getDocs, collection, orderBy, query } from "@firebase/firestore";
 import { firebase } from "src/firebase/config";
 
 export const getDeliveries = defineAction({
@@ -23,12 +23,12 @@ export const getDeliveries = defineAction({
             }
 
             const domicileData = docSnap.data();
-            const { cell: phoneNumber, names, surnames, paidStatus } = domicileData;
+            const { cell: phoneNumber, names, surnames } = domicileData;
 
             const deliveriesRef = collection(domicileRef, "deliveries")
             const recods = await getDocs(query(deliveriesRef, orderBy("deliveryDate", "desc")))
 
-            const deliveries = recods.docs.map((doc) => doc.data())
+            const deliveries = recods.docs.map((doc: any) => doc.data())
 
             return {
                 domicile: {
@@ -36,7 +36,6 @@ export const getDeliveries = defineAction({
                     phoneNumber,
                     names,
                     surnames,
-                    paidStatus
                 },
                 ok: true,
                 code: 200

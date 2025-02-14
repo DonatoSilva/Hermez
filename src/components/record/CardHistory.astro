@@ -1,12 +1,15 @@
 ---
+import { Icon } from "astro-icon/components";
+
 interface Props {
     date: string;
     name: string;
     price: number;
     status: string;
+    recordID: string;
 }
 
-const { date, name, price, status } = Astro.props;
+const { date, name, price, status, recordID } = Astro.props;
 
 const colorStatus = status === "paid" ? "bg-green-500/80" : "bg-red-500/80";
 const textStatus = status === "paid" ? "Pagado" : "Pendiente";
@@ -14,38 +17,160 @@ const textStatus = status === "paid" ? "Pagado" : "Pendiente";
 function formatPrice(price: number): string {
     return price.toLocaleString("es-CO");
 }
+
+const isCurrentDomicile = !!Astro.locals.domicile;
 ---
 
-<div>
-    <div class="card-container">
-        <div class="flex flex-col gap-1">
-            <p class="nameDomicile">{name}</p>
-            <h3 class="date">{date}</h3>
-            <span
-                class={colorStatus +
-                    " text-xs rounded-full px-3 py-1 text-white max-w-min"}
-                >{textStatus}</span
-            >
+<div class="card-history rounded-lg flex flex-col" data-record-id={recordID}>
+    <div class="flex flex-row justify-between items-center min-h-8 card-header">
+        <div
+            class={colorStatus +
+                " rounded-ss-lg rounded-ee-lg flex flex-row items-center gap-1 overflow-hidden text-status"}
+        >
+            <Icon
+                name="solar:forward-2-broken"
+                color="white"
+                width="24"
+                height="24"
+            />
+            <span class="text-white overflow-hidden">{textStatus}</span>
         </div>
-        <div class="flex flex-col justify-center items-center h-full">
-            <p class="price text-xl text-H-blue-900">{formatPrice(price)}</p>
+        {
+            isCurrentDomicile ? (
+                <div class="flex flex-row items-center gap-1 card-actions">
+                    <div class="rounded-md flex flex-row items-center gap-1 overflow-hidden edit">
+                        <Icon
+                            name="solar:clapperboard-edit-outline"
+                            width="24"
+                            height="24"
+                        />
+                        <span class="overflow-hidden text-H-blue-black">
+                            Editar
+                        </span>
+                    </div>
+                    <div class="rounded-md flex flex-row items-center gap-1 overflow-hidden bash">
+                        <Icon
+                            name="solar:paper-bin-bold"
+                            width="24"
+                            height="24"
+                        />
+                        <span class="overflow-hidden text-H-blue-black">
+                            Eliminar
+                        </span>
+                    </div>
+                </div>
+            ) : (
+                ""
+            )
+        }
+    </div>
+    <div class="card-body">
+        <div class="card-container">
+            <div>
+                <div class="flex gap-1 items-center nameDomicile">
+                    <Icon name="solar:user-bold" />
+                    <p>{name}</p>
+                </div>
+                <h3 class="date">{date}</h3>
+            </div>
+            <div class="flex flex-col justify-end items-center h-full">
+                <p class="price text-xl text-H-blue-900">
+                    {formatPrice(price)}
+                </p>
+            </div>
         </div>
     </div>
 </div>
+
 <style>
-    .card-container {
-        @apply grid grid-cols-[1fr_auto] gap-1 w-full text-H-blue-900;
+    .card-history {
+        @apply border;
 
-        .date {
-            @apply text-xl text-H-blue-900;
+        .card-header {
+            .text-status,
+            .bash,
+            .edit {
+                padding: 0.25rem 0.5rem;
+
+                span {
+                    width: 0;
+                    height: 100%;
+                    display: inline-block;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    transition: width 0.3s;
+                }
+
+                transition: color 0.3s;
+            }
+
+            .bash,
+            .edit {
+                & > svg {
+                    @apply text-H-blue-500;
+                }
+            }
         }
 
-        .price {
-            @apply text-2xl font-bold;
+        .card-body {
+            @apply px-3 py-4;
+            .card-container {
+                @apply grid grid-cols-[1fr_auto] gap-1 w-full text-H-blue-900;
+
+                .date {
+                    @apply text-xl text-H-blue-900;
+                }
+
+                .price {
+                    @apply text-2xl font-bold;
+                }
+            }
+
+            .nameDomicile {
+                @apply text-H-blue-500 font-normal;
+            }
         }
 
-        .nameDomicile {
-            @apply text-H-blue-700 font-normal text-base;
+        &:hover {
+            cursor: pointer;
+            @apply shadow-md;
+
+            .card-header {
+                .text-status {
+                    span {
+                        width: 80px;
+                    }
+                }
+
+                .edit:hover,
+                .bash:hover {
+                    span {
+                        width: 80px;
+                    }
+
+                    color: white;
+                    @apply bg-H-blue-900;
+
+                    svg {
+                        @apply text-white;
+                    }
+                }
+            }
         }
     }
 </style>
+
+<script define:vars={{ recordID }}>
+    const cardHistory = document.querySelector(
+        `[data-record-id="${recordID}"]`,
+    );
+    const edit = cardHistory?.querySelector(".edit");
+
+    edit?.addEventListener("click", () => {
+        deleteRecord();
+    });
+
+    const deleteRecord = () => {
+        console.log(recordID);
+    };
+</script>

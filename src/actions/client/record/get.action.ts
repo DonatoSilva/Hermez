@@ -1,7 +1,7 @@
 import { ActionError, defineAction } from "astro:actions";
 import { record, z } from "astro:schema";
-import { collection, getDoc, getDocs, orderBy, query } from "firebase/firestore";
-import { doc } from "firebase/firestore";
+import { collection, getDoc, getDocs, orderBy, query } from "@firebase/firestore";
+import { doc } from "@firebase/firestore";
 import { firebase } from "src/firebase/config";
 
 export const getRecords = defineAction({
@@ -65,6 +65,7 @@ export const getRecords = defineAction({
                 }
 
                 return {
+                    recordID: doc.id,
                     domicileID: doc.data().domicileID,
                     deliveryPrice: doc.data().deliveryPrice,
                     deliveryDate: doc.data().deliveryDate,
@@ -85,9 +86,17 @@ export const getRecords = defineAction({
 export const getRecord = defineAction({
     accept: 'form',
     input: z.object({
+        recordID: z.string(),
+        phoneNumber: z.string()
     }),
-    handler: async ({ }, context) => {
+    handler: async ({ recordID, phoneNumber }, context) => {
         try {
+            const clientRef = doc(firebase.db, 'clients', phoneNumber)
+            const recordRef = doc(clientRef, 'records', recordID)
+
+            const record = await getDoc(recordRef)
+
+            return { record: record.data(), ok: true, code: 200 }
 
         } catch (error) {
             throw error
