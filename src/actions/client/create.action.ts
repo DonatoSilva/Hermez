@@ -1,6 +1,6 @@
 import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
-import { doc, setDoc, Timestamp, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, setDoc, Timestamp, collection, query, where, getDocs } from "@firebase/firestore";
 import { firebase } from "src/firebase/config";
 
 export const createClient = defineAction({

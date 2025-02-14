@@ -27,21 +27,14 @@ const domicile = data.domicile;
 
 if (!domicile) return Astro.redirect("/404?error=DataNotFound");
 const { phoneNumber, names, deliveries } = domicile;
-
-const count = deliveries?.length || 0;
-const prices = deliveries?.map(({ deliveryPrice }) => deliveryPrice) || [];
-const isEmpty = count === 0;
 ---
 
 <Layout>
     <div>
         <Title size="md" />
         <Content
-            count={count}
-            prices={prices}
             phoneNumber={phoneNumber}
             displayName={names}
-            isEmpty={isEmpty}
             deliveries={deliveries}
         />
     </div>

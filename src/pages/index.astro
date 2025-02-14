@@ -4,6 +4,8 @@ import FormButton from "@components/inputs/FormButton.astro";
 import FormInput from "@components/inputs/FormInput.astro";
 import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
+
+const isDomiciliario = !!Astro.locals.domicile;
 ---
 
 <Layout title="Busqueda de domicilios">
@@ -20,6 +22,17 @@ import Layout from "@layouts/Layout.astro";
             <FormButton type="button" class="" text="Buscar" id="btnSearch" />
         </Form>
     </div>
+    {
+        !isDomiciliario ? (
+            <div class="w-full flex justify-center items-center">
+                <h2 class="text-H-blue-300 hover:text-H-blue-900">
+                    ¿Eres Domiciliario?
+                </h2>
+            </div>
+        ) : (
+            ""
+        )
+    }
 </Layout>
 
 <script>
