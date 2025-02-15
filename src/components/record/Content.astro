@@ -1,6 +1,7 @@
 ---
 import CardHistory from "./CardHistory.astro";
 import Modal from "./../action/Modal.astro";
+import AddAndEdit from "./Modals/AddAndEdit.astro";
 import CardTotal from "./CardTotal.astro";
 import FormButton from "./../inputs/FormButton.astro";
 
@@ -102,11 +103,16 @@ const { phoneNumber, displayName, isEmpty, deliveries } = Astro.props;
     </div>
 </Modal>
 
+<AddAndEdit isEdit={true} />
+
 <script>
     import { actions } from "astro:actions";
     import { openModal, closeModal } from "src/scritps/modal/modalActions";
+    import { validateInput } from "src/scritps/validateInput";
+    import { formatPrice } from "src/scritps/formatPrice";
+    import { createDateCorrect } from "src/scritps/convertDate";
 
-    document.addEventListener("astro:page-load", () => {
+    function initDeleteRecord() {
         const deleteRecordModal = document.querySelector(
             "#deleteRecordModal",
         ) as HTMLDialogElement;
@@ -184,9 +190,131 @@ const { phoneNumber, displayName, isEmpty, deliveries } = Astro.props;
 
                     cardHistory?.remove();
                 });
-
-                console.log("animationend");
             }
         }
-    });
+    }
+
+    function initEditRecord() {
+        const editRecordModal = document.querySelector(
+            "#editRecordModal",
+        ) as HTMLDialogElement;
+
+        const formEditRecord = editRecordModal?.querySelector("form");
+
+        formEditRecord?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const recordID = editRecordModal?.getAttribute("data-record-id");
+            const phoneNumber = document
+                .querySelector("#phoneNumber")
+                ?.textContent?.trim();
+
+            const deliveryDate = formEditRecord?.querySelector(
+                "input[name='deliveryDate']",
+            ) as HTMLInputElement;
+            const deliveryPrice = formEditRecord?.querySelector(
+                "input[name='deliveryPrice']",
+            ) as HTMLInputElement;
+            const paidStatus = formEditRecord?.querySelector(
+                "input[name='paidStatus']",
+            ) as HTMLInputElement;
+
+            if (!recordID) {
+                alert("No se pudo obtener la direccion url del domicilio");
+            }
+
+            if (!phoneNumber) {
+                alert("No se pudo obtener el numero de telefono");
+            }
+
+            const inputs = [
+                {
+                    input: deliveryDate,
+                    alertText: "La fecha de entrega es requerida",
+                },
+                {
+                    input: deliveryPrice,
+                    alertText: "El precio de entrega es requerido",
+                },
+                {
+                    input: paidStatus,
+                    alertText: "El estado de pago es requerido",
+                },
+            ];
+
+            for (const { input, alertText } of inputs) {
+                if (!validateInput(input, alertText)) return;
+            }
+
+            const { data, error } = await actions.client.record.updateRecord({
+                recordID: recordID ?? "",
+                phoneNumber: phoneNumber ?? "",
+                deliveryDate: deliveryDate.value,
+                deliveryPrice: Number(deliveryPrice.value),
+                paidStatus: paidStatus.checked,
+            });
+
+            if (error) {
+                alert(error.message);
+                return;
+            }
+
+            cleanModal(true, data);
+        });
+
+        function cleanModal(isEdit: boolean, data: any) {
+            const recordID = editRecordModal?.getAttribute("data-record-id");
+            const cardHistory = document.querySelector(
+                `[data-record-id="${recordID}"]`,
+            ) as HTMLDivElement;
+
+            editRecordModal?.removeAttribute("data-record-id");
+            closeModal(editRecordModal);
+
+            editRecordModal?.addEventListener("animationend", async () => {
+                const deliveryDate = cardHistory?.querySelector(".date")!;
+                const deliveryPrice =
+                    cardHistory?.querySelector(".priceRecord")!;
+                const paidStatus = cardHistory?.querySelector(".paidStatus")!;
+
+                const dataToUpdate = await JSON.parse(data.dataToUpdate);
+                const dateFormatted = createDateCorrect(
+                    dataToUpdate.deliveryDate,
+                );
+                deliveryDate.textContent = new Intl.DateTimeFormat("es-CO", {
+                    dateStyle: "full",
+                }).format(dateFormatted);
+                deliveryPrice.textContent = formatPrice(
+                    dataToUpdate.deliveryPrice,
+                );
+
+                if (dataToUpdate.paidStatus == "paid") {
+                    const textStatus =
+                        cardHistory?.querySelector(".text-status")!;
+
+                    textStatus.classList.replace(
+                        "bg-red-500/80",
+                        "bg-green-500/80",
+                    );
+                    paidStatus.textContent = "Pagado";
+                } else {
+                    const textStatus =
+                        cardHistory?.querySelector(".text-status")!;
+
+                    textStatus.classList.replace(
+                        "bg-green-500/80",
+                        "bg-red-500/80",
+                    );
+                    paidStatus.textContent = "Pendiente";
+                }
+            });
+        }
+    }
+
+    function init() {
+        initDeleteRecord();
+        initEditRecord();
+    }
+
+    document.addEventListener("astro:page-load", init);
 </script>

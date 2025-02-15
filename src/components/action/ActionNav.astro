@@ -2,6 +2,8 @@
 import FormButton from "../inputs/FormButton.astro";
 import FormInput from "../inputs/FormInput.astro";
 import Modal from "./Modal.astro";
+import AddAndEdit from "../record/Modals/AddAndEdit.astro";
+
 // Obtener Url
 const pathName = new URL(Astro.request.url).pathname;
 const isRecordClient = pathName == "/record";
@@ -77,23 +79,7 @@ const displayName = Astro.locals.domicile?.displayName;
     </form>
 </Modal>
 
-<Modal
-    id="createRecordModal"
-    title="Crear domicilio"
-    description="¿Estás seguro de querer crear un nuevo domicilio?"
->
-    <form class="flex flex-col gap-4">
-        <FormInput name="deliveryDate" type="date" label="Fecha de entrega" />
-        <FormInput
-            name="deliveryPrice"
-            type="number"
-            label="Precio de entrega"
-            placeholder="Ingresa el precio del domicilio"
-        />
-        <FormInput name="paidStatus" type="checkbox" label="Pagado" />
-        <FormButton type="submit" text="Crear" />
-    </form>
-</Modal>
+<AddAndEdit />
 
 <style>
     .menu-toggle {
@@ -197,6 +183,7 @@ const displayName = Astro.locals.domicile?.displayName;
     import { actions } from "astro:actions";
     import { navigate } from "astro:transitions/client";
     import { validateInput } from "src/scritps/validateInput";
+    import { createDateCorrect } from "src/scritps/convertDate";
 
     import { openModal, closeModal } from "src/scritps/modal/modalActions";
 
@@ -301,18 +288,6 @@ const displayName = Astro.locals.domicile?.displayName;
             if (!validateInput(input, alertText)) return;
         }
 
-        const createDateCorrect = (fechaInput: string) => {
-            const offsetMinutos = new Date().getTimezoneOffset();
-
-            const [year, month, day] = fechaInput.split("-").map(Number);
-
-            const fecha = new Date(year, month - 1, day, 12, 0, 0);
-
-            fecha.setMinutes(fecha.getMinutes() - offsetMinutos);
-
-            return fecha;
-        };
-
         const phoneNumber = new URL(window.location.href).searchParams.get(
             "search",
         );
@@ -346,7 +321,7 @@ const displayName = Astro.locals.domicile?.displayName;
             alert("Domicilio creado correctamente");
             const modalCreateRecord = form.closest("dialog");
             closeModal(modalCreateRecord as HTMLDialogElement);
-            navigate(window.location.href);
+            navigate(window.location.href, { history: "replace" });
             return;
 
             /* TODO: Se puede hacer una insert del cardHistory deber de recargar la pagina, para reducir el consumo de recursos. Tambien se podria hacer un re-render optimizta del componente. */
