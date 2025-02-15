@@ -5,10 +5,16 @@
 export function openModal(modal) {
     modal.showModal();
 
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            closeModal(modal);
+        }
+    }, { once: true });
+
     const btnCloseModal = modal.querySelector(".btnCloseModal");
     btnCloseModal?.addEventListener("click", () => {
         closeModal(modal);
-    });
+    }, { once: true });
 }
 
 

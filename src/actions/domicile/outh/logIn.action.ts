@@ -44,7 +44,7 @@ export const logIn = defineAction({
 
 
             console.log(JSON.stringify(error));
-            throw new Error(JSON.stringify(error));
+            throw error;
         }
     },
 })

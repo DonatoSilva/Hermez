@@ -1,5 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
+import { formatPrice } from "src/scritps/formatPrice";
+import CardHistoryContent from "./CardHistory/CardHistoryContent.astro";
 
 interface Props {
     date: string;
@@ -14,14 +16,13 @@ const { date, name, price, status, recordID } = Astro.props;
 const colorStatus = status === "paid" ? "bg-green-500/80" : "bg-red-500/80";
 const textStatus = status === "paid" ? "Pagado" : "Pendiente";
 
-function formatPrice(price: number): string {
-    return price.toLocaleString("es-CO");
-}
-
 const isCurrentDomicile = !!Astro.locals.domicile;
 ---
 
-<div class="card-history rounded-lg flex flex-col" data-record-id={recordID}>
+<card-history-content
+    class="card-history rounded-lg flex flex-col"
+    data-record-id={recordID}
+>
     <div class="flex flex-row justify-between items-center min-h-8 card-header">
         <div
             class={colorStatus +
@@ -33,7 +34,9 @@ const isCurrentDomicile = !!Astro.locals.domicile;
                 width="24"
                 height="24"
             />
-            <span class="text-white overflow-hidden">{textStatus}</span>
+            <span class="text-white overflow-hidden paidStatus"
+                >{textStatus}</span
+            >
         </div>
         {
             isCurrentDomicile ? (
@@ -74,83 +77,81 @@ const isCurrentDomicile = !!Astro.locals.domicile;
                 <h3 class="date">{date}</h3>
             </div>
             <div class="flex flex-col justify-end items-center h-full">
-                <p class="price text-xl text-H-blue-900">
+                <p class="price text-xl text-H-blue-900 priceRecord">
                     {formatPrice(price)}
                 </p>
             </div>
         </div>
     </div>
-    <script define:vars={{ recordID }} is:inline>
-        /**
-         * open modal
-         * @param {HTMLDialogElement} modal
-         */
-        function openModal(modal) {
-            modal.showModal();
+</card-history-content>
 
-            const btnCloseModal = modal.querySelector(".btnCloseModal");
-            btnCloseModal?.addEventListener("click", () => {
-                closeModal(modal);
+<script>
+    import { openModal, closeModal } from "src/scritps/modal/modalActions";
+    import { createDateCorrect, convertDate } from "src/scritps/convertDate";
+
+    class CardHistoryContent extends HTMLElement {
+        constructor() {
+            super();
+
+            const recordID = this.getAttribute("data-record-id");
+
+            const edit = this.querySelector(".edit");
+            const bash = this.querySelector(".bash");
+
+            if (!recordID) {
+                throw new Error("Record ID is required");
+            }
+
+            edit?.addEventListener("click", () => {
+                const editModal = document.querySelector(
+                    "#editRecordModal",
+                ) as HTMLDialogElement;
+
+                editModal.setAttribute("data-record-id", recordID);
+
+                const deliveryDate = this.querySelector(".date");
+                const priceRecord = this.querySelector(".priceRecord");
+                const paidStatus = this.querySelector(".paidStatus");
+
+                const deliveryDateValue = deliveryDate?.textContent;
+                const priceRecordValue = priceRecord?.textContent;
+                const paidStatusValue = paidStatus?.textContent;
+
+                const formEditModal = editModal.querySelector("form");
+
+                const inputDeliveryDate = formEditModal?.querySelector(
+                    "input[name='deliveryDate']",
+                ) as HTMLInputElement;
+                const inputDeliveryPrice = formEditModal?.querySelector(
+                    "input[name='deliveryPrice']",
+                ) as HTMLInputElement;
+                const inputPaidStatus = formEditModal?.querySelector(
+                    "input[name='paidStatus']",
+                ) as HTMLInputElement;
+
+                inputDeliveryDate.value = convertDate(deliveryDateValue);
+                inputDeliveryPrice.value = priceRecordValue!
+                    .trim()
+                    .replace(/\./g, "")
+                    .toString();
+                inputPaidStatus.checked = paidStatusValue === "Pagado";
+
+                openModal(editModal);
+            });
+
+            bash?.addEventListener("click", () => {
+                const deleteModal = document.querySelector(
+                    "#deleteRecordModal",
+                ) as HTMLDialogElement;
+
+                deleteModal.setAttribute("data-record-id", recordID);
+                openModal(deleteModal);
             });
         }
+    }
 
-        /**
-         * close modal
-         * @param {HTMLDialogElement} modal
-         */
-        function closeModal(modal) {
-            modal.classList.add("closing");
-            modal.addEventListener("animationend", () => {
-                const isClosing = modal.classList.contains("closing");
-
-                if (isClosing) {
-                    modal.classList.remove("closing");
-                    modal.close();
-                }
-            });
-        }
-
-        const cardHistory = document.querySelector(
-            `[data-record-id="${recordID}"]`,
-        );
-
-        const edit = cardHistory?.querySelector(".edit");
-        const bash = cardHistory?.querySelector(".bash");
-
-        bash?.addEventListener("click", () => {
-            const deleteModal = document.querySelector("#deleteRecordModal");
-
-            deleteModal?.setAttribute("data-record-id", recordID);
-            openModal(deleteModal);
-        });
-
-        edit?.addEventListener("click", () => {
-            alert(
-                "editar todavia no esta disponible - 2025-02-14 / Esteban busca mas errores este es por que no me quedo mas ideas",
-            );
-        });
-
-        /* Es la estructura basica que consegui para la animacion de eliminacion de la tarjeta, 
-        no soy consiente si es la mejor manera de hacerlo, pero funciona.
-        
-        cardHistory?.addEventListener("click", () => {
-            cardHistory.style.height = cardHistory.clientHeight + "px";
-
-            const existUserElement = cardHistory.querySelector("symbol");
-
-            cardHistory.classList.add("deleting");
-            cardHistory.addEventListener("animationend", () => {
-                if (existUserElement) {
-                    cardHistory.style.display = "none";
-                    console.log("existUserElement");
-                    return;
-                }
-                console.log("remove");
-                cardHistory.remove();
-            });
-        }); */
-    </script>
-</div>
+    customElements.define("card-history-content", CardHistoryContent);
+</script>
 
 <style>
     .card-history {
@@ -233,7 +234,7 @@ const isCurrentDomicile = !!Astro.locals.domicile;
         }
 
         &.deleting {
-            animation: animatedDeleted 0.3s ease-in-out;
+            animation: animatedDeleted 0.3s forwards;
             animation-delay: 0.2s;
         }
     }
