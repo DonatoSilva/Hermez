@@ -3,6 +3,8 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+console.log(import.meta.env)
+
 const firebaseConfig = {
   apiKey: import.meta.env.FIREBASE_API_KEY,
   authDomain: import.meta.env.FIREBASE_AUTH_DOMAIN,
@@ -11,6 +13,7 @@ const firebaseConfig = {
   messagingSenderId: import.meta.env.FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.FIREBASE_APP_ID,
 };
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
