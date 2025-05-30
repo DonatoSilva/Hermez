@@ -2,43 +2,47 @@
 import { ClientRouter } from "astro:transitions";
 import ActionNav from "@components/action/ActionNav.astro";
 
+import "./src/styles/global.css";
+
 interface LayoutProps {
-	title?: string;
-	class?: string;
+  title?: string;
+  class?: string;
 }
 
 const { title = "Hermez Domicilio", class: className } =
-	Astro.props as LayoutProps;
+  Astro.props as LayoutProps;
 const { isLoggedIn } = Astro.locals;
 ---
 
 <!doctype html>
 <html lang="es">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-		<ClientRouter />
-	</head>
-	<body>
-		<div class={`H-container ${className}`}>
-			<slot />
-		</div>
-		{isLoggedIn ? <ActionNav /> : ""}
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <div class={`H-container ${className}`}>
+      <slot />
+    </div>
+    {isLoggedIn ? <ActionNav /> : ""}
+  </body>
 </html>
 
 <style>
-	html,
-	body {
-		@apply bg-H-black h-full;
-		margin: 0;
-		width: 100%;
-	}
+  @reference '../styles/global.css';
 
-	.H-container {
-		@apply h-full min-h-fit max-w-md mx-auto bg-H-blue-100 rounded-lg py-9 px-8;
-	}
+  html,
+  body {
+    @apply bg-H-black h-full;
+    margin: 0;
+    width: 100%;
+  }
+
+  .H-container {
+    @apply h-full min-h-fit max-w-md mx-auto bg-H-blue-100 rounded-lg py-9 px-8;
+  }
 </style>

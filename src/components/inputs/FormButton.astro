@@ -2,74 +2,76 @@
 type ButtonType = "submit" | "reset" | "button";
 
 interface Props {
-    type?: ButtonType;
-    text: string;
-    href?: string;
-    class?: string;
-    id?: string;
-    name?: string;
+  type?: ButtonType;
+  text: string;
+  href?: string;
+  class?: string;
+  id?: string;
+  name?: string;
 }
 
 const {
-    type = "button",
-    href,
-    text,
-    id,
-    name,
-    class: className,
+  type = "button",
+  href,
+  text,
+  id,
+  name,
+  class: className,
 } = Astro.props as Props;
 ---
 
 <div>
-    {
-        href ? (
-            <a
-                href={href}
-                id={id}
-                name={name}
-                class={className || "bg-H-blue-900 text-white"}
-            >
-                {text}
-            </a>
-        ) : (
-            <button
-                type={type}
-                id={id}
-                name={name}
-                class={className || "bg-H-blue-900 text-white"}
-            >
-                {text}
-            </button>
-        )
-    }
+  {
+    href ? (
+      <a
+        href={href}
+        id={id}
+        name={name}
+        class={className || "bg-H-blue-900 text-white"}
+      >
+        {text}
+      </a>
+    ) : (
+      <button
+        type={type}
+        id={id}
+        name={name}
+        class={className || "bg-H-blue-900 text-white"}
+      >
+        {text}
+      </button>
+    )
+  }
 </div>
 
 <style>
-    a,
-    button {
-        @apply w-full rounded-lg px-4 py-2 text-center;
-    }
+  @reference "../../styles/global.css";
 
-    a:hover,
-    button:hover {
-        @apply font-semibold rounded-md;
-    }
+  a,
+  button {
+    @apply w-full rounded-lg px-4 py-2 text-center;
+  }
 
-    div {
-        transition: border-color 0.2s ease-in-out;
-        transition: padding 0.2s ease-in-out;
-        box-sizing: border-box;
-        @apply flex justify-center items-center;
+  a:hover,
+  button:hover {
+    @apply font-semibold rounded-md;
+  }
 
-        &:hover {
-            border: 1px solid #d9d9d9;
-            border-radius: 0.5rem;
-            @apply p-1 rounded-lg;
-        }
-    }
+  div {
+    transition: border-color 0.2s ease-in-out;
+    transition: padding 0.2s ease-in-out;
+    box-sizing: border-box;
+    @apply flex justify-center items-center;
 
-    button:disabled {
-        @apply bg-gray-600;
-        cursor: not-allowed;
+    &:hover {
+      border: 1px solid #d9d9d9;
+      border-radius: 0.5rem;
+      @apply p-1 rounded-lg;
     }
+  }
+
+  button:disabled {
+    @apply bg-gray-600;
+    cursor: not-allowed;
+  }
 </style>

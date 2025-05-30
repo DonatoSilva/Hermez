@@ -1,87 +1,89 @@
 ---
 type InputType =
-    | "text"
-    | "password"
-    | "email"
-    | "number"
-    | "tel"
-    | "url"
-    | "date"
-    | "checkbox";
+  | "text"
+  | "password"
+  | "email"
+  | "number"
+  | "tel"
+  | "url"
+  | "date"
+  | "checkbox";
 
 interface Props {
-    type: InputType;
-    label: string;
-    name?: string;
-    id?: string;
-    placeholder?: string;
-    value?: string;
-    checked?: boolean;
+  type: InputType;
+  label: string;
+  name?: string;
+  id?: string;
+  placeholder?: string;
+  value?: string;
+  checked?: boolean;
 }
 
 const {
-    label,
-    placeholder = "",
-    type = "text",
-    name,
-    id,
-    value,
-    checked,
+  label,
+  placeholder = "",
+  type = "text",
+  name,
+  id,
+  value,
+  checked,
 } = Astro.props as Props;
 ---
 
 {
-    type !== "checkbox" ? (
-        <label for={id}>
-            {label}
-            <input
-                name={name}
-                id={id}
-                type={type}
-                placeholder={placeholder}
-                value={value}
-            />
-        </label>
-    ) : (
-        <label for={id}>
-            <input name={name} id={id} type={type} checked={checked} />
-            {label}
-        </label>
-    )
+  type !== "checkbox" ? (
+    <label for={id}>
+      {label}
+      <input
+        name={name}
+        id={id}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+      />
+    </label>
+  ) : (
+    <label for={id}>
+      <input name={name} id={id} type={type} checked={checked} />
+      {label}
+    </label>
+  )
 }
 
 <style>
-    * {
-        color: #1e1e1e;
-        font-size: 16px;
+  @reference "../../styles/global.css";
+
+  * {
+    color: #1e1e1e;
+    font-size: 16px;
+  }
+
+  label {
+    &:has(input[type="checkbox"]) {
+      @apply w-fit h-min flex flex-row items-center justify-start gap-2;
+      user-select: none;
+      &:hover {
+        @apply cursor-pointer;
+      }
+
+      input {
+        @apply w-4 h-4;
+      }
     }
 
-    label {
-        &:has(input[type="checkbox"]) {
-            @apply w-fit h-min flex flex-row items-center justify-start gap-2;
-            user-select: none;
-            &:hover {
-                @apply cursor-pointer;
-            }
+    input {
+      padding: 0.5rem;
 
-            input {
-                @apply w-4 h-4;
-            }
-        }
+      border: 1px solid #d9d9d9;
+      border-radius: 0.5rem;
 
-        input {
-            padding: 0.5rem;
+      @apply w-full;
 
-            border: 1px solid #d9d9d9;
-            border-radius: 0.5rem;
+      &:focus {
+        outline: none;
 
-            @apply w-full;
-
-            &:focus {
-                outline: none;
-
-                @apply border-2 border-H-blue-900;
-            }
-        }
+        @apply border-2 border-H-blue-900;
+      }
     }
+  }
 </style>
