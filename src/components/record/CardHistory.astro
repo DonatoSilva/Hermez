@@ -3,11 +3,11 @@ import { Icon } from "astro-icon/components";
 import { formatPrice } from "src/scritps/formatPrice";
 
 interface Props {
-    date: string;
-    name: string;
-    price: number;
-    status: string;
-    recordID: string;
+  date: string;
+  name: string;
+  price: number;
+  status: string;
+  recordID: string;
 }
 
 const { date, name, price, status, recordID } = Astro.props;
@@ -19,229 +19,221 @@ const isCurrentDomicile = !!Astro.locals.domicile;
 ---
 
 <card-history-content
-    class="card-history rounded-lg flex flex-col"
-    data-record-id={recordID}
+  class="card-history rounded-lg flex flex-col"
+  data-record-id={recordID}
 >
-    <div class="flex flex-row justify-between items-center min-h-8 card-header">
-        <div
-            class={colorStatus +
-                " rounded-ss-lg rounded-ee-lg flex flex-row items-center gap-1 overflow-hidden text-status"}
-        >
+  <div class="flex flex-row justify-between items-center min-h-8 card-header">
+    <div
+      class={colorStatus +
+        " rounded-ss-lg rounded-ee-lg flex flex-row items-center gap-1 overflow-hidden text-status"}
+    >
+      <Icon
+        name="solar:forward-2-broken"
+        color="white"
+        width="24"
+        height="24"
+      />
+      <span class="text-white overflow-hidden paidStatus">{textStatus}</span>
+    </div>
+    {
+      isCurrentDomicile ? (
+        <div class="flex flex-row items-center gap-1 card-actions">
+          <div class="rounded-md flex flex-row items-center gap-1 overflow-hidden edit">
             <Icon
-                name="solar:forward-2-broken"
-                color="white"
-                width="24"
-                height="24"
+              name="solar:clapperboard-edit-outline"
+              width="24"
+              height="24"
             />
-            <span class="text-white overflow-hidden paidStatus"
-                >{textStatus}</span
-            >
+            <span class="overflow-hidden text-H-blue-black">Editar</span>
+          </div>
+          <div class="rounded-md flex flex-row items-center gap-1 overflow-hidden bash">
+            <Icon name="solar:paper-bin-bold" width="24" height="24" />
+            <span class="overflow-hidden text-H-blue-black">Eliminar</span>
+          </div>
         </div>
-        {
-            isCurrentDomicile ? (
-                <div class="flex flex-row items-center gap-1 card-actions">
-                    <div class="rounded-md flex flex-row items-center gap-1 overflow-hidden edit">
-                        <Icon
-                            name="solar:clapperboard-edit-outline"
-                            width="24"
-                            height="24"
-                        />
-                        <span class="overflow-hidden text-H-blue-black">
-                            Editar
-                        </span>
-                    </div>
-                    <div class="rounded-md flex flex-row items-center gap-1 overflow-hidden bash">
-                        <Icon
-                            name="solar:paper-bin-bold"
-                            width="24"
-                            height="24"
-                        />
-                        <span class="overflow-hidden text-H-blue-black">
-                            Eliminar
-                        </span>
-                    </div>
-                </div>
-            ) : (
-                ""
-            )
-        }
-    </div>
-    <div class="card-body">
-        <div class="card-container">
-            <div>
-                <div class="flex gap-1 items-center nameDomicile">
-                    <Icon name="solar:user-bold" />
-                    <p>{name}</p>
-                </div>
-                <h3 class="date">{date}</h3>
-            </div>
-            <div class="flex flex-col justify-end items-center h-full">
-                <p class="price text-xl text-H-blue-900 priceRecord">
-                    {formatPrice(price)}
-                </p>
-            </div>
+      ) : (
+        ""
+      )
+    }
+  </div>
+  <div class="card-body">
+    <div class="card-container">
+      <div>
+        <div class="flex gap-1 items-center nameDomicile">
+          <Icon name="solar:user-bold" />
+          <p>{name}</p>
         </div>
+        <h3 class="date">{date}</h3>
+      </div>
+      <div class="flex flex-col justify-end items-center h-full">
+        <p class="price text-xl text-H-blue-900 priceRecord">
+          {formatPrice(price)}
+        </p>
+      </div>
     </div>
+  </div>
 </card-history-content>
 
 <script>
-    import { openModal, closeModal } from "src/scritps/modal/modalActions";
-    import { createDateCorrect, convertDate } from "src/scritps/convertDate";
+  import { openModal, closeModal } from "src/scritps/modal/modalActions";
+  import { createDateCorrect, convertDate } from "src/scritps/convertDate";
 
-    class CardHistoryContent extends HTMLElement {
-        constructor() {
-            super();
+  class CardHistoryContent extends HTMLElement {
+    constructor() {
+      super();
 
-            const recordID = this.getAttribute("data-record-id");
+      const recordID = this.getAttribute("data-record-id");
 
-            const edit = this.querySelector(".edit");
-            const bash = this.querySelector(".bash");
+      const edit = this.querySelector(".edit");
+      const bash = this.querySelector(".bash");
 
-            if (!recordID) {
-                throw new Error("Record ID is required");
-            }
+      if (!recordID) {
+        throw new Error("Record ID is required");
+      }
 
-            edit?.addEventListener("click", () => {
-                const editModal = document.querySelector(
-                    "#editRecordModal",
-                ) as HTMLDialogElement;
+      edit?.addEventListener("click", () => {
+        const editModal = document.querySelector(
+          "#editRecordModal"
+        ) as HTMLDialogElement;
 
-                editModal.setAttribute("data-record-id", recordID);
+        editModal.setAttribute("data-record-id", recordID);
 
-                const deliveryDate = this.querySelector(".date");
-                const priceRecord = this.querySelector(".priceRecord");
-                const paidStatus = this.querySelector(".paidStatus");
+        const deliveryDate = this.querySelector(".date");
+        const priceRecord = this.querySelector(".priceRecord");
+        const paidStatus = this.querySelector(".paidStatus");
 
-                const deliveryDateValue = deliveryDate?.textContent;
-                const priceRecordValue = priceRecord?.textContent;
-                const paidStatusValue = paidStatus?.textContent;
+        const deliveryDateValue = deliveryDate?.textContent;
+        const priceRecordValue = priceRecord?.textContent;
+        const paidStatusValue = paidStatus?.textContent;
 
-                const formEditModal = editModal.querySelector("form");
+        const formEditModal = editModal.querySelector("form");
 
-                const inputDeliveryDate = formEditModal?.querySelector(
-                    "input[name='deliveryDate']",
-                ) as HTMLInputElement;
-                const inputDeliveryPrice = formEditModal?.querySelector(
-                    "input[name='deliveryPrice']",
-                ) as HTMLInputElement;
-                const inputPaidStatus = formEditModal?.querySelector(
-                    "input[name='paidStatus']",
-                ) as HTMLInputElement;
+        const inputDeliveryDate = formEditModal?.querySelector(
+          "input[name='deliveryDate']"
+        ) as HTMLInputElement;
+        const inputDeliveryPrice = formEditModal?.querySelector(
+          "input[name='deliveryPrice']"
+        ) as HTMLInputElement;
+        const inputPaidStatus = formEditModal?.querySelector(
+          "input[name='paidStatus']"
+        ) as HTMLInputElement;
 
-                inputDeliveryDate.value = convertDate(deliveryDateValue);
-                inputDeliveryPrice.value = priceRecordValue!
-                    .trim()
-                    .replace(/\./g, "")
-                    .toString();
-                inputPaidStatus.checked = paidStatusValue === "Pagado";
+        inputDeliveryDate.value = convertDate(deliveryDateValue);
+        inputDeliveryPrice.value = priceRecordValue!
+          .trim()
+          .replace(/\./g, "")
+          .toString();
+        inputPaidStatus.checked = paidStatusValue === "Pagado";
 
-                openModal(editModal);
-            });
+        openModal(editModal);
+      });
 
-            bash?.addEventListener("click", () => {
-                const deleteModal = document.querySelector(
-                    "#deleteRecordModal",
-                ) as HTMLDialogElement;
+      bash?.addEventListener("click", () => {
+        const deleteModal = document.querySelector(
+          "#deleteRecordModal"
+        ) as HTMLDialogElement;
 
-                deleteModal.setAttribute("data-record-id", recordID);
-                openModal(deleteModal);
-            });
-        }
+        deleteModal.setAttribute("data-record-id", recordID);
+        openModal(deleteModal);
+      });
     }
+  }
 
-    customElements.define("card-history-content", CardHistoryContent);
+  customElements.define("card-history-content", CardHistoryContent);
 </script>
 
 <style>
-    .card-history {
-        @apply border;
+  @reference '../../styles/global.css';
 
-        transition:
-            opacity 0.3s ease-in,
-            height 0.3s ease;
+  .card-history {
+    @apply border;
 
-        .card-header {
-            .text-status,
-            .bash,
-            .edit {
-                padding: 0.25rem 0.5rem;
+    transition:
+      opacity 0.3s ease-in,
+      height 0.3s ease;
 
-                span {
-                    width: 0;
-                    height: 100%;
-                    display: inline-block;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    transition: width 0.3s;
-                }
+    .card-header {
+      .text-status,
+      .bash,
+      .edit {
+        padding: 0.25rem 0.5rem;
 
-                transition: color 0.3s;
-            }
-
-            .bash,
-            .edit {
-                & > svg {
-                    @apply text-H-blue-500;
-                }
-            }
+        span {
+          width: 0;
+          height: 100%;
+          display: inline-block;
+          overflow: hidden;
+          white-space: nowrap;
+          transition: width 0.3s;
         }
 
-        .card-body {
-            @apply px-3 py-4;
-            .card-container {
-                @apply grid grid-cols-[1fr_auto] gap-1 w-full text-H-blue-900;
+        transition: color 0.3s;
+      }
 
-                .date {
-                    @apply text-xl text-H-blue-900;
-                }
-
-                .price {
-                    @apply text-2xl font-bold;
-                }
-            }
-
-            .nameDomicile {
-                @apply text-H-blue-500 font-normal;
-            }
+      .bash,
+      .edit {
+        & > svg {
+          @apply text-H-blue-500;
         }
-
-        &:hover {
-            cursor: pointer;
-            @apply shadow-md;
-
-            .card-header {
-                .text-status {
-                    span {
-                        width: 80px;
-                    }
-                }
-
-                .edit:hover,
-                .bash:hover {
-                    span {
-                        width: 80px;
-                    }
-
-                    color: white;
-                    @apply bg-H-blue-900;
-
-                    svg {
-                        @apply text-white;
-                    }
-                }
-            }
-        }
-
-        &.deleting {
-            animation: animatedDeleted 0.3s forwards;
-            animation-delay: 0.2s;
-        }
+      }
     }
 
-    @keyframes animatedDeleted {
-        to {
-            opacity: 0;
-            height: 0;
+    .card-body {
+      @apply px-3 py-4;
+      .card-container {
+        @apply grid grid-cols-[1fr_auto] gap-1 w-full text-H-blue-900;
+
+        .date {
+          @apply text-xl text-H-blue-900;
         }
+
+        .price {
+          @apply text-2xl font-bold;
+        }
+      }
+
+      .nameDomicile {
+        @apply text-H-blue-500 font-normal;
+      }
     }
+
+    &:hover {
+      cursor: pointer;
+      @apply shadow-md;
+
+      .card-header {
+        .text-status {
+          span {
+            width: 80px;
+          }
+        }
+
+        .edit:hover,
+        .bash:hover {
+          span {
+            width: 80px;
+          }
+
+          color: white;
+          @apply bg-H-blue-900;
+
+          svg {
+            @apply text-white;
+          }
+        }
+      }
+    }
+
+    &.deleting {
+      animation: animatedDeleted 0.3s forwards;
+      animation-delay: 0.2s;
+    }
+  }
+
+  @keyframes animatedDeleted {
+    to {
+      opacity: 0;
+      height: 0;
+    }
+  }
 </style>
