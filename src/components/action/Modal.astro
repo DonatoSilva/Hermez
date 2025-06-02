@@ -22,14 +22,12 @@ const { id, title, description } = Astro.props;
   <slot />
 </dialog>
 
-<script></script>
-
 <style>
   @reference '../../styles/global.css';
 
   dialog {
     height: min-content;
-    @apply rounded-md max-w-md w-full py-8 px-8;
+    @apply rounded-md m-auto max-w-md w-full py-8 px-8;
 
     &::backdrop {
       background-color: @apply bg-H-blue-900;

@@ -1,0 +1,166 @@
+---
+import { ClientRouter } from "astro:transitions";
+
+import Title from "@header/Title.astro";
+import "@styles/global.css";
+---
+
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Página de inicio de sesión para Domicilio Donatello - Hermez. Accede como domiciliario o cliente."
+        />
+        <title>Iniciar Sesión | Domicilio Donatello</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <ClientRouter />
+    </head>
+    <body>
+        <main
+            class="w-full min-h-dvh flex flex-col md:flex-row items-stretch md:items-start justify-center overflow-hidden relative text-H-blue-100"
+        >
+            <a
+                class="group flex-1 h-72 md:h-screen cursor-pointer bg-H-blue-900 p-6 transition-all duration-300 hover:flex-[2] hover:z-10 hover:shadow-lg hover:shadow-H-blue-900/50 relative flex flex-col justify-start items-start"
+                href="/sign-in/domiciliary"
+                title="Iniciar sesión como domiciliario"
+                aria-label="Iniciar sesión como domiciliario"
+            >
+                <img
+                    src="/images/domiciliarioConCajas-min.webp"
+                    alt="Domiciliario"
+                    class="absolute w-36 h-36 md:w-62 md:h-62 top-0 md:top-auto bottom-auto md:bottom-0 right-0 md:left-4 translate-x-1/3 md:translate-x-0 object-contain pointer-events-none transition-transform duration-300 group-hover:scale-125 md:group-hover:scale-150 group-hover:-translate-x-4 group-hover:translate-y-4 md:group-hover:-translate-x-0 md:group-hover:translate-y-0"
+                />
+                <h2 class="text-3xl md:text-6xl font-bold mt-0">
+                    Domiciliarios
+                </h2>
+                <p class="text-base md:text-lg font-light max-w-[40ch]">
+                    “Lleva lo que otros necesitan. Conéctate y comienza.”
+                </p>
+                <div
+                    class="absolute bottom-1/2 md:bottom-8 left-1/2 md:left-auto md:flex justify-center opacity-0 group-hover:opacity-100 backdrop-blur-3xl rounded-lg overflow-hidden transition-opacity duration-300 -translate-x-1/2 md:translate-x-0"
+                >
+                    <span
+                        class="text-H-blue-100 px-4 md:px-6 py-2 text-sm md:text-base font-medium md:shadow"
+                    >
+                        <p class="text-center">
+                            Haz click para iniciar sesión como domiciliario
+                        </p>
+                    </span>
+                </div>
+            </a>
+            <a
+                class="group flex-1 h-72 md:h-screen cursor-pointer bg-H-blue-500 p-6 transition-all duration-400 hover:flex-[2] hover:z-10 hover:shadow-lg hover:shadow-H-blue-500/50 relative flex flex-col justify-end md:justify-start items-end"
+                href="/sign-in/client"
+                title="Iniciar sesión como cliente"
+                aria-label="Iniciar sesión como cliente"
+            >
+                <img
+                    src="/images/clienteFelizEnPuerta-min.webp"
+                    alt="Cliente"
+                    class="absolute w-36 h-36 md:w-62 md:h-62 bottom-2 md:bottom-0 left-0 md:left-auto md:right-4 -translate-x-1/3 md:translate-x-0 object-contain pointer-events-none transition-transform duration-300 group-hover:scale-125 md:group-hover:scale-150 group-hover:translate-x-0"
+                />
+                <h2 class="text-3xl md:text-6xl font-bold mt-0">Clientes</h2>
+                <p class="text-base md:text-lg font-light text-center">
+                    “Encarga, pide, recibe. Así de simple.”
+                </p>
+                <div
+                    class="absolute bottom-1/2 md:bottom-8 right-1/2 md:right-8 flex justify-center opacity-0 group-hover:opacity-100 backdrop-blur-3xl rounded-lg overflow-hidden transition-opacity duration-300 translate-x-1/2 md:translate-x-0"
+                >
+                    <span
+                        class="text-H-blue-100 text-center px-4 md:px-6 py-2 text-sm md:text-base font-medium shadow"
+                    >
+                        <p>Haz click para iniciar sesión como cliente</p>
+                    </span>
+                </div>
+            </a>
+            <div
+                class="z-50 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg w-11/12 max-w-xs md:w-62 md:h-42 bg-H-blue-100 flex flex-col justify-center items-center gap-2 md:gap-4 cursor-crosshair p-4 md:p-0"
+            >
+                <Title size="sm" />
+                <span
+                    class="text-xs md:text-sm text-center text-gray-500 hidden md:block"
+                >
+                    Pulsa <b>K</b> para cliente o <b>D</b> para domiciliario
+                </span>
+                <span class="text-xs text-center text-gray-500 block md:hidden">
+                    Desliza hacia <b>arriba</b> para cliente o hacia <b>abajo</b
+                    > para domiciliario
+                </span>
+            </div>
+        </main>
+    </body>
+</html>
+
+<style>
+    @reference "../../styles/global.css";
+
+    .domiciliaryTouch {
+        @apply flex-[2] z-10 shadow-lg shadow-H-blue-900/50;
+
+        img {
+            @apply scale-125 md:scale-150 translate-x-0 translate-y-4;
+        }
+    }
+    .clientTouch {
+        @apply flex-[2] z-10 shadow-lg shadow-H-blue-500/50;
+
+        img {
+            @apply scale-125 md:scale-150 translate-x-0 -translate-y-4;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("astro:page-load", () => {
+        document.addEventListener("keydown", (event) => {
+            if (event.key.toLowerCase() === "k") {
+                window.location.href = "/sign-in/client";
+                return;
+            }
+
+            if (event.key.toLowerCase() === "d") {
+                window.location.href = "/sign-in/domiciliary";
+                return;
+            }
+        });
+
+        let startY = 0;
+        const domiciliaryLink = document.querySelector(
+            'a[href="/sign-in/domiciliary"]',
+        );
+        const clientLink = document.querySelector('a[href="/sign-in/client"]');
+
+        window.addEventListener("touchstart", (event) => {
+            startY = event.touches[0].clientY;
+        });
+
+        window.addEventListener("touchmove", (event) => {
+            let currentY = event.touches[0].clientY;
+            let desplazamiento = startY - currentY;
+
+            if (desplazamiento > 30) {
+                clientLink?.classList.add("clientTouch");
+                domiciliaryLink?.classList.remove("domiciliaryTouch");
+            } else if (desplazamiento < -30) {
+                domiciliaryLink?.classList.add("domiciliaryTouch");
+                clientLink?.classList.remove("clientTouch");
+            }
+        });
+
+        window.addEventListener("touchend", (event) => {
+            let endY = event.changedTouches[0].clientY;
+            let desplazamiento = startY - endY;
+
+            domiciliaryLink?.classList.remove("domiciliaryTouch");
+            clientLink?.classList.remove("clientTouch");
+
+            if (desplazamiento > 50) {
+                window.location.href = "/sign-in/client";
+            } else if (desplazamiento < -50) {
+                window.location.href = "/sign-in/domiciliary";
+            }
+        });
+    });
+</script>

@@ -13,6 +13,9 @@
       "@header/*": [
         "./src/components/header/*"
       ],
+      "@styles/*": [
+        "./src/styles/*"
+      ],
       "@components/*": [
         "./src/components/*"
       ],

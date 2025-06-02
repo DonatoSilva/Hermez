@@ -3,15 +3,19 @@ import { ClientRouter } from "astro:transitions";
 import ActionNav from "@components/action/ActionNav.astro";
 
 import "./src/styles/global.css";
+import Title from "@header/Title.astro";
 
 interface LayoutProps {
   title?: string;
+  sizeLogo?: "sm" | "md" | "lg";
   class?: string;
 }
 
-const { title = "Hermez Domicilio", class: className } =
-  Astro.props as LayoutProps;
-const { isLoggedIn } = Astro.locals;
+const {
+  title = "Hermez Domicilio",
+  class: className = "",
+  sizeLogo,
+} = Astro.props as LayoutProps;
 ---
 
 <!doctype html>
@@ -24,25 +28,14 @@ const { isLoggedIn } = Astro.locals;
     <title>{title}</title>
     <ClientRouter />
   </head>
-  <body>
-    <div class={`H-container ${className}`}>
-      <slot />
-    </div>
-    {isLoggedIn ? <ActionNav /> : ""}
+  <body
+    class={`grid grid-rows-[auto_1fr_auto] min-h-dvh w-full bg-H-blue-100 py-9 px-8 box-border ${className}`}
+  >
+    <Title size={sizeLogo} />
+    <slot />
+    <!-- {isLoggedIn ? <ActionNav /> : ""} -->
+    <footer class="mt-8 text-center text-xs text-gray-500">
+      &copy; {new Date().getFullYear()} Hermez Domicilio. Todos los derechos reservados.
+    </footer>
   </body>
 </html>
-
-<style>
-  @reference '../styles/global.css';
-
-  html,
-  body {
-    @apply bg-H-black h-full;
-    margin: 0;
-    width: 100%;
-  }
-
-  .H-container {
-    @apply h-full min-h-fit max-w-md mx-auto bg-H-blue-100 rounded-lg py-9 px-8;
-  }
-</style>
