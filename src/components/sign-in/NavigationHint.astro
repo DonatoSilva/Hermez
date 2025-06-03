@@ -1,0 +1,15 @@
+---
+import Title from "@header/Title.astro";
+---
+
+<div
+  class="z-50 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg w-11/12 max-w-xs md:w-62 md:h-42 bg-H-blue-100 flex flex-col justify-center items-center gap-2 md:gap-4 cursor-crosshair p-4 md:p-0"
+>
+  <Title size="sm" />
+  <span class="text-xs md:text-sm text-center text-gray-500 hidden md:block">
+    Pulsa <b>K</b> para cliente o <b>D</b> para domiciliario
+  </span>
+  <span class="text-xs text-center text-gray-500 block md:hidden">
+    Desliza hacia <b>arriba</b> para cliente o hacia <b>abajo</b> para domiciliario
+  </span>
+</div>

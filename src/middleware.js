@@ -1,7 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/astro/server'
 
 const isProtectedRoute = createRouteMatcher(['/(.*)'])
-const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up', '/forgot-password', "/404"])
+const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/forgot-password', "/404"])
 
 export const onRequest = clerkMiddleware((auth, context) => {
     const { userId } = auth()

@@ -1,0 +1,63 @@
+---
+interface Props {
+  type: "domiciliary" | "client";
+  title: string;
+  description: string;
+  imageSrc: string;
+  imageAlt: string;
+  actionText?: string;
+  href?: string;
+}
+
+const {
+  type,
+  title,
+  description,
+  imageSrc,
+  imageAlt,
+  actionText = `Haz click para iniciar sesión como ${type}`,
+  href = "#",
+} = Astro.props;
+
+const isClient = type === "client";
+const bgColor = isClient ? "bg-H-blue-500" : "bg-H-blue-900";
+const shadowColor = isClient ? "shadow-H-blue-500/50" : "shadow-H-blue-900/50";
+const imagePosition = isClient
+  ? "bottom-2 md:bottom-0 left-0 md:left-auto md:right-4 -translate-x-1/3 md:translate-x-0"
+  : "top-0 md:top-auto bottom-auto md:bottom-0 right-0 md:left-4 translate-x-1/3 md:translate-x-0";
+const contentAlignment = isClient
+  ? "justify-end md:justify-start items-end"
+  : "justify-start items-start";
+const hoverTransform = isClient
+  ? "group-hover:scale-125 md:group-hover:scale-150 group-hover:translate-x-0"
+  : "group-hover:scale-125 md:group-hover:scale-150 group-hover:-translate-x-4 group-hover:translate-y-4 md:group-hover:-translate-x-0 md:group-hover:translate-y-0";
+const tooltipPosition = isClient
+  ? "bottom-1/2 md:bottom-8 right-1/2 md:right-8 translate-x-1/2 md:translate-x-0"
+  : "bottom-1/2 md:bottom-8 left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0";
+---
+
+<a
+  class={`group flex-1 h-72 md:h-screen cursor-pointer ${bgColor} p-6 transition-all duration-300 hover:flex-[2] hover:z-10 hover:shadow-lg hover:shadow-${shadowColor} relative flex flex-col ${contentAlignment}`}
+  href={href}
+  title={`Iniciar sesión como ${type}`}
+  aria-label={`Iniciar sesión como ${type}`}
+>
+  <img
+    src={imageSrc}
+    alt={imageAlt}
+    class={`absolute w-36 h-36 md:w-62 md:h-62 ${imagePosition} object-contain pointer-events-none transition-transform duration-300 ${hoverTransform}`}
+  />
+  <h2 class="text-3xl md:text-6xl font-bold mt-0">{title}</h2>
+  <p class="text-base md:text-lg font-light max-w-[40ch]">
+    {description}
+  </p>
+  <div
+    class={`absolute ${tooltipPosition} flex justify-center opacity-0 group-hover:opacity-100 backdrop-blur-3xl rounded-lg overflow-hidden transition-opacity duration-300`}
+  >
+    <span
+      class="text-H-blue-100 text-center px-4 md:px-6 py-2 text-sm md:text-base font-medium shadow"
+    >
+      <p>{actionText}</p>
+    </span>
+  </div>
+</a>

@@ -5,6 +5,8 @@ import FormInput from "@components/inputs/FormInput.astro";
 import Title from "@header/Title.astro";
 import Layout from "@layouts/Layout.astro";
 
+import { SignOutButton } from "@clerk/astro/components";
+
 const isDomiciliario = !!Astro.locals.domicile;
 ---
 
@@ -72,6 +74,7 @@ const isDomiciliario = !!Astro.locals.domicile;
       </div>
     </div>
   </section>
+  <SignOutButton />
   {
     !isDomiciliario ? (
       <div class="w-full flex justify-center items-center my-4 link-login-domiciliario">

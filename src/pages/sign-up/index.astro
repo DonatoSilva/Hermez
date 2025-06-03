@@ -9,8 +9,8 @@ export const prerender = false;
 
 <html lang="es">
   <Head
-    title="Iniciar Sesión | Domicilio Donatello"
-    description="Página de inicio de sesión para Domicilio Donatello - Hermez. Accede como domiciliario o cliente."
+    title="Crear Cuenta | Hermez"
+    description="Página de registro para - Hermez. Únete como domiciliario o cliente. Y empiece a disfrutar de nuestros servicios."
   />
   <body>
     <main
@@ -19,18 +19,20 @@ export const prerender = false;
       <SignInOption
         type="domiciliary"
         title="Domiciliarios"
-        description='"Lleva lo que otros necesitan. Conéctate y comienza."'
+        description='"Únete a nuestro equipo. Comienza tu viaje como domiciliario."'
         imageSrc="/images/domiciliarioConCajas-min.webp"
         imageAlt="Domiciliario"
-        href="/sign-in/domiciliary"
+        actionText="Haz click para registrarte como domiciliario"
+        href="/sign-up/domiciliary"
       />
       <SignInOption
         type="client"
         title="Clientes"
-        description='"Encarga, pide, recibe. Así de simple."'
+        description='"Crea tu cuenta y descubre la comodidad de nuestro servicio."'
         imageSrc="/images/clienteFelizEnPuerta-min.webp"
         imageAlt="Cliente"
-        href="/sign-in/client"
+        actionText="Haz click para registrarte como cliente"
+        href="/sign-up/client"
       />
       <NavigationHint />
     </main>
@@ -42,12 +44,12 @@ export const prerender = false;
     // Keyboard navigation
     document.addEventListener("keydown", (event) => {
       if (event.key.toLowerCase() === "k") {
-        window.location.href = "/sign-in/client";
+        window.location.href = "/sign-up/client";
         return;
       }
 
       if (event.key.toLowerCase() === "d") {
-        window.location.href = "/sign-in/domiciliary";
+        window.location.href = "/sign-up/domiciliary";
         return;
       }
     });
@@ -55,9 +57,9 @@ export const prerender = false;
     // Touch navigation
     let startY = 0;
     const domiciliaryLink = document.querySelector(
-      'a[href="/sign-in/domiciliary"]'
+      'a[href="/sign-up/domiciliary"]'
     );
-    const clientLink = document.querySelector('a[href="/sign-in/client"]');
+    const clientLink = document.querySelector('a[href="/sign-up/client"]');
 
     window.addEventListener("touchstart", (event) => {
       startY = event.touches[0].clientY;
@@ -84,9 +86,9 @@ export const prerender = false;
       clientLink?.classList.remove("clientTouch");
 
       if (desplazamiento > 50) {
-        window.location.href = "/sign-in/client";
+        window.location.href = "/sign-up/client";
       } else if (desplazamiento < -50) {
-        window.location.href = "/sign-in/domiciliary";
+        window.location.href = "/sign-up/domiciliary";
       }
     });
   });
