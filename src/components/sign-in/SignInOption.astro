@@ -34,6 +34,7 @@ const hoverTransform = isClient
 const tooltipPosition = isClient
   ? "bottom-1/2 md:bottom-8 right-1/2 md:right-8 translate-x-1/2 md:translate-x-0"
   : "bottom-1/2 md:bottom-8 left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0";
+const orientationText = isClient ? "text-right" : "text-left";
 ---
 
 <a
@@ -48,7 +49,7 @@ const tooltipPosition = isClient
     class={`absolute w-36 h-36 md:w-62 md:h-62 ${imagePosition} object-contain pointer-events-none transition-transform duration-300 ${hoverTransform}`}
   />
   <h2 class="text-3xl md:text-6xl font-bold mt-0">{title}</h2>
-  <p class="text-base md:text-lg font-light max-w-[40ch]">
+  <p class={`text-base md:text-lg font-light max-w-[40ch] ${orientationText}`}>
     {description}
   </p>
   <div
