@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import clerk from "@clerk/astro";
+import { esES } from '@clerk/localizations'
 
 import tailwindcss from "@tailwindcss/vite";
 import vercel from '@astrojs/vercel';
@@ -11,7 +12,9 @@ import db from '@astrojs/db';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [clerk(), react(), icon(), db()],
+  integrations: [clerk({
+    localization: esES,
+  }), react(), icon(), db()],
   vite: {
     plugins: [tailwindcss()],
   },
