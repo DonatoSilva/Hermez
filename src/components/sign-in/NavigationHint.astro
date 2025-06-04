@@ -1,5 +1,17 @@
 ---
 import Title from "@header/Title.astro";
+
+interface Props {
+  urlTo: string;
+  typeForm: "signIn" | "signUp";
+}
+
+const { urlTo, typeForm } = Astro.props;
+
+const isSignIn = typeForm === "signIn";
+
+const invitation = isSignIn ? "Crear cuenta" : "Iniciar sesión";
+const message = isSignIn ? "¿No tienes una cuenta?" : "¿Ya tienes una cuenta?";
 ---
 
 <div
@@ -9,7 +21,10 @@ import Title from "@header/Title.astro";
   <span class="text-xs md:text-sm text-center text-gray-500 hidden md:block">
     Pulsa <b>K</b> para cliente o <b>D</b> para domiciliario
   </span>
-  <span class="text-xs text-center text-gray-500 block md:hidden">
+  <span class="text-xs text-center text-gray-800 block md:hidden">
     Desliza hacia <b>arriba</b> para cliente o hacia <b>abajo</b> para domiciliario
   </span>
+  <span class="text-gray-500 text-center text-xs md:text-sm"
+    >{message}<br /><b><a href={urlTo}>{invitation}</a></b></span
+  >
 </div>
