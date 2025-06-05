@@ -1,8 +1,8 @@
 import { type APIRoute } from "astro";
-import { getSecret } from "astro:env/server";
+import { CLERK_SECRET_KEY, getSecret } from "astro:env/server";
 import { Webhook } from "svix";
-import { type UserCreatedEvent } from "src/types/clerk";
 import { createClerkClient } from "@clerk/astro/server";
+import type { UserCreatedEvent } from "../../../types/clerkType";
 
 export const POST: APIRoute = async ({ request }: { request: Request }) => {
     const payload = await request.text();
@@ -45,11 +45,12 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
 
     if (type === "user.created") {
         const userId = data.id;
-        const clerkClient = createClerkClient({ secretKey: import.meta.env.CLERK_SECRET_KEY });
+        const clerkClient = createClerkClient({ secretKey: CLERK_SECRET_KEY });
+
 
         if (org === "Domiciliary") {
             await clerkClient.organizations.createOrganizationMembership({
-                organizationId: getSecret("DOMICILIARY_ORG_ID")!,
+                organizationId: getSecret("ID_ORG_DOMICILIARY")!,
                 userId: userId,
                 role: "org:member"
             }).catch((err) => {
@@ -61,7 +62,7 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
 
         if (org === "Client") {
             await clerkClient.organizations.createOrganizationMembership({
-                organizationId: getSecret("CLIENT_ORG_ID")!,
+                organizationId: getSecret("ID_ORG_CLIENT")!,
                 userId: userId,
                 role: "org:member"
             }).catch((err) => {
@@ -70,10 +71,17 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
 
             });
         }
+
+        return new Response("Role successfully updated", {
+            status: 200,
+            headers: {
+                "Content-Type": "text/plain"
+            }
+        });
     }
 
-    return new Response("Role successfully updated", {
-        status: 200,
+    return new Response("Something went wrong", {
+        status: 500,
         headers: {
             "Content-Type": "text/plain"
         }
