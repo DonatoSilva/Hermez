@@ -4,7 +4,7 @@ import { Webhook } from "svix";
 import { type UserCreatedEvent } from "src/types/clerk";
 import { createClerkClient } from "@clerk/astro/server";
 
-export const post: APIRoute = async ({ request }: { request: Request }) => {
+export const POST: APIRoute = async ({ request }: { request: Request }) => {
     const payload = await request.text();
     const headers = Object.fromEntries(request.headers);
 
