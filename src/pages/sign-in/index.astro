@@ -1,6 +1,6 @@
 ---
 import "@styles/global.css";
-import Head from "@components/head/Head.astro";
+import Head from "@components/header/Head.astro";
 import SignInOption from "@components/sign-in/SignInOption.astro";
 import NavigationHint from "@components/sign-in/NavigationHint.astro";
 
@@ -55,7 +55,7 @@ export const prerender = false;
     // Touch navigation
     let startY = 0;
     const domiciliaryLink = document.querySelector(
-      'a[href="/sign-in/domiciliary"]'
+      'a[href="/sign-in/domiciliary"]',
     );
     const clientLink = document.querySelector('a[href="/sign-in/client"]');
 

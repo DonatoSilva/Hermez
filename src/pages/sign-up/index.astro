@@ -1,6 +1,6 @@
 ---
 import "@styles/global.css";
-import Head from "@components/head/Head.astro";
+import Head from "@components/header/Head.astro";
 import SignInOption from "@components/sign-in/SignInOption.astro";
 import NavigationHint from "@components/sign-in/NavigationHint.astro";
 
@@ -40,57 +40,64 @@ export const prerender = false;
 </html>
 
 <script>
+  import { navigate } from "astro:transitions/client";
+
   document.addEventListener("astro:page-load", () => {
     // Keyboard navigation
-    document.addEventListener("keydown", (event) => {
-      if (event.key.toLowerCase() === "k") {
-        window.location.href = "/sign-up/client";
-        return;
-      }
+    if (
+      window.location.pathname === "/sign-up" ||
+      window.location.pathname === "/sign-up/" ||
+      window.location.pathname === "/sign-up/index"
+    ) {
+      document.addEventListener("keydown", (event) => {
+        if (event.key.toLowerCase() === "k") {
+          navigate("/sign-up/client");
+          return;
+        }
 
-      if (event.key.toLowerCase() === "d") {
-        window.location.href = "/sign-up/domiciliary";
-        return;
-      }
-    });
+        if (event.key.toLowerCase() === "d") {
+          navigate("/sign-up/domiciliary");
+          return;
+        }
+      });
 
-    // Touch navigation
-    let startY = 0;
-    const domiciliaryLink = document.querySelector(
-      'a[href="/sign-up/domiciliary"]'
-    );
-    const clientLink = document.querySelector('a[href="/sign-up/client"]');
+      let startY = 0;
+      const domiciliaryLink = document.querySelector(
+        'a[href="/sign-up/domiciliary"]',
+      );
+      const clientLink = document.querySelector('a[href="/sign-up/client"]');
 
-    window.addEventListener("touchstart", (event) => {
-      startY = event.touches[0].clientY;
-    });
+      window.addEventListener("touchstart", (event) => {
+        startY = event.touches[0].clientY;
+      });
 
-    window.addEventListener("touchmove", (event) => {
-      let currentY = event.touches[0].clientY;
-      let desplazamiento = startY - currentY;
+      window.addEventListener("touchmove", (event) => {
+        let currentY = event.touches[0].clientY;
+        let desplazamiento = startY - currentY;
 
-      if (desplazamiento > 30) {
-        clientLink?.classList.add("clientTouch");
+        if (desplazamiento > 30) {
+          clientLink?.classList.add("clientTouch");
+          domiciliaryLink?.classList.remove("domiciliaryTouch");
+        } else if (desplazamiento < -30) {
+          domiciliaryLink?.classList.add("domiciliaryTouch");
+          clientLink?.classList.remove("clientTouch");
+        }
+      });
+
+      window.addEventListener("touchend", (event) => {
+        let endY = event.changedTouches[0].clientY;
+        let desplazamiento = startY - endY;
+
         domiciliaryLink?.classList.remove("domiciliaryTouch");
-      } else if (desplazamiento < -30) {
-        domiciliaryLink?.classList.add("domiciliaryTouch");
         clientLink?.classList.remove("clientTouch");
-      }
-    });
 
-    window.addEventListener("touchend", (event) => {
-      let endY = event.changedTouches[0].clientY;
-      let desplazamiento = startY - endY;
-
-      domiciliaryLink?.classList.remove("domiciliaryTouch");
-      clientLink?.classList.remove("clientTouch");
-
-      if (desplazamiento > 50) {
-        window.location.href = "/sign-up/client";
-      } else if (desplazamiento < -50) {
-        window.location.href = "/sign-up/domiciliary";
-      }
-    });
+        if (desplazamiento > 50) {
+          navigate("/sign-up/client");
+        } else if (desplazamiento < -50) {
+          navigate("/sign-up/domiciliary");
+        }
+      });
+    }
   });
 </script>
 
