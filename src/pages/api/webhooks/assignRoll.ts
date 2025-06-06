@@ -23,9 +23,9 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
     const type = evt.type;
     const data = evt.data;
     const unsafeMetadata = data.unsafe_metadata;
-    const org = unsafeMetadata.org;
+    const org = unsafeMetadata.org.lowerCase();
 
-    if (org !== 'Domiciliary' && org !== 'Client') {
+    if (org !== 'domiciliary' && org !== 'client') {
         return new Response("Invalid organization type. Must be 'Domiciliary' or 'Client'", {
             status: 400,
             headers: {
@@ -48,7 +48,7 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
         const clerkClient = createClerkClient({ secretKey: CLERK_SECRET_KEY });
 
 
-        if (org === "Domiciliary") {
+        if (org === "domiciliary") {
             await clerkClient.organizations.createOrganizationMembership({
                 organizationId: getSecret("ID_ORG_DOMICILIARY")!,
                 userId: userId,
@@ -60,7 +60,7 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
             });
         }
 
-        if (org === "Client") {
+        if (org === "client") {
             await clerkClient.organizations.createOrganizationMembership({
                 organizationId: getSecret("ID_ORG_CLIENT")!,
                 userId: userId,
