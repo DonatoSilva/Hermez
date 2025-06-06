@@ -1,49 +1,13 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { SignUp } from "@clerk/astro/components";
+import Page from "@components/sign-up/page.astro";
 
 const title = "Registro Cliente | Hermez";
 ---
 
 <Layout title={title} sizeLogo="sm" class="relative">
-    <div
-        class="relative z-10 flex flex-col items-center justify-center w-full max-w-md min-h-[600px] min-w-[400px] mx-auto"
-    >
-        <div
-            class="w-full p-6 flex flex-col justify-center items-center gap-8 animate-fade-up"
-        >
-            <h1
-                class="text-2xl md:text-3xl font-bold text-H-blue-900 text-center"
-            >
-                Únete como Cliente
-            </h1>
-            <SignUp
-                signInUrl="/sign-in/client"
-                unsafeMetadata={{ org: "Client" }}
-                appearance={{
-                    elements: {
-                        formButtonPrimary:
-                            "bg-H-blue-500 hover:bg-H-blue-700 transition-colors",
-                        card: "shadow-none bg-transparent",
-                        headerTitle: "text-H-blue-900",
-                        headerSubtitle: "text-H-blue-700",
-                        socialButtonsBlockButton:
-                            "border-H-blue-500/20 hover:bg-H-blue-500/5 transition-colors",
-                        formFieldInput:
-                            "border-H-blue-500/20 focus:border-H-blue-500 transition-colors",
-                        footerActionLink:
-                            "text-H-blue-500 hover:text-H-blue-700 transition-colors",
-                    },
-                }}
-            />
-        </div>
-    </div>
-
-    <img
-        src="/images/clienteFelizEnPuerta-min.webp"
-        alt="Cliente feliz en la puerta"
-        class="absolute bottom-0 right-0 w-64 md:w-96 object-contain opacity-10 animate-float select-none pointer-events-none"
-    />
+    <Page type="client" />
 </Layout>
 
 <style>

@@ -1,0 +1,59 @@
+---
+import { SignUp } from "@clerk/astro/components";
+
+interface Props {
+    type?: "domiciliary" | "client";
+}
+
+const { type } = Astro.props;
+---
+
+<div
+    class="relative z-10 flex flex-col items-center justify-center w-full max-w-4xl min-h-[600px] min-w-[400px] mx-auto gap-8 md:flex-row"
+>
+    <div class="w-full flex flex-col justify-center items-center gap-4">
+        <h1 class="text-2xl md:text-3xl font-bold text-H-blue-900 text-center">
+            Únete como {type === "domiciliary" ? "Domiciliario" : "Cliente"}
+        </h1>
+        <p class="text-center text-H-blue-700 text-base md:text-lg">
+            ¿Ya tienes una cuenta en Hermez, ya sea como cliente o domiciliario?
+            ¡No necesitas registrarte de nuevo! Usa tu misma cuenta para acceder
+            y disfrutar de todos nuestros servicios.
+        </p>
+    </div>
+    <div class="w-full md:w-1/2 flex justify-center items-center">
+        <SignUp
+            signInUrl={type === "domiciliary"
+                ? "/sign-in/domiciliary"
+                : "/sign-in/client"}
+            unsafeMetadata={{
+                org: type === "domiciliary" ? "Domiciliary" : "Client",
+            }}
+            appearance={{
+                elements: {
+                    formButtonPrimary:
+                        "bg-H-blue-900 hover:bg-H-blue-800 transition-colors",
+                    card: "shadow-none bg-transparent",
+                    headerTitle: "text-H-blue-900",
+                    headerSubtitle: "text-H-blue-700",
+                    socialButtonsBlockButton:
+                        "border-H-blue-900/20 hover:bg-H-blue-900/5 transition-colors",
+                    formFieldInput:
+                        "border-H-blue-900/20 focus:border-H-blue-900 transition-colors",
+                    footerActionLink:
+                        "text-H-blue-900 hover:text-H-blue-800 transition-colors",
+                },
+            }}
+        />
+    </div>
+</div>
+
+<img
+    src={type === "domiciliary"
+        ? "/images/domiciliarioConCajas-min.webp"
+        : "/images/clienteFelizEnPuerta-min.webp"}
+    alt={type === "domiciliary"
+        ? "Domiciliario con cajas"
+        : "Cliente feliz en puerta"}
+    class="absolute bottom-0 right-0 w-64 md:w-96 object-contain opacity-10 animate-float select-none pointer-events-none"
+/>
