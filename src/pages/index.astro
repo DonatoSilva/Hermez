@@ -1,111 +1,78 @@
 ---
 import Layout from "@layouts/Layout.astro";
+import { OrganizationSwitcher, SignOutButton } from "@clerk/astro/components";
 
-import { SignOutButton } from "@clerk/astro/components";
+const { userId, orgId } = Astro.locals.auth();
+
+if (!userId) {
+  Astro.redirect("/sign-in");
+}
+
+const roll =
+  orgId === "org_2y41BR666C2m2BcK3R8Iksl7AJZ" ? "Cliente" : "Domiciliario";
+
+const user = await Astro.locals.currentUser();
 ---
 
-<Layout title="Inicio - Hermez" class="flex flex-col gap-4">
-    <section class="w-full max-w-4xl mx-auto px-4 py-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Favoritos</h2>
-        <div class="flex flex-wrap gap-4">
-            <!-- Favorite Item 1 -->
-            <div
-                class="flex-1 flex flex-row justify-between items-center min-w-[280px] bg-white p-4"
-            >
-                <div class="flex flex-col">
-                    <h3 class="text-lg font-semibold text-gray-700">
-                        Juan Pérez
-                    </h3>
-                    <p class="text-gray-600 text-xs mb-2">+57 312 456 7890</p>
-                </div>
-                <span class="text-red-500">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-8 w-8"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                        ></path>
-                    </svg>
-                </span>
-            </div>
+<Layout sizeLogo="sm" title="Inicio - Hermez" class="flex flex-col gap-4">
+  <h2>
+    Bienvenido, <b
+      >{user?.firstName?.toLocaleUpperCase() ?? "Usuario Anónimo"}</b
+    >
+  </h2>
+  <h2>
+    Tu eres, <b>{roll}</b>
+  </h2>
+  <section class="w-full max-w-4xl mx-auto px-4 py-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Favoritos</h2>
+    <div class="flex flex-wrap gap-4">
+      <!-- Favorite Item 1 -->
+      <div
+        class="flex-1 flex flex-row justify-between items-center min-w-[280px] bg-white p-4"
+      >
+        <div class="flex flex-col">
+          <h3 class="text-lg font-semibold text-gray-700">Juan Pérez</h3>
+          <p class="text-gray-600 text-xs mb-2">+57 312 456 7890</p>
         </div>
-        <hr class="text-H-blue-300" />
-        <div class="flex flex-wrap gap-4">
-            <!-- Favorite Item 1 -->
-            <div
-                class="flex-1 flex flex-row justify-between items-center min-w-[280px] bg-white p-4"
-            >
-                <div class="flex flex-col">
-                    <h3 class="text-lg font-semibold text-gray-700">
-                        Juan Pérez
-                    </h3>
-                    <p class="text-gray-600 text-xs mb-2">+57 312 456 7890</p>
-                </div>
-                <span class="text-red-500">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-8 w-8"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                        ></path>
-                    </svg>
-                </span>
-            </div>
+        <span class="text-red-500">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            ></path>
+          </svg>
+        </span>
+      </div>
+    </div>
+    <hr class="text-H-blue-300" />
+    <div class="flex flex-wrap gap-4">
+      <!-- Favorite Item 1 -->
+      <div
+        class="flex-1 flex flex-row justify-between items-center min-w-[280px] bg-white p-4"
+      >
+        <div class="flex flex-col">
+          <h3 class="text-lg font-semibold text-gray-700">Juan Pérez</h3>
+          <p class="text-gray-600 text-xs mb-2">+57 312 456 7890</p>
         </div>
-    </section>
-    <SignOutButton />
+        <span class="text-red-500">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            ></path>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </section>
+  <SignOutButton />
+  <OrganizationSwitcher />
 </Layout>
-
-<style>
-    .search-container {
-        min-height: 250px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-</style>
-
-<script>
-    import { navigate } from "astro:transitions/client";
-    import { validateInput } from "src/scritps/validateInput";
-
-    function Search() {
-        const btnSearch = document.querySelector(
-            "#btnSearch",
-        ) as HTMLButtonElement;
-
-        const search = document.querySelector("#search") as HTMLInputElement;
-
-        if (!btnSearch) return;
-
-        btnSearch.addEventListener("click", (e) => {
-            e.preventDefault();
-
-            btnSearch.disabled = true;
-            if (
-                !validateInput(
-                    search,
-                    "El campo de busqueda no puede estar vació",
-                )
-            ) {
-                btnSearch.disabled = false;
-                return;
-            }
-
-            const baseUrl = "/record";
-
-            const queryParam = `?search=${search.value}`;
-            const url = baseUrl + queryParam;
-
-            navigate(url);
-        });
-    }
-
-    document.addEventListener("astro:page-load", Search);
-</script>

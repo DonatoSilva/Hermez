@@ -14,6 +14,7 @@
     "@astrojs/tailwind": "^5.1.5",
     "@astrojs/vercel": "^8.1.4",
     "@clerk/astro": "^2.8.2",
+    "@clerk/clerk-js": "^5.68.0",
     "@clerk/localizations": "^3.16.3",
     "@iconify-json/solar": "^1.2.2",
     "@tailwindcss/vite": "^4.1.8",

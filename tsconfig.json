@@ -24,7 +24,10 @@
       ],
       "@pages/*": [
         "./src/pages/*"
-      ]
+      ],
+      "@scripts/*": [
+        "./src/scripts/*"
+      ],
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react"

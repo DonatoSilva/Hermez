@@ -1,7 +1,7 @@
 ---
 import { ClientRouter } from "astro:transitions";
-
 import Title from "@header/Title.astro";
+import { ID_ORG_DOMICILIARY } from "astro:env/server";
 
 interface LayoutProps {
   title?: string;
@@ -14,10 +14,22 @@ const {
   class: className = "",
   sizeLogo,
 } = Astro.props as LayoutProps;
+
+let orgId: string | undefined = undefined;
+let isClient = null;
+if (Astro.request.url) {
+  const url = new URL(Astro.request.url);
+  const orgParam = url.searchParams.get("org");
+  isClient = orgParam === "Client";
+
+  if (orgParam) {
+    orgId = isClient ? import.meta.env.ID_ORG_CLIENT : ID_ORG_DOMICILIARY;
+  }
+}
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="es" data-org-id={orgId}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -32,9 +44,25 @@ const {
   >
     <Title size={sizeLogo} />
     <slot />
-    <!-- {isLoggedIn ? <ActionNav /> : ""} -->
     <footer class="mt-8 text-center text-xs text-gray-500">
       &copy; {new Date().getFullYear()} Hermez Domicilio. Todos los derechos reservados.
     </footer>
   </body>
 </html>
+
+<script type="module">
+  import { handleOrganizationSelect } from "../src/scripts/prueba";
+
+  document.addEventListener("astro:page-load", () => {
+    // Solo ejecuta si la URL tiene el queryParam "org"
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("org")) {
+      const orgId = document.documentElement.getAttribute("data-org-id");
+      if (orgId) {
+        handleOrganizationSelect(orgId);
+      }
+
+      console.log("Organization ID from URL:", orgId);
+    }
+  });
+</script>
