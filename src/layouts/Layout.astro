@@ -1,7 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import Title from "@header/Title.astro";
-import { ID_ORG_DOMICILIARY } from "astro:env/server";
 
 interface LayoutProps {
   title?: string;
@@ -23,7 +22,9 @@ if (Astro.request.url) {
   isClient = orgParam === "Client";
 
   if (orgParam) {
-    orgId = isClient ? import.meta.env.ID_ORG_CLIENT : ID_ORG_DOMICILIARY;
+    orgId = isClient
+      ? import.meta.env.ID_ORG_CLIENT
+      : import.meta.env.ID_ORG_DOMICILIARY;
   }
 }
 ---
