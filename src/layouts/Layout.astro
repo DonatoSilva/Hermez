@@ -52,19 +52,4 @@ if (Astro.request.url) {
   </body>
 </html>
 
-<script type="module">
-  import { handleOrganizationSelect } from "../src/scripts/prueba";
-
-  document.addEventListener("astro:page-load", () => {
-    // Solo ejecuta si la URL tiene el queryParam "org"
-    const url = new URL(window.location.href);
-    if (url.searchParams.has("org")) {
-      const orgId = document.documentElement.getAttribute("data-org-id");
-      if (orgId) {
-        handleOrganizationSelect(orgId);
-      }
-
-      console.log("Organization ID from URL:", orgId);
-    }
-  });
-</script>
+<script src="../scripts/Clerk/organizationHandler.js"></script>
