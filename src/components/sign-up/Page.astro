@@ -26,9 +26,9 @@ const { type } = Astro.props;
             signInUrl={type === "domiciliary"
                 ? "/sign-in/domiciliary"
                 : "/sign-in/client"}
-            unsafeMetadata={{
-                org: type === "domiciliary" ? "Domiciliary" : "Client",
-            }}
+            forceRedirectUrl={type === "domiciliary"
+                ? "/sign-up/domiciliary?org=Domiciliary"
+                : "/sign-up/client?org=Client"}
             appearance={{
                 elements: {
                     formButtonPrimary:
