@@ -8,7 +8,5 @@ document.addEventListener("astro:page-load", () => {
         if (orgId) {
             handleOrganizationSelect(orgId);
         }
-
-        console.log("Organization ID from URL:", orgId);
     }
 });

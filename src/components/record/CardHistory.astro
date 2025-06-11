@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-import { formatPrice } from "src/scritps/formatPrice";
+import { formatPrice } from "@scripts/formatPrice";
 
 interface Props {
   date: string;
@@ -15,7 +15,8 @@ const { date, name, price, status, recordID } = Astro.props;
 const colorStatus = status === "paid" ? "bg-green-500/80" : "bg-red-500/80";
 const textStatus = status === "paid" ? "Pagado" : "Pendiente";
 
-const isCurrentDomicile = !!Astro.locals.domicile;
+// TODO: Replace with actual logic when Astro.locals is implemented
+const isCurrentDomicile = false; // Default value instead of Astro.locals.domicile
 ---
 
 <card-history-content
@@ -75,8 +76,8 @@ const isCurrentDomicile = !!Astro.locals.domicile;
 </card-history-content>
 
 <script>
-  import { openModal, closeModal } from "src/scritps/modal/modalActions";
-  import { createDateCorrect, convertDate } from "src/scritps/convertDate";
+  import { openModal, closeModal } from "@scripts/modal/modalActions";
+  import { createDateCorrect, convertDate } from "@scripts/convertDate";
 
   class CardHistoryContent extends HTMLElement {
     constructor() {
@@ -93,7 +94,7 @@ const isCurrentDomicile = !!Astro.locals.domicile;
 
       edit?.addEventListener("click", () => {
         const editModal = document.querySelector(
-          "#editRecordModal"
+          "#editRecordModal",
         ) as HTMLDialogElement;
 
         editModal.setAttribute("data-record-id", recordID);
@@ -109,13 +110,13 @@ const isCurrentDomicile = !!Astro.locals.domicile;
         const formEditModal = editModal.querySelector("form");
 
         const inputDeliveryDate = formEditModal?.querySelector(
-          "input[name='deliveryDate']"
+          "input[name='deliveryDate']",
         ) as HTMLInputElement;
         const inputDeliveryPrice = formEditModal?.querySelector(
-          "input[name='deliveryPrice']"
+          "input[name='deliveryPrice']",
         ) as HTMLInputElement;
         const inputPaidStatus = formEditModal?.querySelector(
-          "input[name='paidStatus']"
+          "input[name='paidStatus']",
         ) as HTMLInputElement;
 
         inputDeliveryDate.value = convertDate(deliveryDateValue);
@@ -130,7 +131,7 @@ const isCurrentDomicile = !!Astro.locals.domicile;
 
       bash?.addEventListener("click", () => {
         const deleteModal = document.querySelector(
-          "#deleteRecordModal"
+          "#deleteRecordModal",
         ) as HTMLDialogElement;
 
         deleteModal.setAttribute("data-record-id", recordID);

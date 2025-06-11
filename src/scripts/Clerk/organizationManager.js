@@ -4,11 +4,9 @@ import { navigate } from "astro:transitions/client";
 
 const clerk = new Clerk(PUBLIC_CLERK_PUBLISHABLE_KEY);
 
-
 export const handleOrganizationSelect = async (organizationId) => {
     await clerk.load()
     await clerk.setActive({ organization: organizationId }).then(() => {
-        // Redirigir a la misma página pero sin el queryParam
         const url = new URL(window.location.href);
         url.searchParams.delete("org");
         navigate(url.pathname);
