@@ -20,6 +20,9 @@ const title = "Iniciar Sesión Cliente | Domicilio Donatello";
             <SignIn
                 fallbackRedirectUrl={"/?org=Client"}
                 signUpUrl="/sign-up/client"
+                signUpFallbackRedirectUrl={"/sign-up/client"}
+                signUpForceRedirectUrl={"/?org=Client"}
+                transferable={false}
                 appearance={{
                     elements: {
                         formButtonPrimary:

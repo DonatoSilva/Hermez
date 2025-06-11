@@ -12,18 +12,10 @@ const isAPIRoute = createRouteMatcher(['/api(.*)'])
 // `context` and `next` are automatically typed
 export const onRequest = clerkMiddleware(
     async (auth, { request, redirect }) => {
-        const { locals, userId, orgId } = auth()
+        const { userId } = auth()
 
 
         if (userId && isProtectedRoute(request)) {
-            if (request.url.includes('/select-organization')) {
-                return
-            }
-
-            if (!orgId) {
-                return redirect('/select-organization')
-            }
-
             return
         }
 

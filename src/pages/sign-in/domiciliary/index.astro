@@ -18,6 +18,9 @@ const title = "Iniciar Sesión Domiciliario | Domicilio Donatello";
       <SignIn
         fallbackRedirectUrl={"/?org=Domiciliary"}
         signUpUrl="/sign-up/domiciliary"
+        signUpFallbackRedirectUrl={"/sign-up/domiciliary"}
+        signUpForceRedirectUrl={"/?org=Domiciliary"}
+        transferable={false}
         appearance={{
           elements: {
             formButtonPrimary:

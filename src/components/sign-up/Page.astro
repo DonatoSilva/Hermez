@@ -26,9 +26,12 @@ const { type } = Astro.props;
             signInUrl={type === "domiciliary"
                 ? "/sign-in/domiciliary"
                 : "/sign-in/client"}
-            forceRedirectUrl={type === "domiciliary"
-                ? "/sign-up/domiciliary?org=Domiciliary"
-                : "/sign-up/client?org=Client"}
+            signInForceRedirectUrl={type === "domiciliary"
+                ? "/sign-in/domiciliary"
+                : "/sign-in/client"}
+            fallbackRedirectUrl={type === "domiciliary"
+                ? "/?org=Domiciliary"
+                : "/?org=Client"}
             appearance={{
                 elements: {
                     formButtonPrimary:
