@@ -1,0 +1,175 @@
+---
+interface Props {
+    visible?: boolean;
+    title: string;
+    message: string;
+    emoji?: string;
+    type?: "error" | "success" | "warning" | "info";
+    autoClose?: boolean;
+    autoCloseDelay?: number;
+}
+
+const {
+    visible = false,
+    title,
+    message,
+    emoji = "ℹ️",
+    type = "info",
+    autoClose = true,
+    autoCloseDelay = 5000,
+} = Astro.props;
+
+// Define color schemes based on type
+const colorSchemes = {
+    error: {
+        background: "bg-gradient-to-r from-red-500 to-red-600",
+        border: "border-red-600",
+        text: "text-white",
+    },
+    warning: {
+        background: "bg-gradient-to-r from-orange-500 to-red-500",
+        border: "border-orange-600",
+        text: "text-white",
+    },
+    success: {
+        background: "bg-gradient-to-r from-green-500 to-green-600",
+        border: "border-green-600",
+        text: "text-white",
+    },
+    info: {
+        background: "bg-gradient-to-r from-blue-500 to-blue-600",
+        border: "border-blue-600",
+        text: "text-white",
+    },
+};
+
+const colors = colorSchemes[type];
+---
+
+{
+    visible && (
+        <div
+            id="notification-container"
+            class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-2xl mx-auto px-4 sm:px-6"
+            data-auto-close={autoClose}
+            data-auto-close-delay={autoCloseDelay}
+        >
+            <div
+                class={`${colors.background} ${colors.text} p-4 sm:p-6 rounded-xl shadow-lg border-l-4 ${colors.border} animate-slide-down`}
+            >
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 rounded-full flex items-center justify-center">
+                            <span class="text-2xl sm:text-3xl">{emoji}</span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg sm:text-xl mb-1">
+                            {title}
+                        </h3>
+                        <p class="text-sm sm:text-base text-white/90">
+                            {message}
+                        </p>
+                    </div>
+                    <button
+                        id="close-notification"
+                        class="flex-shrink-0 ml-auto sm:ml-0 text-white/80 hover:text-white transition-colors duration-200 p-1"
+                        aria-label="Cerrar notificación"
+                    >
+                        <svg
+                            width="35"
+                            height="35"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+<script>
+    function initNotification() {
+        const notificationContainer = document.getElementById(
+            "notification-container",
+        );
+        const closeButton = document.getElementById("close-notification");
+
+        if (!notificationContainer) return;
+
+        const autoClose =
+            notificationContainer.getAttribute("data-auto-close") === "true";
+        const autoCloseDelay = parseInt(
+            notificationContainer.getAttribute("data-auto-close-delay") ||
+                "5000",
+        );
+
+        // Function to close notification
+        function closeNotification() {
+            if (notificationContainer) {
+                notificationContainer.classList.add("animate-slide-up");
+                setTimeout(() => {
+                    notificationContainer.remove();
+                }, 300); // Wait for animation to complete
+            }
+        }
+
+        // Close button event
+        closeButton?.addEventListener("click", closeNotification);
+
+        // Auto close functionality
+        if (autoClose) {
+            setTimeout(closeNotification, autoCloseDelay);
+        }
+    }
+
+    // Initialize when page loads
+    document.addEventListener("astro:page-load", initNotification);
+
+    // Initialize immediately for first load
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initNotification);
+    } else {
+        initNotification();
+    }
+</script>
+
+<style>
+    @keyframes slide-down {
+        from {
+            transform: translateX(0%) translateY(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0%) translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slide-up {
+        from {
+            transform: translateX(0%) translateY(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(0%) translateY(-100%);
+            opacity: 0;
+        }
+    }
+
+    .animate-slide-down {
+        animation: slide-down 0.3s ease-out;
+    }
+
+    .animate-slide-up {
+        animation: slide-up 0.3s ease-out forwards;
+    }
+</style>
