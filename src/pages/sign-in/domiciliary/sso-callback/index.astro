@@ -1,0 +1,76 @@
+---
+import Layout from "@layouts/Layout.astro";
+
+const title = "Procesando inicio de sesión... | Hermez";
+export const prerender = false;
+---
+
+<Layout title={title} sizeLogo="sm" class="relative">
+    <div class="flex flex-col items-center justify-center min-h-[400px]">
+        <div
+            class="animate-spin rounded-full h-16 w-16 border-b-2 border-H-blue-900 mb-4"
+        >
+        </div>
+        <h1 class="text-xl font-semibold text-H-blue-900 mb-2">
+            Verificando tu cuenta...
+        </h1>
+        <p class="text-H-blue-700 text-center">
+            Por favor espera mientras procesamos tu inicio de sesión con Google.
+        </p>
+    </div>
+</Layout>
+
+<script>
+    import { Clerk } from "@clerk/clerk-js";
+    import { PUBLIC_CLERK_PUBLISHABLE_KEY } from "astro:env/client";
+
+    async function handleOAuthCallback() {
+        const clerk = new Clerk(PUBLIC_CLERK_PUBLISHABLE_KEY);
+        try {
+            await clerk.load();
+            const user = await clerk.handleRedirectCallback();
+
+            if (user) {
+                window.location.href = "/?org=Domiciliary";
+            } else {
+                window.location.href =
+                    "/sign-up/domiciliary?accountNotFound=true";
+            }
+        } catch (error) {
+            window.location.href = "/sign-in/domiciliary";
+        }
+    }
+
+    // Ejecutar inmediatamente cuando la página carga
+    document.addEventListener("astro:page-load", handleOAuthCallback);
+
+    // También ejecutar si la página ya está cargada
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", handleOAuthCallback);
+    } else {
+        handleOAuthCallback();
+    }
+
+    // Timeout de seguridad - si después de 10 segundos no se resuelve, redirigir
+    setTimeout(() => {
+        if (window.location.pathname.includes("sso-callback")) {
+            console.log("⏰ Timeout de seguridad - redirigiendo...");
+            window.location.href = "/sign-in/domiciliary";
+        }
+    }, 10000);
+</script>
+
+<style>
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+</style>

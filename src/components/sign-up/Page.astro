@@ -8,23 +8,37 @@ interface Props {
 
 const { type } = Astro.props;
 
-// Check for accountNotFound query parameter
+// Check for accountNotFound query parameter and provider info
 let showAccountNotFoundMessage = false;
+let providerInfo = "";
 if (Astro.request.url) {
     const url = new URL(Astro.request.url);
     showAccountNotFoundMessage =
         url.searchParams.get("accountNotFound") === "true";
+
+    const provider = url.searchParams.get("provider");
+    const from = url.searchParams.get("from");
+
+    if (provider && provider !== "oauth") {
+        if (provider === "google") {
+            providerInfo = " con Google";
+        } else if (provider === "facebook") {
+            providerInfo = " con Facebook";
+        } else {
+            providerInfo = ` con ${provider}`;
+        }
+    }
 }
 ---
 
 <Toast
     visible={showAccountNotFoundMessage}
-    title="¡Oops! Parece que esa cuenta no existe"
-    message="No pudimos encontrar una cuenta con esos datos. ¿Qué tal si intentas registrarte? ¡Es súper fácil y rápido! 🚀"
+    title={`¡Oops! Esa cuenta${providerInfo} no existe todavía`}
+    message={`No encontramos una cuenta registrada${providerInfo}. ¡No te preocupes! Puedes crear tu cuenta ahora mismo. Es súper fácil y rápido 🚀`}
     emoji="😕"
     type="warning"
     autoClose={true}
-    autoCloseDelay={7000}
+    autoCloseDelay={8000}
 />
 
 <div
@@ -49,6 +63,8 @@ if (Astro.request.url) {
     <div class="w-full lg:w-1/2 flex justify-center items-center">
         <div class="w-full max-w-md lg:max-w-lg">
             <SignUp
+                path={"/sign-up/" + type}
+                routing="path"
                 signInUrl={type === "domiciliary"
                     ? "/sign-in/domiciliary"
                     : "/sign-in/client"}
