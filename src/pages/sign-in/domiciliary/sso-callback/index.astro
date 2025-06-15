@@ -1,23 +1,18 @@
 ---
 import Layout from "@layouts/Layout.astro";
+import Spinner from "@components/Spinner.astro";
 
 const title = "Procesando inicio de sesión... | Hermez";
 export const prerender = false;
 ---
 
 <Layout title={title} sizeLogo="sm" class="relative">
-    <div class="flex flex-col items-center justify-center min-h-[400px]">
-        <div
-            class="animate-spin rounded-full h-16 w-16 border-b-2 border-H-blue-900 mb-4"
-        >
-        </div>
-        <h1 class="text-xl font-semibold text-H-blue-900 mb-2">
-            Verificando tu cuenta...
-        </h1>
-        <p class="text-H-blue-700 text-center">
-            Por favor espera mientras procesamos tu inicio de sesión con Google.
-        </p>
-    </div>
+    <Spinner
+        size="md"
+        color="blue-900"
+        title="Verificando tu cuenta..."
+        message="Por favor espera mientras procesamos tu inicio de sesión con Google."
+    />
 </Layout>
 
 <script>
@@ -59,18 +54,3 @@ export const prerender = false;
         }
     }, 10000);
 </script>
-
-<style>
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    .animate-spin {
-        animation: spin 1s linear infinite;
-    }
-</style>

@@ -1,11 +1,10 @@
 ---
 import SignUpLayout from "@layouts/SignUpLayout.astro";
 
-const title = "Registro Cliente | Domicilio Donatello";
+const title = "Verificar Email - Cliente | Domicilio Donatello";
 ---
 
 <SignUpLayout
-    type="client"
     title={title}
     signUpPath="/sign-up/client"
     signInUrl="/sign-in/client"
@@ -16,13 +15,12 @@ const title = "Registro Cliente | Domicilio Donatello";
     <h1
         class="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-H-blue-900"
     >
-        Únete como Cliente
+        Verifica tu Email
     </h1>
     <p
         class="text-H-blue-700 text-sm sm:text-base lg:text-lg max-w-md lg:max-w-none"
     >
-        ¿Ya tienes una cuenta en Hermez, ya sea como cliente o domiciliario? ¡No
-        necesitas registrarte de nuevo! Usa tu misma cuenta para acceder y
-        disfrutar de todos nuestros servicios.
+        Te hemos enviado un código de verificación a tu correo electrónico.
+        Ingresa el código para continuar con tu registro como cliente.
     </p>
 </SignUpLayout>

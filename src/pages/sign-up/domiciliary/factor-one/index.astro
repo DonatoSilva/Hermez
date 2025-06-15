@@ -1,0 +1,28 @@
+---
+import SignUpLayout from "@layouts/SignUpLayout.astro";
+
+const title = "Verificación de Seguridad - Domiciliario | Domicilio Donatello";
+---
+
+<SignUpLayout
+    type="domiciliary"
+    title={title}
+    signUpPath="/sign-up/domiciliary"
+    signInUrl="/sign-in/domiciliary"
+    fallbackRedirectUrl="/?org=Domiciliary"
+    imageSrc="/images/domiciliarioConCajas-min.webp"
+    imageAlt="Domiciliario con cajas"
+>
+    <h1
+        class="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-H-blue-900"
+    >
+        Verificación de Seguridad
+    </h1>
+    <p
+        class="text-H-blue-700 text-sm sm:text-base lg:text-lg max-w-md lg:max-w-none"
+    >
+        Por tu seguridad y la de nuestros usuarios, necesitamos verificar
+        algunos datos adicionales antes de completar tu registro como
+        domiciliario.
+    </p>
+</SignUpLayout>

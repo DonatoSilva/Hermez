@@ -1,0 +1,27 @@
+---
+import SignUpLayout from "@layouts/SignUpLayout.astro";
+
+const title = "Verificar Email - Domiciliario | Domicilio Donatello";
+---
+
+<SignUpLayout
+    type="domiciliary"
+    title={title}
+    signUpPath="/sign-up/domiciliary"
+    signInUrl="/sign-in/domiciliary"
+    fallbackRedirectUrl="/?org=Domiciliary"
+    imageSrc="/images/domiciliarioConCajas-min.webp"
+    imageAlt="Domiciliario con cajas"
+>
+    <h1
+        class="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-H-blue-900"
+    >
+        Verifica tu Email
+    </h1>
+    <p
+        class="text-H-blue-700 text-sm sm:text-base lg:text-lg max-w-md lg:max-w-none"
+    >
+        Te hemos enviado un código de verificación a tu correo electrónico.
+        Ingresa el código para continuar con tu registro como domiciliario.
+    </p>
+</SignUpLayout>

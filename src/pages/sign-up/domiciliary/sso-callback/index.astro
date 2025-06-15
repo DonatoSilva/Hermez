@@ -2,22 +2,23 @@
 import Layout from "@layouts/Layout.astro";
 import Spinner from "@components/Spinner.astro";
 
-const title = "Procesando inicio de sesión... | Hermez";
+const title = "Procesando registro... | Hermez";
 export const prerender = false;
 ---
 
 <Layout title={title} sizeLogo="sm" class="relative">
     <Spinner
         size="md"
-        color="blue-500"
-        title="Verificando tu cuenta..."
-        message="Por favor espera mientras procesamos tu inicio de sesión con Google."
+        color="blue-900"
+        title="Completando tu registro..."
+        message="Por favor espera mientras completamos tu registro como domiciliario."
     />
 </Layout>
 
 <script>
     import { Clerk } from "@clerk/clerk-js";
     import { PUBLIC_CLERK_PUBLISHABLE_KEY } from "astro:env/client";
+
     async function handleOAuthCallback() {
         const clerk = new Clerk(PUBLIC_CLERK_PUBLISHABLE_KEY);
         try {
@@ -25,12 +26,12 @@ export const prerender = false;
             const user = await clerk.handleRedirectCallback();
 
             if (user) {
-                window.location.href = "/?org=Client";
+                window.location.href = "/?org=Domiciliary";
             } else {
-                window.location.href = "/sign-up/client?accountNotFound=true";
+                window.location.href = "/sign-up/domiciliary";
             }
         } catch (error) {
-            window.location.href = "/sign-in/client";
+            window.location.href = "/sign-up/domiciliary";
         }
     }
 
@@ -47,8 +48,7 @@ export const prerender = false;
     // Timeout de seguridad - si después de 10 segundos no se resuelve, redirigir
     setTimeout(() => {
         if (window.location.pathname.includes("sso-callback")) {
-            console.log("⏰ Timeout de seguridad - redirigiendo...");
-            window.location.href = "/sign-in/client";
+            window.location.href = "/sign-up/domiciliary";
         }
     }, 10000);
 </script>
