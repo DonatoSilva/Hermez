@@ -1,0 +1,15 @@
+---
+import SignUpLayout from "@layouts/SignUpLayout.astro";
+
+const title = "Procesando registro... | Hermez";
+export const prerender = false;
+---
+
+<SignUpLayout
+    title={title}
+    signUpPath="/sign-up/client"
+    signInUrl="/sign-in"
+    fallbackRedirectUrl="/?org=Client"
+    imageSrc="/images/illustrations/undraw_authentication_fsn5.svg"
+    imageAlt="Ilustración de autenticación"
+/>

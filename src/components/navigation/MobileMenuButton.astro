@@ -1,0 +1,60 @@
+---
+interface Props {
+    variant?: "client" | "domiciliary";
+}
+
+const { variant = "client" } = Astro.props;
+
+// Configuración de colores por variante
+const colorConfig = {
+    client: {
+        button: "bg-H-blue-500 hover:bg-H-blue-600 focus:ring-H-blue-500",
+        icon: "text-white",
+    },
+    domiciliary: {
+        button: "bg-H-blue-900 hover:bg-H-blue-800 focus:ring-H-blue-900",
+        icon: "text-white",
+    },
+};
+
+const colors = colorConfig[variant];
+---
+
+<button
+    id="mobile-menu-button"
+    type="button"
+    class={`inline-flex items-center justify-center p-2 rounded-md ${colors.button} focus:outline-none focus:ring-2 focus:ring-inset ${colors.button.split(" ")[3]} transition-colors duration-200`}
+    aria-controls="mobile-menu-dialog"
+    aria-expanded="false"
+    aria-label="Abrir menú de navegación"
+>
+    <span class="sr-only">Abrir menú principal</span>
+    <!-- Hamburger Icon -->
+    <svg
+        id="menu-icon"
+        class={`block h-6 w-6 ${colors.icon}`}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+    >
+        <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
+    </svg>
+    <!-- Close Icon (hidden by default) -->
+    <svg
+        id="close-icon"
+        class={`hidden h-6 w-6 ${colors.icon}`}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+    >
+        <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"></path>
+    </svg>
+</button>

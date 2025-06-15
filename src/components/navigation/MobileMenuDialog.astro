@@ -1,0 +1,283 @@
+---
+import { UserButton } from "@clerk/astro/components";
+
+interface Props {
+    variant?: "client" | "domiciliary";
+}
+
+const { variant = "client" } = Astro.props;
+
+// Configuración por variante
+const config = {
+    client: {
+        background: "bg-white",
+        primary: "text-H-blue-900",
+        secondary: "text-H-blue-700",
+        accent: "bg-H-blue-500 text-white",
+        border: "border-H-blue-200",
+        menuItems: [
+            { label: "Inicio", href: "/?org=Client", icon: "🏠" },
+            { label: "Mis Pedidos", href: "/orders?org=Client", icon: "📦" },
+            { label: "Favoritos", href: "/favorites?org=Client", icon: "❤️" },
+            { label: "Direcciones", href: "/addresses?org=Client", icon: "📍" },
+        ],
+    },
+    domiciliary: {
+        background: "bg-white",
+        primary: "text-H-blue-900",
+        secondary: "text-H-blue-700",
+        accent: "bg-H-blue-900 text-white",
+        border: "border-H-blue-200",
+        menuItems: [
+            { label: "Inicio", href: "/?org=Domiciliary", icon: "🏠" },
+            {
+                label: "Mis Entregas",
+                href: "/deliveries?org=Domiciliary",
+                icon: "🚚",
+            },
+            {
+                label: "Historial",
+                href: "/history?org=Domiciliary",
+                icon: "📋",
+            },
+            {
+                label: "Configuración",
+                href: "/settings?org=Domiciliary",
+                icon: "⚙️",
+            },
+        ],
+    },
+};
+
+const currentConfig = config[variant];
+---
+
+<!-- Mobile Menu Dialog -->
+<dialog
+    id="mobile-menu-dialog"
+    class="fixed inset-0 z-50 md:hidden"
+    aria-modal="true"
+    role="dialog"
+    aria-labelledby="mobile-menu-title"
+>
+    <!-- Backdrop -->
+    <div
+        class="fixed inset-0 bg-black bg-opacity-25 transition-opacity duration-300"
+    >
+    </div>
+
+    <!-- Menu Panel -->
+    <div class="fixed inset-y-0 right-0 flex max-w-full">
+        <div
+            class={`relative w-screen max-w-[80vw] transform transition-transform duration-300 ease-in-out ${currentConfig.background} shadow-xl`}
+        >
+            <!-- Close Button -->
+            <div
+                class="absolute top-0 left-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4"
+            >
+                <button
+                    id="mobile-menu-close"
+                    type="button"
+                    class="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                    aria-label="Cerrar menú"
+                >
+                    <span class="sr-only">Cerrar menú</span>
+                    <svg
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Menu Content -->
+            <div class="h-full flex flex-col py-6 overflow-y-scroll">
+                <!-- Header -->
+                <div class="px-4 sm:px-6">
+                    <h2
+                        id="mobile-menu-title"
+                        class={`text-lg font-medium ${currentConfig.primary}`}
+                    >
+                        Menú de Navegación
+                    </h2>
+                </div>
+
+                <!-- User Info Section -->
+                <div
+                    class={`mt-6 px-4 sm:px-6 pb-4 border-b ${currentConfig.border}`}
+                >
+                    <div class="flex items-center space-x-3">
+                        <UserButton
+                            afterSignOutUrl={variant === "client"
+                                ? "/sign-in/client"
+                                : "/sign-in/domiciliary"}
+                            appearance={{
+                                elements: {
+                                    avatarBox: "w-10 h-10",
+                                    userButtonPopoverCard:
+                                        "shadow-lg border border-gray-200",
+                                },
+                            }}
+                        />
+                        <div>
+                            <p
+                                class={`text-sm font-medium ${currentConfig.primary}`}
+                            >
+                                {
+                                    variant === "client"
+                                        ? "Cliente"
+                                        : "Domiciliario"
+                                }
+                            </p>
+                            <p class={`text-xs ${currentConfig.secondary}`}>
+                                Hermez Domicilio
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="mt-6 flex-1">
+                    <nav class="px-4 sm:px-6 space-y-1">
+                        {
+                            currentConfig.menuItems.map((item) => (
+                                <a
+                                    href={item.href}
+                                    class={`group flex items-center px-3 py-3 text-base font-medium rounded-md transition-colors duration-200 ${currentConfig.primary} hover:${currentConfig.accent.split(" ")[0]} hover:text-white`}
+                                    data-mobile-menu-link
+                                >
+                                    <span
+                                        class="mr-4 text-lg"
+                                        aria-hidden="true"
+                                    >
+                                        {item.icon}
+                                    </span>
+                                    {item.label}
+                                </a>
+                            ))
+                        }
+                    </nav>
+                </div>
+
+                <!-- Footer Actions -->
+                <div
+                    class={`px-4 sm:px-6 pt-4 border-t ${currentConfig.border}`}
+                >
+                    <div class="space-y-3">
+                        <!-- Notifications -->
+                        <button
+                            type="button"
+                            class={`w-full flex items-center px-3 py-3 text-base font-medium rounded-md transition-colors duration-200 ${currentConfig.secondary} hover:${currentConfig.accent.split(" ")[0]} hover:text-white`}
+                        >
+                            <svg
+                                class="mr-4 h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                                ></path>
+                            </svg>
+                            Notificaciones
+                        </button>
+
+                        <!-- Help -->
+                        <button
+                            type="button"
+                            class={`w-full flex items-center px-3 py-3 text-base font-medium rounded-md transition-colors duration-200 ${currentConfig.secondary} hover:${currentConfig.accent.split(" ")[0]} hover:text-white`}
+                        >
+                            <svg
+                                class="mr-4 h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
+                                ></path>
+                            </svg>
+                            Ayuda y Soporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
+
+<script>
+    document.addEventListener("astro:page-load", function () {
+        const menuButton = document.getElementById("mobile-menu-button");
+        const menuDialog = document.getElementById("mobile-menu-dialog");
+        const menuClose = document.getElementById("mobile-menu-close");
+        const menuIcon = document.getElementById("menu-icon");
+        const closeIcon = document.getElementById("close-icon");
+        const menuLinks = document.querySelectorAll("[data-mobile-menu-link]");
+
+        if (!menuButton || !menuDialog) return;
+
+        // Open menu
+        menuButton.addEventListener("click", function () {
+            menuDialog.showModal();
+            menuButton.setAttribute("aria-expanded", "true");
+            document.body.style.overflow = "hidden";
+
+            // Toggle icons
+            if (menuIcon && closeIcon) {
+                menuIcon.classList.add("hidden");
+                closeIcon.classList.remove("hidden");
+            }
+        });
+
+        // Close menu function
+        function closeMenu() {
+            menuDialog.close();
+            menuButton.setAttribute("aria-expanded", "false");
+            document.body.style.overflow = "";
+
+            // Toggle icons back
+            if (menuIcon && closeIcon) {
+                menuIcon.classList.remove("hidden");
+                closeIcon.classList.add("hidden");
+            }
+        }
+
+        // Close menu events
+        if (menuClose) {
+            menuClose.addEventListener("click", closeMenu);
+        }
+
+        // Close on backdrop click
+        menuDialog.addEventListener("click", function (e) {
+            if (e.target === menuDialog) {
+                closeMenu();
+            }
+        });
+
+        // Close on escape key
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && menuDialog.open) {
+                closeMenu();
+            }
+        });
+
+        // Close menu when clicking on navigation links
+        menuLinks.forEach((link) => {
+            link.addEventListener("click", closeMenu);
+        });
+    });
+</script>
