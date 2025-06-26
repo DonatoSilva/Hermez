@@ -1,8 +1,5 @@
 ---
 import { SignedIn } from "@clerk/astro/components";
-import MobileMenuButton from "./MobileMenuButton.astro";
-import DesktopMenu from "./DesktopMenu.astro";
-import MobileMenuDialog from "./MobileMenuDialog.astro";
 
 interface Props {
     variant?: "client" | "domiciliary";
@@ -15,15 +12,15 @@ const { variant = "client" } = Astro.props;
     <nav class="w-full">
         <!-- Desktop Menu - Hidden on mobile -->
         <div class="hidden md:block">
-            <DesktopMenu variant={variant} />
+            <!-- Desktop menu content here -->
         </div>
 
         <!-- Mobile Menu Button - Hidden on desktop -->
         <div class="block md:hidden">
-            <MobileMenuButton variant={variant} />
+            <!-- Mobile menu button content here -->
         </div>
 
         <!-- Mobile Menu Dialog -->
-        <MobileMenuDialog variant={variant} />
+        <!-- Mobile menu dialog content here -->
     </nav>
 </SignedIn>
