@@ -4,6 +4,9 @@ dist/
 # generated types
 .astro/
 
+# Rules AI 
+.github/
+
 # dependencies
 node_modules/
 
