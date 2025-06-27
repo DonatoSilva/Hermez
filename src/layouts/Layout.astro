@@ -1,7 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import Title from "@header/Title.astro";
-import MenuBar from "@components/navigation/MenuBar.astro";
 import "../styles/global.css";
 import { ID_ORG_CLIENT } from "astro:env/server";
 
@@ -47,7 +46,6 @@ if (Astro.request.url) {
     class={`grid gap-8 grid-rows-[auto_auto_1fr_auto] min-h-dvh w-full bg-H-blue-100 py-9 px-8 box-border ${className}`}
   >
     <Title size={sizeLogo} />
-    <MenuBar variant={isClient ? "client" : "domiciliary"} />
     <slot />
     <footer class="mt-8 text-center text-xs text-gray-500">
       &copy; {new Date().getFullYear()} Hermez Domicilio. Todos los derechos reservados.
