@@ -4,18 +4,18 @@ import Layout from "@layouts/Layout.astro";
 let message = "¡Oops! Te perdiste en el camino";
 ---
 
-<Layout title="Página no encontrada - 404" sizeLogo="md">
-    <main
-        class="container relative flex flex-col justify-center text-center mx-auto"
-    >
-        <img
-            src="/images/404-min.png"
-            alt="Página no encontrada"
-            class="size-86 mx-auto md:absolute bottom-0 right-0"
-        />
-        <h1 class="text-9xl text-H-blue-900 font-semibold">404</h1>
-        <p class="text-H-blue-900 text-2xl w-full max-w-prosess mx-auto">
-            {message}
-        </p>
-    </main>
+<Layout title="Página no encontrada - 404">
+  <main
+    class="container relative flex flex-col justify-center text-center mx-auto"
+  >
+    <img
+      src="/images/404-min.png"
+      alt="Página no encontrada"
+      class="size-86 mx-auto md:absolute bottom-0 right-0"
+    />
+    <h1 class="text-9xl text-H-blue-900 font-semibold">404</h1>
+    <p class="text-H-blue-900 text-2xl w-full max-w-prosess mx-auto">
+      {message}
+    </p>
+  </main>
 </Layout>
