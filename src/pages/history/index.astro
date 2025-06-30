@@ -1,0 +1,13 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const { userId } = Astro.locals.auth();
+
+if (!userId) {
+  Astro.redirect("/sign-in");
+}
+---
+
+<Layout sizeLogo="md" title="Historia - Hermez" class="flex flex-col gap-4">
+  <section></section>
+</Layout>
