@@ -14,6 +14,9 @@ export const onRequest = clerkMiddleware(
     async (auth, { request, redirect }) => {
         const { userId } = auth()
 
+        if (userId && isAuthRoute(request)) {
+            return redirect('/')
+        }
 
         if (userId && isProtectedRoute(request)) {
             return
@@ -27,9 +30,7 @@ export const onRequest = clerkMiddleware(
             return
         }
 
-        if (userId && isAuthRoute(request)) {
-            return redirect('/')
-        }
+
 
         if (!userId && isProtectedRoute(request)) {
             return redirect('/sign-in')

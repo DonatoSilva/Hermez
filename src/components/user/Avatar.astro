@@ -1,0 +1,21 @@
+---
+interface Props {
+  src: string;
+  alt?: string;
+  size?: "small" | "medium" | "large";
+}
+
+const sizeClasses = {
+  small: "w-10 h-10",
+  medium: "w-12 h-12",
+  large: "w-16 h-16",
+};
+
+const { src, alt = "User Avatar", size = "small" }: Props = Astro.props;
+---
+
+<div
+  class={`aspect-square rounded-full overflow-hidden border-3 border-H-blue-500 dark:border-H-blue-900 group-hover:border-H-blue-700 hover:border-H-blue-700 dark:group-hover:border-H-blue-300 dark:hover:border-H-blue-300 transition-colors duration-300 cursor-pointer ${sizeClasses[size]}`}
+>
+  <img src={src} alt={alt} class="object-cover w-full h-full" />
+</div>

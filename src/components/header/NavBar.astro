@@ -1,9 +1,11 @@
 ---
+import Avatar from "@components/user/Avatar.astro";
 import Logo from "./Logo.astro";
+import UserProfile from "@components/user/UserProfile.astro";
 const pages = {
   Inicio: "/",
   Historia: "/history",
-  Configuracion: "/settings",
+  Configuración: "/settings",
 };
 
 interface NavBarProps {
@@ -12,14 +14,24 @@ interface NavBarProps {
 }
 
 const { size = "lg" } = Astro.props as NavBarProps;
+
+const userId = Astro.locals.auth()?.userId;
+
+if (!userId) {
+  return Astro.redirect('/sign-in');
+}
+
+const currentUser = await Astro.locals.currentUser();
 ---
 
 <nav
   class="flex items-center justify-between w-full max-w-6xl mx-auto px-4 py-2"
 >
   <Logo size={size} />
-  <ul
-    class="hidden md:flex gap-4 px-3 py-2 rounded-lg text-H-blue-100 bg-H-blue-900"
+  {
+    userId ? (
+      <ul
+    class="hidden md:flex gap-4 px-3 py-2 min-h-full items-center rounded-lg text-H-blue-100 bg-H-blue-900"
   >
     {
       Object.entries(pages).map(([key, value]) => (
@@ -51,9 +63,19 @@ const { size = "lg" } = Astro.props as NavBarProps;
         stroke-linejoin="round"></path>
     </svg>
   </button>
+    ) : ""
+  }
+  <UserProfile 
+    visibleSize="md"
+    username={currentUser?.username?.toLocaleUpperCase() || "Usuario"}
+    role={"Cliente"}
+    avatarUrl={currentUser?.imageUrl || "/default-avatar.png"}
+  />
 </nav>
 
-<dialog
+{
+  userId ? (
+    <dialog
   id="navMobile"
   closedby="any"
   class="min-h-dvh w-full max-w-md top-0 left-auto px-6 py-4 right-0 bg-H-blue-900"
@@ -96,8 +118,18 @@ const { size = "lg" } = Astro.props as NavBarProps;
         ))
       }
     </ul>
+    <UserProfile
+    position="up"
+    className={"text-H-black only:sm:w-full "}
+    visibleSize="sm"
+    username={currentUser?.username?.toLocaleUpperCase() || "Usuario"}
+    role={"Cliente"}
+    avatarUrl={currentUser?.imageUrl || "/default-avatar.png"}
+  />
   </nav>
 </dialog>
+  ): ""
+}
 
 <script>
   document.addEventListener("astro:page-load", () => {

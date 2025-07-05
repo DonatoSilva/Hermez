@@ -1,0 +1,73 @@
+---
+import Avatar from "./Avatar.astro";
+
+interface Props {
+  username: string;
+  role: string;
+  avatarUrl?: string;
+  className?: string;
+  visibleSize?: "sm" | "md" | "lg";
+  position?: "up" | "down";
+}
+
+const {
+  username,
+  role,
+  avatarUrl = "/default-avatar.png",
+  className = "",
+  visibleSize = "md",
+  position = "down",
+} = Astro.props;
+
+const visibility =
+  {
+    sm: "sm:flex md:hidden",
+    md: "md:flex",
+    lg: "lg:flex ",
+  }[visibleSize] || "flex";
+---
+
+<div class=`relative group hidden ${visibility} ${className}`>
+  <div
+    class="group flex flex-row items-center gap-2 w-full py-2 px-4 bg-gray-100 dark:bg-gray-800 rounded-lg cursor-pointer"
+  >
+    <div class="flex items-center gap-2">
+      <Avatar src={avatarUrl} alt={username} />
+      <div class="flex flex-col">
+        <b class="text-sm">{username}</b>
+        <span class="text-xs">{role}</span>
+      </div>
+    </div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4 transform transition-transform duration-300 group-hover:rotate-180"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M19 9l-7 7-7-7"></path>
+    </svg>
+  </div>
+
+  <div
+    class={`absolute right-0 ${
+      position === "up" ? "bottom-full mb-2" : "top-full mt-2"
+    } w-full invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 bg-white dark:bg-gray-700 rounded-lg shadow-lg`}
+  >
+    <ul class="py-2">
+      <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+        <a href="/profile" class="block text-sm">Mi Perfil</a>
+      </li>
+      <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+        <a href="/settings" class="block text-sm">Configuración</a>
+      </li>
+      <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+        <a href="/logout" class="block text-sm">Cerrar Sesión</a>
+      </li>
+    </ul>
+  </div>
+</div>
