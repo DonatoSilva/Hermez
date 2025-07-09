@@ -2,6 +2,7 @@
 import Avatar from "@components/user/Avatar.astro";
 import Logo from "./Logo.astro";
 import UserProfile from "@components/user/UserProfile.astro";
+import ThemeToggle from "@components/ThemeToggle.astro";
 const pages = {
   Inicio: "/",
   Historia: "/history",
@@ -27,16 +28,16 @@ const currentUser = await Astro.locals.currentUser();
 <nav
   class="flex items-center justify-between w-full max-w-6xl mx-auto px-4 py-2"
 >
-  <Logo size={size} />
+  <Logo size={size} className="-mt-1.5"/>
   {
     userId ? (
       <ul
-    class="hidden md:flex gap-4 px-3 py-2 min-h-full items-center rounded-lg text-H-blue-100 bg-H-blue-900"
+    class="hidden md:flex gap-4 px-3 py-2 min-h-full items-center rounded-lg text-H-blue-100 bg-H-blue-900 "
   >
     {
       Object.entries(pages).map(([key, value]) => (
         <a
-          class="w-full px-4 py-1  hover:bg-H-blue-500 h-fit rounded-md transition-colors cursor-pointer"
+          class="w-full px-4 py-1.5  hover:bg-H-blue-500 h-fit rounded-md transition-colors cursor-pointer"
           href={value}
         >
           {key}
@@ -78,55 +79,60 @@ const currentUser = await Astro.locals.currentUser();
     <dialog
   id="navMobile"
   closedby="any"
-  class="min-h-dvh w-full max-w-md top-0 left-auto px-6 py-4 right-0 bg-H-blue-900"
+  class="min-h-dvh w-full max-w-md top-0 left-auto px-6 py-4 right-0 bg-H-blue-900 "
 >
-  <nav class="flex flex-col gap-8 h-full text-white">
-    <header class="flex flex-row justify-between items-center">
-      <Logo size={size} color="text-H-blue-100" />
-      <form method="dialog">
-        <button
-          class="border border-H-blue-100 rounded-full py-2 px-2 cursor-pointer md:hidden"
-          id="closeNavMobile"
-          autofocus
-        >
-          <svg
-            width="30"
-            height="30"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+  <nav class="flex flex-col flex-1 gap-8 text-white">
+   
+      <header class="flex flex-row justify-between items-center">
+        <Logo size={size} color="text-H-blue-100" />
+        <form method="dialog">
+          <button
+            class="border border-H-blue-100 rounded-full py-2 px-2 cursor-pointer md:hidden"
+            id="closeNavMobile"
+            autofocus
           >
-            <path
-              d="M6 18L18 6M6 6L18 18"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"></path>
-          </svg>
-        </button>
-      </form>
-    </header>
-    <ul class="flex flex-col gap-4">
-      {
-        Object.entries(pages).map(([key, value]) => (
-          <a
-            class="w-full px-6 py-3 hover:bg-H-blue-500 rounded-md transition-colors cursor-pointer text-center"
-            href={value}
-          >
-            {key}
-          </a>
-        ))
-      }
-    </ul>
-    <UserProfile
-    position="up"
-    className={"text-H-black only:sm:w-full "}
-    visibleSize="sm"
-    username={currentUser?.username?.toLocaleUpperCase() || "Usuario"}
-    role={"Cliente"}
-    avatarUrl={currentUser?.imageUrl || "/default-avatar.png"}
-  />
+            <svg
+              width="30"
+              height="30"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 18L18 6M6 6L18 18"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+          </button>
+        </form>
+      </header>
+      <ul class="flex flex-col gap-4">
+        {
+          Object.entries(pages).map(([key, value]) => (
+            <a
+              class="w-full px-6 py-3 hover:bg-H-blue-500 rounded-md transition-colors cursor-pointer text-center"
+              href={value}
+            >
+              {key}
+            </a>
+          ))
+        }
+      </ul>
+   
   </nav>
+   <div class="flex gap-6 items-center">
+    <UserProfile
+      position="up"
+      className={"text-H-black sm:w-full [&>div]:justify-between flex-1"}
+      visibleSize="sm"
+      username={currentUser?.username?.toLocaleUpperCase() || "Usuario"}
+      role={"Cliente"}
+      avatarUrl={currentUser?.imageUrl || "/default-avatar.png"}
+    />
+    <ThemeToggle />
+   </div>
 </dialog>
   ): ""
 }
@@ -138,6 +144,7 @@ const currentUser = await Astro.locals.currentUser();
     const closeButton = document.querySelector("#closeNavMobile");
 
     if (!dialog || !openButton || !closeButton) return;
+    dialog.close();
 
     openButton.addEventListener("click", () => {
       dialog.showModal();
@@ -148,13 +155,17 @@ const currentUser = await Astro.locals.currentUser();
     });
   });
 </script>
+
 <style>
   dialog:open {
     opacity: 1;
     transform: translateX(0);
+    display: flex;
+    flex-direction: column;
   }
 
   dialog {
+    display: hidden;
     opacity: 0;
     transform: translateX(100%);
     transition:
@@ -187,6 +198,12 @@ const currentUser = await Astro.locals.currentUser();
   @starting-style {
     dialog:open::backdrop {
       background-color: rgb(255 255 255 / 0%);
+    }
+  }
+
+  @media (min-width: 48rem) {
+    dialog:open {
+      display: none;
     }
   }
 </style>

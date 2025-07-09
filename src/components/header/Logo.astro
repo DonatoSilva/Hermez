@@ -2,12 +2,13 @@
 interface Props {
   size?: "sm" | "md" | "lg";
   color?: string;
+  className?: string;
 }
 
-const { size = "lg", color = "text-H-blue-900" } = Astro.props;
+const { size = "lg", color = "text-H-blue-900", className = "" } = Astro.props;
 ---
 
-<a href="/" transition:name="title" class="max-h-min">
+<a href="/" transition:name="title" class={`max-h-min ${className}`}>
   <div class="max-h-min">
     <p
       class={`${color} font-normal leading-none ${

@@ -3,6 +3,7 @@ import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 import { ID_ORG_CLIENT } from "astro:env/server";
 import NavBar from "@header/NavBar.astro";
+import ThemeToggle from "@components/ThemeToggle.astro";
 
 interface LayoutProps {
   title?: string;
@@ -43,13 +44,16 @@ if (Astro.request.url) {
     <ClientRouter />
   </head>
   <body
-    class={`grid gap-8 grid-rows-[auto_auto_1fr_auto] min-h-dvh w-full bg-H-blue-100 py-9 px-8 box-border ${className}`}
+    class={`relative flex flex-colgrid gap-8 grid-rows-[auto_auto_1fr_auto] min-h-dvh w-full bg-H-blue-100 py-9 px-8 box-border ${className}`}
   >
     <NavBar size={sizeLogo} />
     <slot />
     <footer class="mt-8 text-center text-xs text-gray-500">
       &copy; {new Date().getFullYear()} Hermez Domicilio. Todos los derechos reservados.
     </footer>
+    <ThemeToggle
+      className="hidden md:flex absolute bottom-4 right-4 border border-H-blue-300/30 hover:shadow-md hover:border-H-blue-300 transition-all"
+    />
     <script src="../scripts/Clerk/organizationHandler.js"></script>
   </body>
 </html>
