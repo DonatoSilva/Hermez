@@ -17,6 +17,7 @@ interface NavBarProps {
 const { size = "lg" } = Astro.props as NavBarProps;
 
 const userId = Astro.locals.auth()?.userId;
+const userRole: "Client" | "Domiciliary" | null = Astro.locals.userRole;
 
 
 const currentUser = await Astro.locals.currentUser();
@@ -65,7 +66,7 @@ const currentUser = await Astro.locals.currentUser();
   <UserProfile 
     visibleSize="md"
     username={currentUser?.username?.toLocaleUpperCase() || "Usuario"}
-    role={"Cliente"}
+    role={userRole ?? "Desconocido"}
     avatarUrl={currentUser?.imageUrl || "/default-avatar.png"}
   />
    ) : ""
@@ -126,7 +127,7 @@ const currentUser = await Astro.locals.currentUser();
       className={"text-H-black sm:w-full [&>div]:justify-between flex-1"}
       visibleSize="sm"
       username={currentUser?.username?.toLocaleUpperCase() || "Usuario"}
-      role={"Cliente"}
+      role={userRole ?? "Desconocido"}
       avatarUrl={currentUser?.imageUrl || "/default-avatar.png"}
     />
     <ThemeToggle />

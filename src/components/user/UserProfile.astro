@@ -1,4 +1,5 @@
 ---
+import { SignOutButton } from "@clerk/astro/components";
 import Avatar from "./Avatar.astro";
 
 interface Props {
@@ -60,13 +61,18 @@ const visibility =
   >
     <ul class="py-2">
       <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-        <a href="/profile" class="block text-sm">Mi Perfil</a>
+        <a href="/profile" class="block">Mi Perfil</a>
       </li>
       <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-        <a href="/settings" class="block text-sm">Configuración</a>
+        <a href="/settings" class="block">Configuración</a>
       </li>
       <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-        <a href="/logout" class="block text-sm">Cerrar Sesión</a>
+        <SignOutButton
+          redirectUrl="/sign-in"
+          class={"cursor-pointer w-full h-full text-left"}
+        >
+          Cerrar Sesión
+        </SignOutButton>
       </li>
     </ul>
   </div>

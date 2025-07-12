@@ -17,19 +17,7 @@ const {
   sizeLogo,
 } = Astro.props as LayoutProps;
 
-let orgId: string | undefined = ID_ORG_CLIENT;
-let isClient = null;
-if (Astro.request.url) {
-  const url = new URL(Astro.request.url);
-  const orgParam = url.searchParams.get("org");
-  isClient = orgParam === "Client";
-
-  if (orgParam) {
-    orgId = isClient
-      ? import.meta.env.ID_ORG_CLIENT
-      : import.meta.env.ID_ORG_DOMICILIARY;
-  }
-}
+const orgId: string | undefined = Astro.locals.orgId;
 ---
 
 <!doctype html>

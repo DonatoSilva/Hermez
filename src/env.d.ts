@@ -1,11 +1,14 @@
 /// <reference path="../.astro/actions.d.ts" />
 /// <reference types="astro/client" />
 
-import type { orgUser } from "./types/orgUser";
+
 
 declare global {
     namespace App {
-        interface Locals extends ClerkLocals { }
+        interface Locals extends ClerkLocals {
+            userRole: "Client" | "Domiciliary" | null;
+            orgId: string | null;
+        }
     }
 }
 
