@@ -1,7 +1,7 @@
 /// <reference path="../.astro/actions.d.ts" />
 /// <reference types="astro/client" />
 
-
+export { };
 
 declare global {
     namespace App {
