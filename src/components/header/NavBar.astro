@@ -18,9 +18,6 @@ const { size = "lg" } = Astro.props as NavBarProps;
 
 const userId = Astro.locals.auth()?.userId;
 
-if (!userId) {
-  return Astro.redirect('/sign-in');
-}
 
 const currentUser = await Astro.locals.currentUser();
 ---
@@ -64,14 +61,15 @@ const currentUser = await Astro.locals.currentUser();
         stroke-linejoin="round"></path>
     </svg>
   </button>
-    ) : ""
-  }
+   
   <UserProfile 
     visibleSize="md"
     username={currentUser?.username?.toLocaleUpperCase() || "Usuario"}
     role={"Cliente"}
     avatarUrl={currentUser?.imageUrl || "/default-avatar.png"}
   />
+   ) : ""
+  }
 </nav>
 
 {
