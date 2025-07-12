@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-H-black: #0c1218;
   --color-H-blue-900: #2b4055;
