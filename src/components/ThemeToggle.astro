@@ -66,7 +66,6 @@ const { className } = Astro.props;
 
       // Check for saved theme preference
       const savedTheme = localStorage.getItem("theme");
-      console.log(`Saved theme: ${savedTheme}`);
 
       if (savedTheme === "dark") {
         root.classList.add("dark");

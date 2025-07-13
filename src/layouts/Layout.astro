@@ -1,7 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
-import { ID_ORG_CLIENT } from "astro:env/server";
 import NavBar from "@header/NavBar.astro";
 import ThemeToggle from "@components/ThemeToggle.astro";
 
@@ -21,7 +20,7 @@ const orgId: string | null = Astro.locals.orgId;
 ---
 
 <!doctype html>
-<html lang="es" data-org-id={orgId}>
+<html lang="es" {...orgId ? { "data-org-id": orgId } : {}}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />

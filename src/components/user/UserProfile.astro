@@ -26,6 +26,13 @@ const visibility =
     md: "hidden md:flex",
     lg: "hidden lg:flex",
   }[visibleSize] || "flex";
+
+const orgSwitchUrl = (() => {
+  const baseUrl =
+    Astro.url.pathname + Astro.url.search.replace(/(\?|&)org=[^&]*/g, "");
+  const orgParam = role === "Usuario" ? "?org=Domiciliary" : "?org=Client";
+  return baseUrl + (baseUrl.includes("?") ? "&" : "?") + orgParam.slice(1);
+})();
 ---
 
 <div class=`relative group ${visibility} ${className}`>
@@ -65,6 +72,11 @@ const visibility =
       </li>
       <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
         <a href="/settings" class="block">Configuración</a>
+      </li>
+      <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+        <a href={orgSwitchUrl} class="block"
+          >Cambiar a {role === "Usuario" ? "Domiciliario" : "Usuario"}</a
+        >
       </li>
       <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
         <SignOutButton

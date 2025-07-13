@@ -13,24 +13,37 @@ const isAPIRoute = createRouteMatcher(['/api(.*)'])
 // `context` and `next` are automatically typed
 export const onRequest = clerkMiddleware(
     async (auth, { locals, request, redirect }) => {
-        const { userId } = auth()
+        const { userId, sessionClaims } = auth()
         const url = request.url
 
+
+        switch (sessionClaims?.o?.id) {
+            case ID_ORG_CLIENT:
+                locals.userRole = 'Usuario';
+                break;
+            case ID_ORG_DOMICILIARY:
+                locals.userRole = 'Domiciliario';
+                break;
+            default:
+                locals.userRole = null;
+        }
+
         if (url) {
+            // Extract organization ID from the URL
             const urlObj = new URL(url)
             const orgParam = urlObj.searchParams.get('org')
-            if (orgParam) {
+            if (!locals.userRole) {
+                locals.orgId = ID_ORG_CLIENT;
+            } else if (orgParam) {
                 if (orgParam === 'Client') {
                     locals.orgId = ID_ORG_CLIENT;
-                    locals.userRole = 'Usuario'
                 }
 
                 if (orgParam === 'Domiciliary') {
                     locals.orgId = ID_ORG_DOMICILIARY;
-                    locals.userRole = 'Domiciliario'
                 }
             } else {
-                locals.orgId = 'no-org-id'
+                locals.orgId = null
             }
         }
 
