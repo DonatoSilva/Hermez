@@ -6,7 +6,7 @@ export { };
 declare global {
     namespace App {
         interface Locals extends ClerkLocals {
-            userRole: "Client" | "Domiciliary" | null;
+            userRole: "User" | "Domiciliary" | null;
             orgId: string | null;
         }
     }

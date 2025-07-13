@@ -19,10 +19,10 @@ export const onRequest = clerkMiddleware(
 
         switch (sessionClaims?.o?.id) {
             case ID_ORG_CLIENT:
-                locals.userRole = 'Usuario';
+                locals.userRole = 'User';
                 break;
             case ID_ORG_DOMICILIARY:
-                locals.userRole = 'Domiciliario';
+                locals.userRole = 'Domiciliary';
                 break;
             default:
                 locals.userRole = null;
@@ -35,7 +35,7 @@ export const onRequest = clerkMiddleware(
             if (!locals.userRole) {
                 locals.orgId = ID_ORG_CLIENT;
             } else if (orgParam) {
-                if (orgParam === 'Client') {
+                if (orgParam === 'User') {
                     locals.orgId = ID_ORG_CLIENT;
                 }
 

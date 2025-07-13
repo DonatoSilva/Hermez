@@ -3,22 +3,16 @@ import { SignOutButton } from "@clerk/astro/components";
 import Avatar from "./Avatar.astro";
 
 interface Props {
-  username: string;
-  role: string;
-  avatarUrl?: string;
   className?: string;
   visibleSize?: "sm" | "md" | "lg";
   position?: "up" | "down";
 }
 
-const {
-  username,
-  role,
-  avatarUrl = "/default-avatar.png",
-  className = "",
-  visibleSize = "md",
-  position = "down",
-} = Astro.props;
+const { className = "", visibleSize = "md", position = "down" } = Astro.props;
+
+const role: "User" | "Domiciliary" | null = Astro.locals.userRole;
+const { username, imageUrl: avatarUrl } =
+  (await Astro.locals.currentUser()) ?? {};
 
 const visibility =
   {
@@ -30,7 +24,7 @@ const visibility =
 const orgSwitchUrl = (() => {
   const baseUrl =
     Astro.url.pathname + Astro.url.search.replace(/(\?|&)org=[^&]*/g, "");
-  const orgParam = role === "Usuario" ? "?org=Domiciliary" : "?org=Client";
+  const orgParam = role === "User" ? "?org=Domiciliary" : "?org=User";
   return baseUrl + (baseUrl.includes("?") ? "&" : "?") + orgParam.slice(1);
 })();
 ---
@@ -40,10 +34,15 @@ const orgSwitchUrl = (() => {
     class="group flex flex-row items-center gap-2 w-full py-2 px-4 bg-gray-100 dark:bg-gray-800 rounded-lg cursor-pointer"
   >
     <div class="flex items-center gap-2">
-      <Avatar src={avatarUrl} alt={username} />
+      <Avatar
+        src={avatarUrl ?? "/images/default-avatar.png"}
+        alt={username ?? "Usuario desconocido"}
+      />
       <div class="flex flex-col">
         <b class="text-sm">{username}</b>
-        <span class="text-xs">{role}</span>
+        <span class="text-xs"
+          >{role == "User" ? "Usuario" : "Domiciliario"}</span
+        >
       </div>
     </div>
     <svg
@@ -75,7 +74,7 @@ const orgSwitchUrl = (() => {
       </li>
       <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
         <a href={orgSwitchUrl} class="block"
-          >Cambiar a {role === "Usuario" ? "Domiciliario" : "Usuario"}</a
+          >Cambiar a {role === "User" ? "Domiciliario" : "Usuario"}</a
         >
       </li>
       <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">

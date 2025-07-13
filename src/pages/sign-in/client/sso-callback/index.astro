@@ -7,48 +7,48 @@ export const prerender = false;
 ---
 
 <Layout title={title} sizeLogo="sm" class="relative">
-    <Spinner
-        size="md"
-        color="blue-500"
-        title="Verificando tu cuenta..."
-        message="Por favor espera mientras procesamos tu inicio de sesión con Google."
-    />
+  <Spinner
+    size="md"
+    color="blue-500"
+    title="Verificando tu cuenta..."
+    message="Por favor espera mientras procesamos tu inicio de sesión con Google."
+  />
 </Layout>
 
 <script>
-    import { Clerk } from "@clerk/clerk-js";
-    import { PUBLIC_CLERK_PUBLISHABLE_KEY } from "astro:env/client";
-    async function handleOAuthCallback() {
-        const clerk = new Clerk(PUBLIC_CLERK_PUBLISHABLE_KEY);
-        try {
-            await clerk.load();
-            const user = await clerk.handleRedirectCallback();
+  import { Clerk } from "@clerk/clerk-js";
+  import { PUBLIC_CLERK_PUBLISHABLE_KEY } from "astro:env/client";
+  async function handleOAuthCallback() {
+    const clerk = new Clerk(PUBLIC_CLERK_PUBLISHABLE_KEY);
+    try {
+      await clerk.load();
+      const user = await clerk.handleRedirectCallback();
 
-            if (user) {
-                window.location.href = "/?org=Client";
-            } else {
-                window.location.href = "/sign-up/client?accountNotFound=true";
-            }
-        } catch (error) {
-            window.location.href = "/sign-in/client";
-        }
+      if (user) {
+        window.location.href = "/?org=user";
+      } else {
+        window.location.href = "/sign-up/client?accountNotFound=true";
+      }
+    } catch (error) {
+      window.location.href = "/sign-in/client";
     }
+  }
 
-    // Ejecutar inmediatamente cuando la página carga
-    document.addEventListener("astro:page-load", handleOAuthCallback);
+  // Ejecutar inmediatamente cuando la página carga
+  document.addEventListener("astro:page-load", handleOAuthCallback);
 
-    // También ejecutar si la página ya está cargada
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", handleOAuthCallback);
-    } else {
-        handleOAuthCallback();
+  // También ejecutar si la página ya está cargada
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", handleOAuthCallback);
+  } else {
+    handleOAuthCallback();
+  }
+
+  // Timeout de seguridad - si después de 10 segundos no se resuelve, redirigir
+  setTimeout(() => {
+    if (window.location.pathname.includes("sso-callback")) {
+      console.log("⏰ Timeout de seguridad - redirigiendo...");
+      window.location.href = "/sign-in/client";
     }
-
-    // Timeout de seguridad - si después de 10 segundos no se resuelve, redirigir
-    setTimeout(() => {
-        if (window.location.pathname.includes("sso-callback")) {
-            console.log("⏰ Timeout de seguridad - redirigiendo...");
-            window.location.href = "/sign-in/client";
-        }
-    }, 10000);
+  }, 10000);
 </script>

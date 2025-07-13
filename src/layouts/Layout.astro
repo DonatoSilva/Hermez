@@ -3,6 +3,7 @@ import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 import NavBar from "@header/NavBar.astro";
 import ThemeToggle from "@components/ThemeToggle.astro";
+import UserProfile from "@components/user/UserProfile.astro";
 
 interface LayoutProps {
   title?: string;
@@ -39,8 +40,11 @@ const orgId: string | null = Astro.locals.orgId;
       &copy; {new Date().getFullYear()} Hermez Domicilio. Todos los derechos reservados.
     </footer>
     <ThemeToggle
-      className="hidden md:flex absolute bottom-4 right-4 border border-H-blue-300/30 hover:shadow-md hover:border-H-blue-300 transition-all"
+      className="hidden md:flex fixed bottom-4 right-4 border border-H-blue-300/30 hover:shadow-md hover:border-H-blue-300 transition-all"
     />
+    <div class="fixed bottom-4 left-4">
+      <UserProfile className="lg:hidden" position="up" />
+    </div>
     <script src="../scripts/Clerk/organizationHandler.js"></script>
   </body>
 </html>
