@@ -1,0 +1,38 @@
+---
+interface Props {
+  title: string;
+  color?: string;
+  className?: string;
+  height?: string;
+}
+
+const {
+  title,
+  color = "bg-H-blue-700",
+  className = "",
+  height = "max-h-min",
+} = Astro.props;
+---
+
+<div
+  class={`relative flex flex-col ${color} rounded-lg overflow-clip w-full max-w-10/12 mx-auto px-8 py-6 ${height} ${className}`}
+>
+  <!-- Título -->
+  <div
+    class="relative w-full font-semibold text-H-blue-100 text-2xl leading-tight tracking-tight"
+  >
+    {title}
+  </div>
+  <!-- Contenido opcional como texto o sectiones complementarias -->
+  <slot name="optional-content" />
+
+  <!-- Espacio para el botón -->
+  <div class="relative">
+    <slot name="button" />
+  </div>
+
+  <!-- Imagen (debe ser pasada como slot) -->
+  <div class="absolute w-fit -bottom-9 right-0">
+    <slot name="image" />
+  </div>
+</div>

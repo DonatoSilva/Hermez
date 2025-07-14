@@ -1,5 +1,7 @@
 ---
 import Layout from "@layouts/Layout.astro";
+import Banner from "@components/banner/Banner.astro";
+import Button from "@components/button/Button.astro";
 
 const { userId } = Astro.locals.auth();
 
@@ -9,5 +11,24 @@ if (!userId) {
 ---
 
 <Layout sizeLogo="md" title="Inicio - Hermez" class="flex flex-col gap-4">
-  <section></section>
+  <section>
+    <Banner title="Nosotros podemos" className="gap-4">
+      <p
+        slot="optional-content"
+        class="text-H-blue-100 text-balance text-base font-normal max-w-prose"
+      >
+        Nos encanta que seas ese usuario que confía y prefiere nuestros
+        servicios 🔥🚀.
+      </p>
+      <Button slot="button" color="bg-H-blue-900 text-white">
+        Pedir domicilio
+      </Button>
+      <img
+        slot="image"
+        src="/images/domiciliarioConCajas-min.webp"
+        alt="Domiciliario con cajas"
+        class="min-w-26 w-full max-w-48 h-full object-cover z-10 transition-all md:max-w-62"
+      />
+    </Banner>
+  </section>
 </Layout>

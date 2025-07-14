@@ -2,7 +2,7 @@
 import Avatar from "@components/user/Avatar.astro";
 import Logo from "./Logo.astro";
 import UserProfile from "@components/user/UserProfile.astro";
-import ThemeToggle from "@components/ThemeToggle.astro";
+import ThemeToggle from "@components/button/ThemeToggle.astro";
 const pages = {
   Inicio: "/",
   Historia: "/history",
@@ -23,11 +23,11 @@ const userId = Astro.locals.auth()?.userId;
 <nav
   class="flex items-center justify-between w-full max-w-6xl mx-auto px-4 py-2"
 >
-  <Logo size={size} className="-mt-1.5"/>
+  <Logo size={size} className="-mt-1.5" color="text-H-blue-900 dark:text-H-blue-100 "/>
   {
     userId ? (
       <ul
-    class="hidden md:flex gap-4 px-3 py-2 min-h-full items-center rounded-lg text-H-blue-100 bg-H-blue-900 "
+    class="hidden md:flex gap-4 px-3 py-2 min-h-full items-center rounded-lg text-H-blue-100 bg-H-blue-900"
   >
     {
       Object.entries(pages).map(([key, value]) => (
@@ -120,7 +120,7 @@ const userId = Astro.locals.auth()?.userId;
    <div class="flex gap-6 items-center">
     <UserProfile
       position="up"
-      className={"text-H-black sm:w-full [&>div]:justify-between flex-1"}
+      className={"text-H-black dark:text-H-blue-100 sm:w-full [&>div]:justify-between flex-1"}
       visibleSize="sm"
     />
     <ThemeToggle />

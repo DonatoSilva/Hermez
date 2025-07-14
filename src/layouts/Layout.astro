@@ -2,7 +2,7 @@
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 import NavBar from "@header/NavBar.astro";
-import ThemeToggle from "@components/ThemeToggle.astro";
+import ThemeToggle from "@components/button/ThemeToggle.astro";
 import UserProfile from "@components/user/UserProfile.astro";
 
 interface LayoutProps {
@@ -32,7 +32,7 @@ const orgId: string | null = Astro.locals.orgId;
     <ClientRouter />
   </head>
   <body
-    class={`relative flex flex-col gap-8 min-h-dvh w-full bg-H-blue-100 py-9 px-8 box-border ${className}`}
+    class={`container mx-auto relative flex flex-col gap-8 min-h-dvh w-full bg-H-blue-100 text-H-blue-900 dark:bg-H-black dark:text-white  py-9 px-8 box-border ${className}`}
   >
     <NavBar size={sizeLogo} />
     <slot />
