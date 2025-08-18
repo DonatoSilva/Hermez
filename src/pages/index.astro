@@ -99,7 +99,7 @@ const userExistsAPI = Astro.locals.userExistsAPI;
           </div>
           <button
             type="submit"
-            class="bg-H-blue-900 dark:bg-H-blue-700 text-white font-semibold py-2 rounded hover:bg-H-blue-800 dark:hover:bg-H-blue-600 transition-colors cursor-pointer"
+            class="bg-H-blue-900 dark:bg-H-blue-700 text-white font-semibold py-2 rounded hover:bg-H-blue-800 dark:hover:bg-H-blue-600 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Guardar datos
           </button>
@@ -111,6 +111,7 @@ const userExistsAPI = Astro.locals.userExistsAPI;
 
 <script>
   import { API_USERS, URL_LOCAL_BACKEND } from "astro:env/client";
+  import { navigate } from "astro:transitions/client";
   import { toastStore } from "src/stores/StoreToast";
 
   const onFormsubmit = () => {
@@ -118,46 +119,62 @@ const userExistsAPI = Astro.locals.userExistsAPI;
       "userDataForm"
     ) as HTMLFormElement | null; /// no es la forma correcta pero bueno que mas se le puede hacer
     if (!form) return;
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
+
+      const btnSubmit = form.querySelector("button[type='submit']");
+      btnSubmit?.setAttribute("disabled", "true");
+
       const formData = new FormData(form);
-      const userid = formData.get("userid");
       const data = Object.fromEntries(formData);
 
-      if (!true) return;
+      if (!data.userid) return;
 
-      const url: string = URL_LOCAL_BACKEND + API_USERS;
-      const resq = await fetch(url, {
+      const url = URL_LOCAL_BACKEND + API_USERS;
+      const AUTO_CLOSE_DELAY = 2500;
+
+      fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      });
-
-      if (!resq.ok) {
-        console.log("fallido", await resq.json());
-        toastStore.set({
-          visible: true,
-          title: "Error al guardar los datos",
-          message: "Por favor, intenta nuevamente más tarde.",
-          emoji: "⚠️",
-          type: "error",
-          autoClose: true,
-          autoCloseDelay: 5000,
+      })
+        .then((resq) => {
+          if (!resq.ok) {
+            toastStore.set({
+              visible: true,
+              title: "Error al guardar los datos",
+              message: "Por favor, intenta nuevamente más tarde.",
+              emoji: "⚠️",
+              type: "error",
+              autoClose: true,
+              autoCloseDelay: AUTO_CLOSE_DELAY,
+            });
+            return;
+          }
+          toastStore.set({
+            visible: true,
+            title: "Datos guardados",
+            message: "Tus datos se han guardado correctamente.",
+            emoji: "✅",
+            type: "success",
+            autoClose: true,
+            autoCloseDelay: AUTO_CLOSE_DELAY,
+          });
+          setTimeout(async () => {
+            await navigate("/");
+          }, AUTO_CLOSE_DELAY);
+        })
+        .catch(() => {
+          toastStore.set({
+            visible: true,
+            title: "Error al guardar los datos",
+            message: "Por favor, intenta nuevamente más tarde.",
+            emoji: "⚠️",
+            type: "error",
+            autoClose: true,
+            autoCloseDelay: AUTO_CLOSE_DELAY,
+          });
         });
-
-        return;
-      }
-
-      console.log("correcto", await resq.json());
-      toastStore.set({
-        visible: true,
-        title: "Datos guardados",
-        message: "Tus datos se han guardado correctamente.",
-        emoji: "✅",
-        type: "success",
-        autoClose: true,
-        autoCloseDelay: 300,
-      });
     });
   };
   window.addEventListener("astro:page-load", onFormsubmit);
