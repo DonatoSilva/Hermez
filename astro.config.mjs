@@ -33,6 +33,15 @@ export default defineConfig({
         context: "server",
         access: "public",
       })
+      ,
+      URL_LOCAL_BACKEND: envField.string({
+        context: "client",
+        access: "public",
+      }),
+      API_USERS: envField.string({
+        context: "client",
+        access: "public",
+      })
     }
   },
   integrations: [clerk({

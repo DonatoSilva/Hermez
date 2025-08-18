@@ -8,6 +8,7 @@ declare global {
         interface Locals extends ClerkLocals {
             userRole: "User" | "Domiciliary" | null;
             orgId: string | null;
+            userExistsAPI: boolean;
         }
     }
 }
@@ -18,6 +19,8 @@ interface ImportMetaEnv {
     readonly CLERK_WEBHOOK_SECRET: string;
     readonly ID_ORG_DOMICILIARY: string;
     readonly ID_ORG_CLIENT: string;
+    readonly URL_LOCAL_BACKEND: string;
+    readonly API_USERS: string;
 }
 
 interface ImportMeta {

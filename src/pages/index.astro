@@ -8,27 +8,158 @@ const { userId } = Astro.locals.auth();
 if (!userId) {
   Astro.redirect("/sign-in");
 }
+
+const userExistsAPI = Astro.locals.userExistsAPI;
 ---
 
 <Layout sizeLogo="md" title="Inicio - Hermez" class="flex flex-col gap-4">
   <section>
-    <Banner title="Nosotros podemos" className="gap-4">
-      <p
-        slot="optional-content"
-        class="text-H-blue-100 text-balance text-base font-normal max-w-prose"
-      >
-        Nos encanta que seas ese usuario que confía y prefiere nuestros
-        servicios 🔥🚀.
-      </p>
-      <Button slot="button" color="bg-H-blue-900 text-white">
-        Pedir domicilio
-      </Button>
-      <img
-        slot="image"
-        src="/images/domiciliarioConCajas-min.webp"
-        alt="Domiciliario con cajas"
-        class="min-w-26 w-full max-w-48 h-full object-cover z-10 transition-all md:max-w-62"
-      />
-    </Banner>
+    {
+      userExistsAPI ? (
+        <Banner title="Nosotros podemos" className="gap-4">
+          <p
+            slot="optional-content"
+            class="text-H-blue-100 text-balance text-base font-normal max-w-prose z-10"
+          >
+            Nos encanta que seas ese usuario que confía y prefiere nuestros
+            servicios 🔥🚀.
+          </p>
+          <Button slot="button" color="bg-H-blue-900 text-white">
+            Pedir domicilio
+          </Button>
+          <img
+            slot="image"
+            src="/images/domiciliarioConCajas-min.webp"
+            alt="Domiciliario con cajas"
+            class="min-w-26 w-full max-w-48 h-full object-cover z-0 transition-all md:max-w-62 blur-xs"
+          />
+        </Banner>
+      ) : (
+        <form
+          id="userDataForm"
+          aria-label="Formulario de registro de usuario"
+          class="flex flex-col gap-4 max-w-md mx-auto p-6 rounded-lg transition-colors"
+        >
+          <input type="hidden" name="userid" value={userId} />
+          <h2 class="text-xl font-bold text-H-blue-900 dark:text-white mb-2">
+            Registra tus datos
+          </h2>
+          <div class="flex flex-col gap-2">
+            <label
+              for="gender"
+              class="text-sm font-medium text-H-blue-900 dark:text-white"
+            >
+              Género
+            </label>
+            <select
+              id="gender"
+              name="gender"
+              required
+              class="border border-gray-300 dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700"
+            >
+              <option value="">Selecciona tu género</option>
+              <option value="male">Masculino</option>
+              <option value="female">Femenino</option>
+              <option value="other">Otro</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label
+              for="phone"
+              class="text-sm font-medium text-H-blue-900 dark:text-white"
+            >
+              Teléfono
+            </label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              pattern="[0-9]{10}"
+              required
+              placeholder="Ej: 3001234567"
+              class="border border-gray-300 dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700"
+            />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label
+              for="age"
+              class="text-sm font-medium text-H-blue-900 dark:text-white"
+            >
+              Edad
+            </label>
+            <input
+              id="age"
+              name="age"
+              type="number"
+              min="1"
+              max="120"
+              required
+              class="border border-gray-300 dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700"
+            />
+          </div>
+          <button
+            type="submit"
+            class="bg-H-blue-900 dark:bg-H-blue-700 text-white font-semibold py-2 rounded hover:bg-H-blue-800 dark:hover:bg-H-blue-600 transition-colors cursor-pointer"
+          >
+            Guardar datos
+          </button>
+        </form>
+      )
+    }
   </section>
 </Layout>
+
+<script>
+  import { API_USERS, URL_LOCAL_BACKEND } from "astro:env/client";
+  import { toastStore } from "src/stores/StoreToast";
+
+  const onFormsubmit = () => {
+    const form = document.getElementById(
+      "userDataForm"
+    ) as HTMLFormElement | null; /// no es la forma correcta pero bueno que mas se le puede hacer
+    if (!form) return;
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const userid = formData.get("userid");
+      const data = Object.fromEntries(formData);
+
+      if (!true) return;
+
+      const url: string = URL_LOCAL_BACKEND + API_USERS;
+      const resq = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!resq.ok) {
+        console.log("fallido", await resq.json());
+        toastStore.set({
+          visible: true,
+          title: "Error al guardar los datos",
+          message: "Por favor, intenta nuevamente más tarde.",
+          emoji: "⚠️",
+          type: "error",
+          autoClose: true,
+          autoCloseDelay: 5000,
+        });
+
+        return;
+      }
+
+      console.log("correcto", await resq.json());
+      toastStore.set({
+        visible: true,
+        title: "Datos guardados",
+        message: "Tus datos se han guardado correctamente.",
+        emoji: "✅",
+        type: "success",
+        autoClose: true,
+        autoCloseDelay: 300,
+      });
+    });
+  };
+  window.addEventListener("astro:page-load", onFormsubmit);
+  window.addEventListener("DOMContentLoaded", onFormsubmit);
+</script>

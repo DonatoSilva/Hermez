@@ -4,6 +4,7 @@ import "../styles/global.css";
 import NavBar from "@header/NavBar.astro";
 import ThemeToggle from "@components/button/ThemeToggle.astro";
 import UserProfile from "@components/user/UserProfile.astro";
+import Toast from "@components/Toast.astro";
 
 interface LayoutProps {
   title?: string;
@@ -34,6 +35,7 @@ const orgId: string | null = Astro.locals.orgId;
   <body
     class={`container mx-auto relative flex flex-col gap-8 min-h-dvh w-full bg-H-blue-100 text-H-blue-900 dark:bg-H-black dark:text-white  py-9 px-8 box-border ${className}`}
   >
+    <Toast />
     <NavBar size={sizeLogo} />
     <slot />
     <footer class="mt-8 text-center text-xs text-gray-500">

@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/astro/server'
 import { ID_ORG_CLIENT, ID_ORG_DOMICILIARY } from 'astro:env/server'
+import { API_USERS, URL_LOCAL_BACKEND } from 'astro:env/client'
 const isProtectedRoute = createRouteMatcher(['/(.*)'])
 const isPublicRoute = createRouteMatcher(["/404"])
 const isAuthRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/forgot-password'])
@@ -12,10 +13,31 @@ const isAPIRoute = createRouteMatcher(['/api(.*)'])
  */
 // `context` and `next` are automatically typed
 export const onRequest = clerkMiddleware(
-    async (auth, { locals, request, redirect }) => {
+    async (auth, { locals, request, redirect, cookies }) => {
         const { userId, sessionClaims } = auth()
         const url = request.url
+        locals.userExistsAPI = true
 
+        const hasUserDataCookie = cookies.get('data-user')
+
+        if (hasUserDataCookie !== userId) {
+            let userExists = false;
+            console.log(`Checking if user exists for userId: ${userId}`);
+
+            try {
+                const url = `${URL_LOCAL_BACKEND}${API_USERS}${userId}`;
+                console.log(`Fetching user data from: ${url}`);
+                const res = await fetch(url);
+                userExists = res.status !== 404;
+
+                /// guardamos la existencia del usuario en la cookie para evitar futuras consultas
+                if (userExists) cookies.set('data-user', userId, { path: '/', maxAge: 60 * 60 * 24 * 15 }) // 15 days;
+            } catch (e) {
+                userExists = false;
+            }
+
+            locals.userExistsAPI = userExists;
+        }
 
         switch (sessionClaims?.o?.id) {
             case ID_ORG_CLIENT:
