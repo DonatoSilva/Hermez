@@ -1,5 +1,4 @@
 ---
-import Avatar from "@components/user/Avatar.astro";
 import Logo from "./Logo.astro";
 import UserProfile from "@components/user/UserProfile.astro";
 import ThemeToggle from "@components/button/ThemeToggle.astro";
@@ -35,6 +34,7 @@ const userId = Astro.locals.auth()?.userId;
           class={`w-full px-4 py-1.5 hover:bg-H-blue-500 h-fit rounded-md transition-colors cursor-pointer
             ${pageActive === value ? "bg-H-blue-700 font-semibold" : ""}`}
           href={value}
+          data-astro-prefetch="viewport"
         >
           {key}
         </a>

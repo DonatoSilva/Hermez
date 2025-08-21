@@ -1,0 +1,33 @@
+---
+import type { HistoryItemProps } from "src/types/history/HistoryItemProps";
+import {
+  statusColors,
+  imageForType,
+} from "@components/history/historyItem/HistoryItem";
+
+const { price, address, status, type } = Astro.props as HistoryItemProps;
+const { url, alt } = imageForType[type] || {};
+---
+
+<div
+  class="flex relative md:flex-row items-center justify-between p-4 rounded-lg bg-H-blue-100 dark:bg-gray-800 overflow-auto w-full group cursor-pointer"
+>
+  <img
+    src={url}
+    alt={alt}
+    class="w-16 h-16 rounded-md group-hover:drop-shadow-lg/50 dark:drop-shadow-H-blue-300 transition-all duration-150"
+  />
+  <div class="flex-1 ml-4">
+    <p class="text-2xl font-semibold text-gray-800 dark:text-gray-200">
+      ${price}
+    </p>
+    <span class="text-sm text-gray-600 dark:text-gray-400">
+      {address}
+    </span>
+  </div>
+  <div
+    class={`group-hover:shadow-lg dark:shadow-H-blue-700 transition-shadow duration-150 absolute top-0 right-0 px-3 py-1 rounded-bl-lg rounded-tr-lg text-sm font-medium ${statusColors[status]}`}
+  >
+    {status}
+  </div>
+</div>
