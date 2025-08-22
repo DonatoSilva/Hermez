@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import AddressItem from "@components/settings/address/AddressItem";
 
 const { userId } = Astro.locals.auth();
 
@@ -13,5 +14,7 @@ if (!userId) {
   title="Configuración - Hermez"
   class="flex flex-col gap-4"
 >
-  <section></section>
+  <section>
+    <AddressItem name="Mi Hogar" address="Carrera 8 # 10 - 32" />
+  </section>
 </Layout>
