@@ -1,6 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/astro/server'
 import { ID_ORG_CLIENT, ID_ORG_DOMICILIARY } from 'astro:env/server'
 import { API_USERS, URL_LOCAL_BACKEND } from 'astro:env/client'
+import { log } from 'console'
 const isProtectedRoute = createRouteMatcher(['/(.*)'])
 const isPublicRoute = createRouteMatcher(["/404"])
 const isAuthRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/forgot-password'])
@@ -18,11 +19,10 @@ export const onRequest = clerkMiddleware(
         const url = request.url
         locals.userExistsAPI = true
 
-        const hasUserDataCookie = cookies.get('data-user')
+        const hasUserDataCookie = cookies.get('data-user').value
 
         if (hasUserDataCookie !== userId) {
             let userExists = false;
-            console.log(`Checking if user exists for userId: ${userId}`);
 
             try {
                 const url = `${URL_LOCAL_BACKEND}${API_USERS}${userId}`;
@@ -51,7 +51,6 @@ export const onRequest = clerkMiddleware(
         }
 
         if (url) {
-            // Extract organization ID from the URL
             const urlObj = new URL(url)
             const orgParam = urlObj.searchParams.get('org')
             if (!locals.userRole) {
@@ -84,8 +83,6 @@ export const onRequest = clerkMiddleware(
         if (!userId && isAuthRoute(request)) {
             return
         }
-
-
 
         if (!userId && isProtectedRoute(request)) {
             return redirect('/sign-in')
