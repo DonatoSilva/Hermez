@@ -37,25 +37,25 @@ const userExistsAPI = Astro.locals.userExistsAPI;
           />
         </Banner>
         <section id="historyToday" class="box-border flex flex-col gap-[15px] items-start justify-start overflow-clip py-2.5 w-full">
-    <div class="flex flex-row justify-between items-center w-full">
-      <h3 class="font-normal text-H-black dark:text-white text-2xl text-nowrap">
-        Historial solicitudes
-      </h3>
-      <button
-        id="btnHistoryToday"
-        type="button"
-        class="ml-4 flex items-center gap-1 px-3 py-2 text-H-blue-300 hover:text-H-blue-900 transition-colors transform-border duration-300 text-sm border border-H-blue-300 hover:border-H-blue-500 rounded-3xl cursor-pointer"
-      >
-        Mas
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-    </div>
-    <ContentItems>
-      <HistoryItem type="moto" price="4000" address="Cra 10 #20-30 ➝ Av. 5 #45-12" status="en camino"/>
-    </ContentItems>
-  </section>
+          <div class="flex flex-row justify-between items-center w-full">
+            <h3 class="font-normal text-H-black dark:text-white text-2xl text-nowrap">
+              Historial solicitudes
+            </h3>
+            <button
+              id="btnHistoryToday"
+              type="button"
+              class="ml-4 flex items-center gap-1 px-3 py-2 text-H-blue-300 hover:text-H-blue-900 transition-colors transform-border duration-300 text-sm border border-H-blue-300 hover:border-H-blue-500 rounded-3xl cursor-pointer"
+            >
+              Mas
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          <ContentItems>
+            <HistoryItem type="moto" price="4000" address="Cra 10 #20-30 ➝ Av. 5 #45-12" status="en camino"/>
+          </ContentItems>
+        </section>
       ) : (
         <aside class="flex flex-col lg:flex-row items-center gap-8  p-6 rounded-lg transition-all lg:ms-3">
           <!-- Encabezado atractivo e imagen -->
