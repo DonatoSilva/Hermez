@@ -2,68 +2,77 @@
 import HistoryItem from "@components/history/historyItem/HistoryItem";
 import Layout from "../../layouts/Layout.astro";
 import ContentItems from "@components/history/ContentItems.astro";
+import UserRegistrationForm from "@components/user/UserRegistrationForm.astro";
 
 const { userId } = Astro.locals.auth();
 
 if (!userId) {
   Astro.redirect("/sign-in");
 }
+
+const userExistsAPI = Astro.locals.userExistsAPI;
 ---
 
 <Layout sizeLogo="md" title="Historia - Hermez" class="flex flex-col gap-4">
-  <main class="w-full flex flex-col gap-3">
-    <div class="w-full max-w-3xl mx-auto flex flex-row justify-between">
-      <p class="text-lg whitespace-pre">Filtro</p>
+  {
+    userExistsAPI ? (
+      <main class="w-full flex flex-col gap-3">
+        <div class="w-full max-w-3xl mx-auto flex flex-row justify-between">
+          <p class="text-lg whitespace-pre">Filtro</p>
 
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-8 h-8 text-gray-700 dark:text-gray-200"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M3 5h18M6 10h12M9 15h6"></path>
-      </svg>
-    </div>
-    <div
-      class="bg-[#2b4055] dark:bg-gray-700 box-border content-stretch flex flex-col items-center justify-center leading-[0] left-6 not-italic overflow-clip mx-auto max-w-2xl w-full py-5 rounded-lg text-center"
-    >
-      <h4 class="font-bold text-white text-6xl tracking-tight leading-[1.2]">
-        $280.000
-      </h4>
-      <span
-        class="font-normal text-neutral-100 text-sm leading-[1.4] whitespace-pre-wrap"
-        >Acumulado en domicilios
-      </span>
-    </div>
-  </main>
-  <section class="flex gap-4 flex-col">
-    <h5 class="text-lg font-semibold">Historial de solicitudes</h5>
-    <p class="text-sm text-gray-600 dark:text-gray-400">hoy</p>
-    <ContentItems>
-      <HistoryItem
-        type="moto"
-        price={"10000"}
-        address="Calle Falsa 123"
-        status="cancelado"
-        server:defer>cargando...</HistoryItem
-      >
-      <HistoryItem
-        type="moto"
-        price={"10000"}
-        address="Calle Falsa 123"
-        status="cancelado"
-      />
-      <HistoryItem
-        type="moto"
-        price={"10000"}
-        address="Calle 5 #20-30"
-        status="cancelado"
-      />
-    </ContentItems>
-  </section>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-8 h-8 text-gray-700 dark:text-gray-200"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 5h18M6 10h12M9 15h6"></path>
+          </svg>
+        </div>
+        <div
+          class="bg-[#2b4055] dark:bg-gray-700 box-border content-stretch flex flex-col items-center justify-center leading-[0] left-6 not-italic overflow-clip mx-auto max-w-2xl w-full py-5 rounded-lg text-center"
+        >
+          <h4 class="font-bold text-white text-6xl tracking-tight leading-[1.2]">
+            $280.000
+          </h4>
+          <span
+            class="font-normal text-neutral-100 text-sm leading-[1.4] whitespace-pre-wrap"
+            >Acumulado en domicilios
+          </span>
+        </div>
+      </main>
+      <section class="flex gap-4 flex-col">
+        <h5 class="text-lg font-semibold">Historial de solicitudes</h5>
+        <p class="text-sm text-gray-600 dark:text-gray-400">hoy</p>
+        <ContentItems>
+          <HistoryItem
+            type="moto"
+            price={"10000"}
+            address="Calle Falsa 123"
+            status="cancelado"
+            server:defer>cargando...</HistoryItem
+          >
+          <HistoryItem
+            type="moto"
+            price={"10000"}
+            address="Calle Falsa 123"
+            status="cancelado"
+          />
+          <HistoryItem
+            type="moto"
+            price={"10000"}
+            address="Calle 5 #20-30"
+            status="cancelado"
+          />
+        </ContentItems>
+      </section>
+    ) : (
+      <UserRegistrationForm userId={userId!} />
+    )
+  }
 </Layout>
