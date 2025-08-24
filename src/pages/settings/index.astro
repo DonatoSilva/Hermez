@@ -1,8 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import AddressItem from "@components/settings/address/AddressItem";
-import TargetCard from "@components/settings/target/TargetCard";
-import Button from "@components/button/Button.astro";
+import ProfileForm from "@components/settings/ProfileForm.astro";
+import AddressSection from "@components/settings/AddressSection.astro";
+import PaymentMethodsSection from "@components/settings/PaymentMethodsSection.astro";
+import SettingsMenu from "@components/settings/SettingsMenu.astro";
 
 const { userId } = Astro.locals.auth();
 
@@ -11,86 +12,11 @@ if (!userId) {
 }
 ---
 
-<Layout
-  sizeLogo="md"
-  title="Configuración - Hermez"
-  class="flex flex-col gap-4"
->
-  <section class="w-full flex flex-col gap-8">
-    <form class="w-full mx-auto flex flex-col gap-4">
-      <div class="flex items-center gap-4">
-        <img
-          src="/images/clienteFelizEnPuerta-min.webp"
-          alt="avatar"
-          class="w-full h-full object-cover max-w-24 max-h-24 rounded-md bg-H-blue-100"
-        />
-        <div class="flex flex-col gap-2 flex-1">
-          <Button color="bg-white text-H-blue-900" onClick="handleRemove"
-            >Eliminar foto</Button
-          >
-          <Button color="bg-H-blue-900 text-white" onClick="handleUpload"
-            >Subir foto</Button
-          >
-        </div>
-      </div>
-
-      <label class="flex flex-col gap-2">
-        <span class="text-sm">Nombre completo</span>
-        <input
-          class="border border-gray-300 rounded-md px-3 py-2"
-          value="Maria Jose Silva"
-        />
-      </label>
-
-      <label class="flex flex-col gap-2">
-        <span class="text-sm">Correo</span>
-        <input
-          class="border border-gray-300 rounded-md px-3 py-2"
-          value="figueroajesus2015@hotmail.com"
-        />
-      </label>
-
-      <label class="flex flex-col gap-2">
-        <span class="text-sm">Teléfono</span>
-        <input
-          type="tel"
-          class="border border-gray-300 rounded-md px-3 py-2"
-          value="+57 300 123 4567"
-        />
-      </label>
-
-      <label class="flex flex-col gap-2">
-        <span class="text-sm">Edad</span>
-        <input class="border border-gray-300 rounded-md px-3 py-2" value="23" />
-      </label>
-
-      <label class="flex flex-col gap-2">
-        <span class="text-sm">Género</span>
-        <input
-          class="border border-gray-300 rounded-md px-3 py-2"
-          value="Mujer"
-        />
-      </label>
-
-      <div class="flex gap-3 mt-2">
-        <Button color="bg-H-blue-900 text-white w-full">Guardar</Button>
-        <Button color="bg-white text-H-blue-900 w-full">Cancelar</Button>
-      </div>
-    </form>
-
-    <div class="w-full mx-auto">
-      <h5 class="text-lg font-semibold mb-3">Direcciones</h5>
-      <AddressItem
-        type="work"
-        name="Mi Trabajo"
-        address="Carrera 8 # 10 - 32"
-        id="address-1"
-      />
-    </div>
-
-    <div class="w-full mx-auto">
-      <h5 class="text-lg font-semibold mb-3">Métodos de pago</h5>
-      <TargetCard title="Debit Card" last="0426" expiry="07/25" id="card-1" />
-    </div>
-  </section>
+<Layout sizeLogo="md" title="Configuración - Hermez" class="flex flex-col gap-4">
+  <SettingsMenu />
+  <main class="flex flex-row overflow-x-scroll scrollbar-hide">
+    <ProfileForm />
+    <AddressSection />
+    <PaymentMethodsSection />
+  </main>
 </Layout>
