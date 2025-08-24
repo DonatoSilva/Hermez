@@ -1,4 +1,5 @@
 ---
+import UserRegistrationForm from "../components/user/UserRegistrationForm.astro";
 import Layout from "@layouts/Layout.astro";
 import Banner from "@components/banner/Banner.astro";
 import Button from "@components/button/Button.astro";
@@ -57,106 +58,7 @@ const userExistsAPI = Astro.locals.userExistsAPI;
           </ContentItems>
         </section>
       ) : (
-        <aside class="flex flex-col lg:flex-row items-center gap-8  p-6 rounded-lg transition-all lg:ms-3">
-          <!-- Encabezado atractivo e imagen -->
-          <div class="flex flex-col items-center lg:items-start gap-4 flex-1">
-            <div class="text-center lg:text-left">
-              <h2 class="text-2xl font-bold text-H-blue-900 dark:text-white mb-2">
-                ¡Completa tu registro!
-              </h2>
-              <p class="text-sm text-gray-600 dark:text-gray-300">
-                Ayúdanos a conocerte mejor para ofrecerte una experiencia personalizada.
-              </p>
-            </div>
-            <div class="flex relative justify-center w-full max-w-92 mt-12">
-              <img
-                src="/images/Candado-min.png"
-                alt="Registro de usuario"
-                class="size-48 object-contain m-auto mask-b-from-1.5"
-              />
-              <span class="absolute top-2 left-0 bg-H-blue-900 text-white text-xs rounded-full px-4 py-2 shadow-lg animate-bounce duration-300 -z-20">
-                Desbloquea pedidos rápidos 🚀
-              </span>
-              <span class="absolute bottom-2 right-0 bg-H-blue-700 text-white text-xs rounded-full px-4 py-2 shadow-lg animate-bounce duration-300 z-20">
-                Accede a historial y soporte exclusivo 💬
-              </span>
-            </div>
-          </div>
-          <!-- Formulario -->
-          <form
-            id="userDataForm"
-            aria-label="Formulario de registro de usuario"
-            class="flex flex-col gap-4 max-w-md w-full p-6 rounded-lg transition-colors bg-white dark:bg-H-blue-900 shadow lg:shadow-none"
-          >
-            <input type="hidden" name="userid" value={userId} />
-            <h2 class="text-xl font-bold text-H-blue-900 dark:text-white mb-2">
-              Registra tus datos
-            </h2>
-            <div class="flex flex-col gap-2">
-              <label
-                for="gender"
-                class="text-sm font-medium text-H-blue-900 dark:text-white"
-              >
-                Género
-              </label>
-              <select
-                id="gender"
-                name="gender"
-                required
-                class="border border-gray-300 dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700"
-              >
-                <option value="">Selecciona tu género</option>
-                <option value="male">Masculino</option>
-                <option value="female">Femenino</option>
-                <option value="other">Otro</option>
-              </select>
-            </div>
-            <div class="flex flex-col gap-2">
-              <label
-                for="phone"
-                class="text-sm font-medium text-H-blue-900 dark:text-white"
-              >
-                Teléfono
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                pattern="[0-9]{10}"
-                required
-                placeholder="Ej: 3001234567"
-                class="border border-gray-300 dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <label
-                for="age"
-                class="text-sm font-medium text-H-blue-900 dark:text-white"
-              >
-                Edad
-              </label>
-              <input
-                id="age"
-                name="age"
-                type="number"
-                min="1"
-                max="120"
-                required
-                class="border border-gray-300 dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700"
-              />
-            </div>
-            <button
-              type="submit"
-              class="bg-H-blue-900 dark:bg-H-blue-700 text-white font-semibold py-2 rounded hover:bg-H-blue-800 dark:hover:bg-H-blue-600 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group flex items-center justify-center gap-2"
-            >
-              <span>Guardar mis datos</span>
-              <span
-                class="ml-2 inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin transition-opacity duration-200 opacity-0 group-disabled:opacity-100"
-                aria-hidden="true"
-              />
-            </button>
-          </form>
-        </aside>
+        <UserRegistrationForm userId={userId!} />
       )
     }
   </section>
