@@ -138,14 +138,10 @@ const userExistsAPI = Astro.locals.userExistsAPI;
   };
 
   function main() {
-    console.log("main function executed");
     onFormsubmit();
 
     const historyToday = document.getElementById("historyToday");
-    console.log("historyToday:", historyToday);
-
     const btnHistoryToday = historyToday?.querySelector("#btnHistoryToday");
-    console.log("btnHistoryToday:", btnHistoryToday);
 
     if (!btnHistoryToday) return;
 

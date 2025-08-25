@@ -1,8 +1,14 @@
 ---
 import AddressItem from "@components/settings/address/AddressItem";
+
+interface Props {
+  isActive: boolean;
+}
+
+const { isActive } = Astro.props;
 ---
 
-<section class="min-w-full mx-auto">
+<section class:list={["min-w-full", { active: isActive }]} id="section-locations">
   <h5 class="text-lg font-semibold mb-3">Direcciones</h5>
   <AddressItem type="work" name="Mi Trabajo" address="Carrera 8 # 10 - 32" id="address-1" />
 </section>

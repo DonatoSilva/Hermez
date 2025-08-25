@@ -10,13 +10,76 @@ const { userId } = Astro.locals.auth();
 if (!userId) {
   Astro.redirect("/sign-in");
 }
+
+const url = Astro.url;
+const searchParams = url.searchParams;
+let sectionActivite = searchParams.get("section");
+
+if (!sectionActivite) {
+  sectionActivite = "profile";
+}
 ---
 
 <Layout sizeLogo="md" title="Configuración - Hermez" class="flex flex-col gap-4">
-  <SettingsMenu />
-  <main class="flex flex-row overflow-x-scroll scrollbar-hide">
-    <ProfileForm />
-    <AddressSection />
-    <PaymentMethodsSection />
+  <SettingsMenu sectionActivite={sectionActivite} />
+  <main
+    id="containerSectionsSetting"
+    class="w-full min-h-fit flex flex-row overflow-x-scroll scrollbar-hide"
+  >
+    <ProfileForm isActive={sectionActivite == "profile" ? true : false} />
+    <PaymentMethodsSection isActive={sectionActivite == "cards" ? true : false} />
+    <AddressSection isActive={sectionActivite == "locations" ? true : false} />
+    <section
+      class:list={["min-w-full", { active: sectionActivite == "more" ? true : false }]}
+      id="section-more"
+    >
+      <h5 class="text-lg font-semibold mb-3">Más</h5>
+    </section>
   </main>
 </Layout>
+
+<style>
+  #containerSectionsSetting {
+    section {
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.3s ease-in-out;
+      visibility: hidden;
+      position: absolute;
+
+      &.active {
+        opacity: 1;
+        transform: translateX(0);
+        visibility: visible;
+        position: relative;
+      }
+    }
+  }
+</style>
+
+<script>
+  const checkboxes: NodeListOf<HTMLInputElement> =
+    document.querySelectorAll('input[name="settings"]');
+
+  checkboxes?.forEach((checkbox) => {
+    checkbox.addEventListener("change", (e) => {
+      const target: HTMLInputElement = e.target as HTMLInputElement;
+      const checkId = target.id;
+      console.log(checkId);
+
+      const newSection: HTMLElement | null = document.querySelector(
+        `section[id="section-${checkId}"]`
+      );
+      const oldSection: HTMLElement | null = document.querySelector("section.active");
+
+      console.log(`newSection: `, newSection);
+      console.log(`oldSection: `, oldSection);
+      oldSection?.classList.remove("active");
+      newSection?.classList.add("active");
+
+      const url = new URL(window.location.href);
+      url.searchParams.set("section", checkId);
+      window.history.pushState({}, "", url);
+    });
+  });
+</script>

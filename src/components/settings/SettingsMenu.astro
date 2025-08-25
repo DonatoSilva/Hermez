@@ -1,24 +1,72 @@
 ---
+interface Props {
+  sectionActivite: string;
+}
 
+const { sectionActivite } = Astro.props;
 ---
 
 <div class="w-full flex flex-col gap-2">
   <h2 class="text-xl md:text-2xl font-semibold">Configuraciones</h2>
-  <div class="flex gap-4 overflow-x-hidden">
-    <a
-      href="#"
-      class="px-3 py-2 rounded-md bg-H-blue-900 text-white font-semibold text-sm md:text-base"
+  <div id="settings-submenu" class="flex gap-4 overflow-x-hidden">
+    <input
+      type="radio"
+      id="profile"
+      name="settings"
+      value="profile"
+      class="hidden peer/profile"
+      checked={sectionActivite === "profile"}
+    />
+    <label
+      for="profile"
+      class="px-3 py-2 rounded-md bg-gray-200 text-H-blue-900 font-semibold text-sm md:text-base cursor-pointer peer-checked/profile:bg-H-blue-900 transition-colors duration-300 peer-checked/profile:text-white"
     >
       Perfil
-    </a>
-    <a href="#" class="px-3 py-2 rounded-md bg-gray-200 text-H-blue-900 font-semibold text-base">
+    </label>
+
+    <input
+      type="radio"
+      id="cards"
+      name="settings"
+      value="cards"
+      class="hidden peer/cards"
+      checked={sectionActivite === "cards"}
+    />
+    <label
+      for="cards"
+      class="px-3 py-2 rounded-md bg-gray-200 text-H-blue-900 font-semibold text-base cursor-pointer peer-checked/cards:bg-H-blue-900 peer-checked/cards:text-white transition-colors duration-300"
+    >
       Tarjetas
-    </a>
-    <a href="#" class="px-3 py-2 rounded-md bg-gray-200 text-H-blue-900 font-semibold text-base">
+    </label>
+
+    <input
+      type="radio"
+      id="locations"
+      name="settings"
+      value="locations"
+      class="hidden peer/locations"
+      checked={sectionActivite === "locations"}
+    />
+    <label
+      for="locations"
+      class="px-3 py-2 rounded-md bg-gray-200 text-H-blue-900 font-semibold text-base cursor-pointer peer-checked/locations:bg-H-blue-900 peer-checked/locations:text-white transition-colors duration-300"
+    >
       Ubicaciones
-    </a>
-    <a href="#" class="px-3 py-2 rounded-md bg-gray-200 text-H-blue-900 font-semibold text-base">
+    </label>
+
+    <input
+      type="radio"
+      id="more"
+      name="settings"
+      value="more"
+      class="hidden peer/more"
+      checked={sectionActivite === "more"}
+    />
+    <label
+      for="more"
+      class="px-3 py-2 rounded-md bg-gray-200 text-H-blue-900 font-semibold text-base cursor-pointer peer-checked/more:bg-H-blue-900 peer-checked/more:text-white transition-colors duration-300"
+    >
       Más
-    </a>
+    </label>
   </div>
 </div>

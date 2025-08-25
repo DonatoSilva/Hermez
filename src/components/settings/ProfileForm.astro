@@ -1,8 +1,14 @@
 ---
 import Button from "@components/button/Button.astro";
+
+interface Props {
+  isActive: boolean;
+}
+
+const { isActive } = Astro.props;
 ---
 
-<section class="min-w-full">
+<section class:list={["min-w-full", { active: isActive }]} id="section-profile">
   <h5 class="text-lg font-semibold mb-3">Mi perfil</h5>
   <form class="w-full mx-auto flex flex-col gap-4">
     <div class="flex items-center gap-4">
