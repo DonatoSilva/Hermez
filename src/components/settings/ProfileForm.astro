@@ -1,11 +1,22 @@
 ---
 import Button from "@components/button/Button.astro";
+import { server as actions } from "@actions/index";
 
 interface Props {
   isActive: boolean;
 }
 
 const { isActive } = Astro.props;
+const { userId } = Astro.locals.auth();
+
+const { imageUrl, firstName, lastName, emailAddresses } = (await Astro.locals.currentUser()) ?? {};
+
+const { data: userData } = await Astro.callAction(actions.getUserData, { id: userId ?? "" });
+const { gender, phone, age } = userData ?? {
+  gender: "notFound",
+  phone: "notFound",
+  age: 0,
+};
 ---
 
 <section class:list={["min-w-full", { active: isActive }]} id="section-profile">
@@ -13,7 +24,7 @@ const { isActive } = Astro.props;
   <form class="w-full mx-auto flex flex-col gap-4">
     <div class="flex items-center gap-4">
       <img
-        src="/images/clienteFelizEnPuerta-min.webp"
+        src={imageUrl ?? "/images/clienteFelizEnPuerta-min.webp"}
         alt="avatar"
         class="w-full h-full object-cover max-w-24 max-h-24 rounded-md bg-H-blue-100"
       />
@@ -25,34 +36,33 @@ const { isActive } = Astro.props;
 
     <label class="flex flex-col gap-2">
       <span class="text-sm">Nombre completo</span>
-      <input class="border border-gray-300 rounded-md px-3 py-2" value="Maria Jose Silva" />
+      <input
+        class="border border-gray-300 rounded-md px-3 py-2"
+        value={firstName + " " + lastName}
+      />
     </label>
 
     <label class="flex flex-col gap-2">
       <span class="text-sm">Correo</span>
       <input
         class="border border-gray-300 rounded-md px-3 py-2"
-        value="figueroajesus2015@hotmail.com"
+        value={emailAddresses?.[0]?.emailAddress}
       />
     </label>
 
     <label class="flex flex-col gap-2">
       <span class="text-sm">Teléfono</span>
-      <input
-        type="tel"
-        class="border border-gray-300 rounded-md px-3 py-2"
-        value="+57 300 123 4567"
-      />
+      <input type="tel" class="border border-gray-300 rounded-md px-3 py-2" value={phone} />
     </label>
 
     <label class="flex flex-col gap-2">
       <span class="text-sm">Edad</span>
-      <input class="border border-gray-300 rounded-md px-3 py-2" value="23" />
+      <input class="border border-gray-300 rounded-md px-3 py-2" value={age} />
     </label>
 
     <label class="flex flex-col gap-2">
       <span class="text-sm">Género</span>
-      <input class="border border-gray-300 rounded-md px-3 py-2" value="Mujer" />
+      <input class="border border-gray-300 rounded-md px-3 py-2" value={gender} />
     </label>
 
     <div class="flex gap-3 mt-2">

@@ -28,6 +28,9 @@
       "@scripts/*": [
         "./src/scripts/*"
       ],
+      "@actions/*": [
+        "./src/actions/*"
+      ],
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react"
