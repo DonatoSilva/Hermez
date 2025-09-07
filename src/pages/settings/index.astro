@@ -2,7 +2,6 @@
 import Layout from "../../layouts/Layout.astro";
 import ProfileForm from "@components/settings/ProfileForm.astro";
 import AddressSection from "@components/settings/AddressSection.astro";
-import PaymentMethodsSection from "@components/settings/PaymentMethodsSection.astro";
 import SettingsMenu from "@components/settings/SettingsMenu.astro";
 
 const { userId } = Astro.locals.auth();
@@ -27,7 +26,6 @@ if (!sectionActivite) {
     class="w-full min-h-fit flex flex-row overflow-x-scroll scrollbar-hide"
   >
     <ProfileForm isActive={sectionActivite == "profile" ? true : false} />
-    <PaymentMethodsSection isActive={sectionActivite == "cards" ? true : false} />
     <AddressSection isActive={sectionActivite == "locations" ? true : false} />
     <section
       class:list={["min-w-full", { active: sectionActivite == "more" ? true : false }]}
