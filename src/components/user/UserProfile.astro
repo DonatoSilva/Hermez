@@ -11,8 +11,7 @@ interface Props {
 const { className = "", visibleSize = "md", position = "down" } = Astro.props;
 
 const role: "User" | "Domiciliary" | null = Astro.locals.userRole;
-const { username, imageUrl: avatarUrl } =
-  (await Astro.locals.currentUser()) ?? {};
+const { username, imageUrl: avatarUrl } = (await Astro.locals.currentUser()) ?? {};
 
 const visibility =
   {
@@ -22,8 +21,7 @@ const visibility =
   }[visibleSize] || "flex";
 
 const orgSwitchUrl = (() => {
-  const baseUrl =
-    Astro.url.pathname + Astro.url.search.replace(/(\?|&)org=[^&]*/g, "");
+  const baseUrl = Astro.url.pathname + Astro.url.search.replace(/(\?|&)org=[^&]*/g, "");
   const orgParam = role === "User" ? "?org=Domiciliary" : "?org=User";
   return baseUrl + (baseUrl.includes("?") ? "&" : "?") + orgParam.slice(1);
 })();
@@ -40,9 +38,7 @@ const orgSwitchUrl = (() => {
       />
       <div class="flex flex-col">
         <b class="text-sm">{username}</b>
-        <span class="text-xs"
-          >{role == "User" ? "Usuario" : "Domiciliario"}</span
-        >
+        <span class="text-xs">{role == "User" ? "Usuario" : "Domiciliario"}</span>
       </div>
     </div>
     <svg
@@ -52,11 +48,8 @@ const orgSwitchUrl = (() => {
       viewBox="0 0 24 24"
       stroke="currentColor"
     >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M19 9l-7 7-7-7"></path>
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"
+      ></path>
     </svg>
   </div>
 
@@ -67,9 +60,6 @@ const orgSwitchUrl = (() => {
   >
     <ul class="py-2">
       <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-        <a href="/profile" class="block">Mi Perfil</a>
-      </li>
-      <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
         <a href="/settings" class="block">Configuración</a>
       </li>
       <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
@@ -78,10 +68,7 @@ const orgSwitchUrl = (() => {
         >
       </li>
       <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-        <SignOutButton
-          redirectUrl="/sign-in"
-          class={"cursor-pointer w-full h-full text-left"}
-        >
+        <SignOutButton redirectUrl="/sign-in" class={"cursor-pointer w-full h-full text-left"}>
           Cerrar Sesión
         </SignOutButton>
       </li>
