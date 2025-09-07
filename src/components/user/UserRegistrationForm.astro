@@ -1,90 +1,12 @@
 ---
-import { API_USERS, URL_LOCAL_BACKEND } from "astro:env/client";
-import { navigate } from "astro:transitions/client";
-import { toastStore } from "src/stores/StoreToast";
-
 interface Props {
   userId: string;
 }
 
 const { userId } = Astro.props;
-
-const onFormsubmit = () => {
-  const form = document.getElementById(
-    "userDataForm"
-  ) as HTMLFormElement | null;
-  if (!form) return;
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const btnSubmit = form.querySelector("button[type='submit']");
-    btnSubmit?.setAttribute("disabled", "true");
-
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData);
-
-    if (!data.userid) return;
-
-    const url = URL_LOCAL_BACKEND + API_USERS;
-    const AUTO_CLOSE_DELAY = 2500;
-
-    fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then((resq) => {
-        if (!resq.ok) {
-          toastStore.set({
-            visible: true,
-            title: "Error al guardar los datos",
-            message: "Por favor, intenta nuevamente más tarde.",
-            emoji: "⚠️",
-            type: "error",
-            autoClose: true,
-            autoCloseDelay: AUTO_CLOSE_DELAY,
-          });
-          return;
-        }
-        toastStore.set({
-          visible: true,
-          title: "Datos guardados",
-          message: "Tus datos se han guardado correctamente.",
-          emoji: "✅",
-          type: "success",
-          autoClose: true,
-          autoCloseDelay: AUTO_CLOSE_DELAY,
-        });
-        setTimeout(async () => {
-          await navigate("/");
-        }, AUTO_CLOSE_DELAY);
-      })
-      .catch(() => {
-        toastStore.set({
-          visible: true,
-          title: "Error al guardar los datos",
-          message: "Por favor, intenta nuevamente más tarde.",
-          emoji: "⚠️",
-          type: "error",
-          autoClose: true,
-          autoCloseDelay: AUTO_CLOSE_DELAY,
-        });
-      })
-      .finally(() => {
-        btnSubmit?.removeAttribute("disabled");
-      });
-  });
-};
-
-function main() {
-  onFormsubmit();
-}
-
-document.addEventListener("astro:page-load", main);
-document.addEventListener("DOMContentLoaded", main);
 ---
 
-<aside class="flex flex-col lg:flex-row items-center gap-8  p-6 rounded-lg transition-all lg:ms-3">
+<aside class="flex flex-col lg:flex-row items-center gap-8 p-6 rounded-lg transition-all lg:ms-3">
   <!-- Encabezado atractivo e imagen -->
   <div class="flex flex-col items-center lg:items-start gap-4 flex-1">
     <div class="text-center lg:text-left">
@@ -101,10 +23,14 @@ document.addEventListener("DOMContentLoaded", main);
         alt="Registro de usuario"
         class="size-48 object-contain m-auto mask-b-from-1.5"
       />
-      <span class="absolute top-2 left-0 bg-H-blue-900 text-white text-xs rounded-full px-4 py-2 shadow-lg animate-bounce duration-300 -z-20">
+      <span
+        class="absolute top-2 left-0 bg-H-blue-900 text-white text-xs rounded-full px-4 py-2 shadow-lg animate-bounce duration-300 -z-20"
+      >
         Desbloquea pedidos rápidos 🚀
       </span>
-      <span class="absolute bottom-2 right-0 bg-H-blue-700 text-white text-xs rounded-full px-4 py-2 shadow-lg animate-bounce duration-300 z-20">
+      <span
+        class="absolute bottom-2 right-0 bg-H-blue-700 text-white text-xs rounded-full px-4 py-2 shadow-lg animate-bounce duration-300 z-20"
+      >
         Accede a historial y soporte exclusivo 💬
       </span>
     </div>
@@ -116,14 +42,9 @@ document.addEventListener("DOMContentLoaded", main);
     class="flex flex-col gap-4 max-w-md w-full p-6 rounded-lg transition-colors bg-white dark:bg-H-blue-900 shadow lg:shadow-none"
   >
     <input type="hidden" name="userid" value={userId} />
-    <h2 class="text-xl font-bold text-H-blue-900 dark:text-white mb-2">
-      Registra tus datos
-    </h2>
+    <h2 class="text-xl font-bold text-H-blue-900 dark:text-white mb-2"> Registra tus datos </h2>
     <div class="flex flex-col gap-2">
-      <label
-        for="gender"
-        class="text-sm font-medium text-H-blue-900 dark:text-white"
-      >
+      <label for="gender" class="text-sm font-medium text-H-blue-900 dark:text-white">
         Género
       </label>
       <select
@@ -139,10 +60,7 @@ document.addEventListener("DOMContentLoaded", main);
       </select>
     </div>
     <div class="flex flex-col gap-2">
-      <label
-        for="phone"
-        class="text-sm font-medium text-H-blue-900 dark:text-white"
-      >
+      <label for="phone" class="text-sm font-medium text-H-blue-900 dark:text-white">
         Teléfono
       </label>
       <input
@@ -156,12 +74,7 @@ document.addEventListener("DOMContentLoaded", main);
       />
     </div>
     <div class="flex flex-col gap-2">
-      <label
-        for="age"
-        class="text-sm font-medium text-H-blue-900 dark:text-white"
-      >
-        Edad
-      </label>
+      <label for="age" class="text-sm font-medium text-H-blue-900 dark:text-white"> Edad </label>
       <input
         id="age"
         name="age"
@@ -179,8 +92,81 @@ document.addEventListener("DOMContentLoaded", main);
       <span>Guardar mis datos</span>
       <span
         class="ml-2 inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin transition-opacity duration-200 opacity-0 group-disabled:opacity-100"
-        aria-hidden="true"
-      />
+        aria-hidden="true"></span>
     </button>
   </form>
 </aside>
+
+<script>
+  import { API_USERS, URL_LOCAL_BACKEND } from "astro:env/client";
+  import { navigate } from "astro:transitions/client";
+  import { toastStore } from "src/stores/StoreToast";
+
+  const onFormsubmit = () => {
+    const form = document.getElementById("userDataForm") as HTMLFormElement | null;
+    if (!form) return;
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const btnSubmit = form.querySelector("button[type='submit']");
+      btnSubmit?.setAttribute("disabled", "true");
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+
+      if (!data.userid) return;
+
+      const url = URL_LOCAL_BACKEND + API_USERS;
+      const AUTO_CLOSE_DELAY = 2500;
+
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+        .then((resq) => {
+          if (!resq.ok) {
+            toastStore.set({
+              visible: true,
+              title: "Error al guardar los datos",
+              message: "Por favor, intenta nuevamente más tarde.",
+              emoji: "⚠️",
+              type: "error",
+              autoClose: true,
+              autoCloseDelay: AUTO_CLOSE_DELAY,
+            });
+            return;
+          }
+          toastStore.set({
+            visible: true,
+            title: "Datos guardados",
+            message: "Tus datos se han guardado correctamente.",
+            emoji: "✅",
+            type: "success",
+            autoClose: true,
+            autoCloseDelay: AUTO_CLOSE_DELAY,
+          });
+          setTimeout(async () => {
+            await navigate("/");
+          }, AUTO_CLOSE_DELAY);
+        })
+        .catch(() => {
+          toastStore.set({
+            visible: true,
+            title: "Error al guardar los datos",
+            message: "Por favor, intenta nuevamente más tarde.",
+            emoji: "⚠️",
+            type: "error",
+            autoClose: true,
+            autoCloseDelay: AUTO_CLOSE_DELAY,
+          });
+        })
+        .finally(() => {
+          btnSubmit?.removeAttribute("disabled");
+        });
+    });
+  };
+
+  document.addEventListener("astro:page-load", onFormsubmit);
+  document.addEventListener("DOMContentLoaded", onFormsubmit);
+</script>

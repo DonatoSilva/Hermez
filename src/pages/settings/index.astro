@@ -21,7 +21,7 @@ if (!sectionActivite) {
 ---
 
 <Layout sizeLogo="md" title="Configuración - Hermez" class="flex flex-col gap-4">
-  <SettingsMenu sectionActivite={sectionActivite} />
+  <SettingsMenu sectionActivite={sectionActivite ?? "profile"} />
   <main
     id="containerSectionsSetting"
     class="w-full min-h-fit flex flex-row overflow-x-scroll scrollbar-hide"
@@ -58,28 +58,33 @@ if (!sectionActivite) {
 </style>
 
 <script>
-  const checkboxes: NodeListOf<HTMLInputElement> =
-    document.querySelectorAll('input[name="settings"]');
+  const main = () => {
+    const checkboxes = document.querySelectorAll(
+      'input[name="settings"]'
+    ) as NodeListOf<HTMLInputElement>;
 
-  checkboxes?.forEach((checkbox) => {
-    checkbox.addEventListener("change", (e) => {
-      const target: HTMLInputElement = e.target as HTMLInputElement;
-      const checkId = target.id;
-      console.log(checkId);
+    checkboxes?.forEach((checkbox) => {
+      checkbox.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        const checkId = target.id;
+        console.log(checkId);
 
-      const newSection: HTMLElement | null = document.querySelector(
-        `section[id="section-${checkId}"]`
-      );
-      const oldSection: HTMLElement | null = document.querySelector("section.active");
+        const newSection: HTMLElement | null = document.querySelector(
+          `section[id="section-${checkId}"]`
+        );
+        const oldSection: HTMLElement | null = document.querySelector("section.active");
 
-      console.log(`newSection: `, newSection);
-      console.log(`oldSection: `, oldSection);
-      oldSection?.classList.remove("active");
-      newSection?.classList.add("active");
+        console.log(`newSection: `, newSection);
+        console.log(`oldSection: `, oldSection);
+        oldSection?.classList.remove("active");
+        newSection?.classList.add("active");
 
-      const url = new URL(window.location.href);
-      url.searchParams.set("section", checkId);
-      window.history.pushState({}, "", url);
+        const url = new URL(window.location.href);
+        url.searchParams.set("section", checkId);
+        window.history.pushState({}, "", url);
+      });
     });
-  });
+  };
+  document.addEventListener("astro:page-load", main);
+  document.addEventListener("DOMContentLoaded", main);
 </script>

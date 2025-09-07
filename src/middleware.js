@@ -19,7 +19,7 @@ export const onRequest = clerkMiddleware(
         const url = request.url
         locals.userExistsAPI = true
 
-        const hasUserDataCookie = cookies.get('data-user').value
+        const hasUserDataCookie = cookies.get('data-user')?.value
 
         if (hasUserDataCookie !== userId) {
             let userExists = false;
