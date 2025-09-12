@@ -1,4 +1,5 @@
 import React from "react";
+import { isOpen as statusOpenModal } from "src/stores/DeliverySelectStore";
 import type { HistoryItemProps } from "src/types/history/HistoryItemProps";
 
 export const statusColors = {
@@ -28,11 +29,17 @@ export const imageForType: Record<string, { url: string; alt: string }> = {
   },
 };
 
-function HistoryItem({ price, address, status, type }: HistoryItemProps) {
+function HistoryItem({ price, address, status, type, id }: HistoryItemProps) {
   const { url, alt } = imageForType[type] || {};
 
   return (
-    <div className="flex relative md:flex-row items-center justify-between p-4 rounded-lg bg-H-blue-100 dark:bg-gray-800 overflow-auto w-full group cursor-pointer">
+    <div
+      className="flex relative md:flex-row items-center justify-between p-4 rounded-lg bg-H-blue-100 dark:bg-gray-800 overflow-auto w-full group cursor-pointer"
+      id={id}
+      onClick={() => {
+        statusOpenModal.set(true)
+      }}
+    >
       <img
         src={url}
         alt={alt}

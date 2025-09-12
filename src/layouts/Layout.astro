@@ -12,11 +12,7 @@ interface LayoutProps {
   class?: string;
 }
 
-const {
-  title = "Hermez Domicilio",
-  class: className = "",
-  sizeLogo,
-} = Astro.props as LayoutProps;
+const { title = "Hermez Domicilio", class: className = "", sizeLogo } = Astro.props as LayoutProps;
 
 const orgId: string | null = Astro.locals.orgId;
 ---
@@ -66,5 +62,5 @@ const orgId: string | null = Astro.locals.orgId;
       <UserProfile className="lg:hidden" position="up" />
     </div>
     <script src="../scripts/Clerk/organizationHandler.js"></script>
-  </body>
-</html>
+  </body></html
+>

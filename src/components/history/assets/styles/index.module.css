@@ -1,0 +1,73 @@
+.dialog {
+  animation: fade-out 0.5s ease-out;
+  transform-origin: bottom center;
+  &::backdrop {
+    animation: backdrop-fade-in 0.4s ease-out forwards;
+  }
+}
+
+.dialog[open] {
+  animation: fade-in 0.5s ease-out;
+}
+
+.dialog[open]::backdrop {
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  animation: backdrop-fade-in 0.4s ease-out forwards;
+}
+/* Animation keyframes */
+@keyframes fade-in {
+  0% {
+    transform: scaleY(0);
+    display: none;
+  }
+
+  50% {
+    transform: scaleY(1.02);
+    display: block;
+  }
+
+  75% {
+    transform: scaleY(0.98);
+  }
+
+  100% {
+    transform: scaleY(1);
+    display: block;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    transform: scaleY(1);
+    display: block;
+  }
+
+  25% {
+    transform: scaleY(1.02);
+  }
+
+  50% {
+    transform: scaleY(0.98);
+  }
+
+  100% {
+    transform: scaleY(0);
+    display: none;
+  }
+}
+
+@keyframes backdrop-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

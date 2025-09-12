@@ -21,7 +21,7 @@ export const onRequest = clerkMiddleware(
 
         const hasUserDataCookie = cookies.get('data-user')?.value
 
-        if (hasUserDataCookie !== userId) {
+        if (userId && hasUserDataCookie !== userId) {
             let userExists = false;
 
             try {

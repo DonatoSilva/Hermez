@@ -1,15 +1,13 @@
 ---
 import type { HistoryItemProps } from "src/types/history/HistoryItemProps";
-import {
-  statusColors,
-  imageForType,
-} from "@components/history/historyItem/HistoryItem";
+import { statusColors, imageForType } from "@components/history/historyItem/HistoryItem";
 
-const { price, address, status, type } = Astro.props as HistoryItemProps;
+const { price, address, status, type, id } = Astro.props as HistoryItemProps;
 const { url, alt } = imageForType[type] || {};
 ---
 
 <div
+  id={id}
   class="flex relative md:flex-row items-center justify-between p-4 rounded-lg bg-H-blue-100 dark:bg-gray-800 overflow-auto w-full group cursor-pointer"
 >
   <img

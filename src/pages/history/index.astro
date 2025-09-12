@@ -5,6 +5,7 @@ import ContentItems from "@components/history/ContentItems.astro";
 import UserRegistrationForm from "@components/user/UserRegistrationForm.astro";
 import HistoryFilterSection from "@components/history/HistoryFilterSection.astro";
 import AccumulatedAmountCard from "@components/history/AccumulatedAmountCard.astro";
+import DeliveryDetails from "@components/history/deliverysDetails/DeliveryDetails";
 
 const { userId } = Astro.locals.auth();
 
@@ -23,11 +24,33 @@ const userExistsAPI = Astro.locals.userExistsAPI;
         <AccumulatedAmountCard amount="$12.000" description="Monto acumulado" />
         <section class="flex gap-4 flex-col">
           <h5 class="text-lg font-semibold">Historial de solicitudes</h5>
+          <DeliveryDetails client:load />
           <p class="text-sm text-gray-600 dark:text-gray-400">hoy</p>
           <ContentItems>
-            <HistoryItem type="moto" price={"10000"} address="Calle Falsa 123" status="cancelado" />
-            <HistoryItem type="moto" price={"10000"} address="Calle Falsa 123" status="cancelado" />
-            <HistoryItem type="moto" price={"10000"} address="Calle 5 #20-30" status="cancelado" />
+            <HistoryItem
+              id="add32"
+              type="moto"
+              price={"10000"}
+              address="Calle Falsa 123"
+              status="cancelado"
+              client:visible
+            />
+            <HistoryItem
+              id="add33"
+              type="moto"
+              price={"10000"}
+              address="Calle Falsa 123"
+              status="cancelado"
+              client:visible
+            />
+            <HistoryItem
+              id="add34"
+              type="moto"
+              price={"10000"}
+              address="Calle 5 #20-30"
+              status="cancelado"
+              client:visible
+            />
           </ContentItems>
         </section>
       </main>

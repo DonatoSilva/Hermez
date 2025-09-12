@@ -1,6 +1,5 @@
 ---
 import { SignUp } from "@clerk/astro/components";
-import Toast from "../components/Toast.astro";
 import Layout from "./Layout.astro";
 import { toastStore } from "src/stores/StoreToast";
 
@@ -13,14 +12,7 @@ interface Props {
   imageAlt: string;
 }
 
-const {
-  title,
-  signUpPath,
-  signInUrl,
-  fallbackRedirectUrl,
-  imageSrc,
-  imageAlt,
-} = Astro.props;
+const { title, signUpPath, signInUrl, fallbackRedirectUrl, imageSrc, imageAlt } = Astro.props;
 
 if (Astro.request.url) {
   const url = new URL(Astro.request.url);
@@ -58,17 +50,14 @@ if (Astro.request.url) {
           fallbackRedirectUrl={fallbackRedirectUrl}
           appearance={{
             elements: {
-              formButtonPrimary:
-                "bg-H-blue-900 hover:bg-H-blue-800 transition-colors",
+              formButtonPrimary: "bg-H-blue-900 hover:bg-H-blue-800 transition-colors",
               card: "shadow-none bg-transparent",
               headerTitle: "text-H-blue-900",
               headerSubtitle: "text-H-blue-700",
               socialButtonsBlockButton:
                 "border-H-blue-900/20 hover:bg-H-blue-900/5 transition-colors",
-              formFieldInput:
-                "border-H-blue-900/20 focus:border-H-blue-900 transition-colors",
-              footerActionLink:
-                "text-H-blue-900 hover:text-H-blue-800 transition-colors",
+              formFieldInput: "border-H-blue-900/20 focus:border-H-blue-900 transition-colors",
+              footerActionLink: "text-H-blue-900 hover:text-H-blue-800 transition-colors",
             },
           }}
         />

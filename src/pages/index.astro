@@ -54,7 +54,7 @@ const userExistsAPI = Astro.locals.userExistsAPI;
             </button>
           </div>
           <ContentItems>
-            <HistoryItem type="moto" price="4000" address="Cra 10 #20-30 ➝ Av. 5 #45-12" status="en camino"/>
+            <HistoryItem id="add32" type="moto" price="4000" address="Cra 10 #20-30 ➝ Av. 5 #45-12" status="en camino"/>
           </ContentItems>
         </section>
       ) : (
@@ -146,7 +146,6 @@ const userExistsAPI = Astro.locals.userExistsAPI;
     if (!btnHistoryToday) return;
 
     btnHistoryToday.addEventListener("click", () => {
-      console.log("btnHistoryToday clicked");
       navigate("/history");
     });
   }
