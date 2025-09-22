@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { isOpen as statusOpenModal } from 'src/stores/DeliverySelectStore';
 import styles from '../assets/styles/index.module.css'
+import BodyDetails from './BodyDetails';
 
 const DeliveryDetails: React.FC = () => {
     const dialogRef = useRef<HTMLDialogElement>(null)
@@ -24,17 +25,22 @@ const DeliveryDetails: React.FC = () => {
         statusOpenModal.set(isOpen)
     }, [isOpen])
 
+    const handleClose: () => void = () => {
+        setIsOpen(false)
+    }
+
     return (
         <dialog
             ref={dialogRef}
-            className={` fixed top-auto mx-auto w-full max-w-7xl h-[80vh] max-h-[850px] rounded-t-3xl bg-white p-6 z-10 ${styles.dialog}`}
+            className={`fixed top-auto mx-auto w-full max-w-7xl h-[80vh] max-h-[850px] rounded-t-3xl bg-H-blue-100 dark:bg-H-black dark:text-H-blue-100 p-6 z-10 ${styles.dialog}`}
         >
-            <div className="mx-auto w-full max-w-[1224px] h-full">
+            <div className="mx-auto w-full max-w-[1224px] h-full flex flex-col gap-4">
+                <div className='w-full max-w-52 h-2 bg-gray-300 dark:bg-H-blue-900 rounded-full mx-auto transition-colors duration-200 cursor-pointer'></div>
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-2xl font-semibold">Detalles del domicilio</h2>
                     <button
-                        onClick={() => setIsOpen(false)}
-                        className="p-2 hover:bg-gray-100 rounded-full border-2 border-transparent hover:border-H-blue-300 cursor-pointer transition-all"
+                        onClick={handleClose}
+                        className="p-2 dark:bg-gray-800 hover:bg-H-blue-300 rounded-full border-2 border-transparent hover:border-H-blue-300 cursor-pointer transition-all"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +58,7 @@ const DeliveryDetails: React.FC = () => {
                         </svg>
                     </button>
                 </div>
-                {/* Content goes here */}
+                <BodyDetails />
             </div>
         </dialog>
     );

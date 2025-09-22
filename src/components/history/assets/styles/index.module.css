@@ -12,10 +12,11 @@
 
 .dialog[open]::backdrop {
   backdrop-filter: blur(8px);
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.8);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   animation: backdrop-fade-in 0.4s ease-out forwards;
 }
+
 /* Animation keyframes */
 @keyframes fade-in {
   0% {

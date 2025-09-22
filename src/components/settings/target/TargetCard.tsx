@@ -1,6 +1,6 @@
 import React from "react";
 import type { FC } from "react";
-import MenuIcon from "src/components/icons/MenuIcon";
+import MenuIcon from "@header/icons/MenuIcon";
 import type { TargetCardProps } from "src/types/setting/TargetProps";
 
 const TargetCard: FC<TargetCardProps> = ({ title, last, expiry, id }) => {
