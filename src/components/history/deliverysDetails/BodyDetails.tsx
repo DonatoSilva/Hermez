@@ -3,8 +3,8 @@ import { MessageOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons'
 
 const BodyDetails = () => {
     return (
-        <div className='w-full h-full flex flex-col lg:flex-row gap-8 dark:text-white text-H-black'>
-            <div className='flex-1 flex flex-col gap-8'>
+        <div className='w-full h-full flex flex-col lg:flex-row lg:items-start gap-8 dark:text-white text-H-black'>
+            <div className='flex-1 flex flex-col gap-8 lg:pb-8'>
                 <div className='flex justify-between items-start'>
                     <span className='bg-amber-500 text-white px-2 py-0.5 rounded-md'>En espera</span >
                     <div className='flex flex-col items-end'>
@@ -12,7 +12,7 @@ const BodyDetails = () => {
                         <b>10min</b>
                     </div>
                 </div>
-                <div className='bg-white dark:bg-gray-800 rounded-lg p-6'>
+                <div className='bg-white dark:bg-transparent rounded-lg p-6'>
                     <div className='flex items-center justify-between mb-6'>
                         <div className='flex items-center gap-4'>
                             <img
@@ -56,14 +56,14 @@ const BodyDetails = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                         <button
-                            className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg transition-colors"
+                            className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg transition-colors cursor-pointer"
                             onClick={() => window.open('tel:+123456789')}
                         >
                             <PhoneOutlined className="text-xl" />
                             <span className="font-medium">Llamar</span>
                         </button>
                         <button
-                            className="flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 text-white py-3 rounded-lg transition-colors"
+                            className="flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 text-white py-3 rounded-lg transition-colors cursor-pointer"
                             onClick={() => window.open('sms:+123456789')}
                         >
                             <MessageOutlined className="text-xl" />
@@ -71,9 +71,6 @@ const BodyDetails = () => {
                         </button>
                     </div>
                 </div>
-            </div>
-
-            <div className='lg:w-2/5 flex flex-col gap-8'>
                 <div className='rounded-lg bg-H-blue-900 px-8 py-4 text-white cursor-crosshair hover:shadow-md shadow-gray-500 transition-shadow duration-500'>
                     <div className="flex items-start gap-4">
                         <div className="flex flex-col items-center gap-2">
@@ -94,6 +91,9 @@ const BodyDetails = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div className='lg:w-2/5 flex flex-col gap-8 lg:h-full lg:justify-between lg:pb-8'>
                 <div className="flex items-center gap-4 p-4 rounded-lg">
                     <div className="flex-1">
                         <h3 className="text-lg font-semibold mb-1">Tipo de Envío</h3>
@@ -126,6 +126,28 @@ const BodyDetails = () => {
                             <PlusOutlined />
                         </button>
                     </div>
+                </div>
+                <div className="rounded-lg bg-H-blue-900 p-4 text-white">
+                    <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-lg font-semibold text-gray-200">Detalles de Pago</h4>
+                        <div className="flex items-center gap-2">
+                            <span className="bg-H-blue-300 text-H-blue-900 px-3 py-1 rounded-full text-sm">
+                                Nequi
+                            </span>
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-gray-300">Valor del domicilio</span>
+                        <span className="text-xl font-bold">$12.500</span>
+                    </div>
+                </div>
+                <div className="flex gap-4 mt-4">
+                    <button className="cursor-pointer flex-1 bg-H-blue-900 hover:bg-H-blue-700 text-white py-2 px-4 rounded-lg transition-colors font-medium">
+                        Listo
+                    </button>
+                    <button className="cursor-pointer flex-1 border-2 border-red-500 text-red-500 hover:bg-red-50 py-2 px-4 rounded-lg transition-colors font-medium">
+                        Cancelar
+                    </button>
                 </div>
             </div>
         </div>
