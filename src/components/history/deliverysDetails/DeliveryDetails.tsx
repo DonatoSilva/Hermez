@@ -16,8 +16,18 @@ const DeliveryDetails: React.FC = () => {
                 dialogRef.current?.close()
             }
         })
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                handleClose()
+            }
+        }
+
+        document.addEventListener('keydown', handleKeyDown)
+
         return () => {
             unsubscribe()
+            document.removeEventListener('keydown', handleKeyDown)
         }
     }, [])
 

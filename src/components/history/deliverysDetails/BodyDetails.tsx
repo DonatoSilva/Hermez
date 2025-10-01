@@ -93,7 +93,7 @@ const BodyDetails = () => {
                 </div>
             </div>
 
-            <div className='lg:w-2/5 flex flex-col gap-8 lg:h-full lg:justify-between lg:pb-8'>
+            <div className='lg:w-2/5 flex flex-col gap-8 lg:h-full lg:justify-between pb-8'>
                 <div className="flex items-center gap-4 p-4 rounded-lg">
                     <div className="flex-1">
                         <h3 className="text-lg font-semibold mb-1">Tipo de Envío</h3>

@@ -1,25 +1,248 @@
----
-interface Props {
-  filterText: string;
-}
+<div class="w-full max-w-3xl m-auto">
+  <div class="min-w-full flex flex-row justify-between">
+    <h2 class="text-lg whitespace-pre text-H-blue-900 dark:text-white">Filtros</h2>
 
-const { filterText } = Astro.props;
----
-
-<div class="w-full max-w-3xl mx-auto flex flex-row justify-between">
-  <p class="text-lg whitespace-pre">{filterText}</p>
-
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    class="w-8 h-8 text-gray-700 dark:text-gray-200 cursor-pointer"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    stroke-width="2"
+    <svg
+      id="filter-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-8 h-8 text-gray-700 dark:text-gray-200 cursor-pointer"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h18M6 10h12M9 15h6"></path>
+    </svg>
+  </div>
+  <dialog
+    id="filter-modal"
+    class="m-auto w-full max-w-md rounded-lg bg-H-blue-100 dark:bg-H-black dark:text-H-blue-100 p-6 z-10 overflow-y-auto transition-all duration-200"
   >
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      d="M3 5h18M6 10h12M9 15h6"></path>
-  </svg>
+    <div class="mx-auto w-full h-full flex flex-col gap-4">
+      <h3 class="text-2xl font-semibold text-H-blue-900 dark:text-white">Filtros</h3>
+      <hr class="border-H-blue-500 dark:border-H-blue-700" />
+      <article id="filter-status" class="p-4 rounded-md flex flex-col gap-2">
+        <h3 class="font-semibold text-H-blue-900 dark:text-white">Estado</h3>
+        <div class="flex flex-row gap-4 flex-wrap">
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="status" value="pending" class="hidden" />
+            <span class="dark:text-gray-300">Pendiente</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="status" value="completed" class="hidden" />
+            <span class="dark:text-white">Completado</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="status" value="cancelled" class="hidden" />
+            <span class="dark:text-white">Cancelado</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="status" value="on-the-way" class="hidden" />
+            <span class="dark:text-white">En camino</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="status" value="all" class="hidden" checked />
+            <span class="dark:text-white">Todos</span>
+          </label>
+        </div>
+      </article>
+
+      <hr class="border-H-blue-500 dark:border-H-blue-700" />
+      <article id="filter-payment" class="p-4 rounded-md flex flex-col gap-2">
+        <h3 class="font-semibold text-H-blue-900 dark:text-white">Tipo de pago</h3>
+        <div class="flex flex-row gap-4 flex-wrap">
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="payment" value="card" class="hidden" />
+            <span class="dark:text-white">Tarjeta</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="payment" value="cash" class="hidden" />
+            <span class="dark:text-white">Efectivo</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="payment" value="transfer" class="hidden" />
+            <span class="dark:text-white">Transferencia</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="payment" value="all" class="hidden" checked />
+            <span class="dark:text-white">Todos</span>
+          </label>
+        </div>
+      </article>
+      <hr class="border-H-blue-500 dark:border-H-blue-700" />
+      <article id="filter-month" class="p-4 rounded-md flex flex-col gap-2">
+        <h3 class="font-semibold text-H-blue-900 dark:text-white">Mes</h3>
+        <div class="flex flex-row gap-4 flex-wrap">
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="1" class="hidden" />
+            <span class="dark:text-white">Enero</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="2" class="hidden" />
+            <span class="dark:text-white">Febrero</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="3" class="hidden" />
+            <span class="dark:text-white">Marzo</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="4" class="hidden" />
+            <span class="dark:text-white">Abril</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="5" class="hidden" />
+            <span class="dark:text-white">Mayo</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="6" class="hidden" />
+            <span class="dark:text-white">Junio</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="7" class="hidden" />
+            <span class="dark:text-white">Julio</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="8" class="hidden" />
+            <span class="dark:text-white">Agosto</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="9" class="hidden" />
+            <span class="dark:text-white">Septiembre</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="10" class="hidden" />
+            <span class="dark:text-white">Octubre</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="11" class="hidden" />
+            <span class="dark:text-white">Noviembre</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="12" class="hidden" />
+            <span class="dark:text-white">Diciembre</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-H-blue-800 dark:text-white dark:has-[:checked]:bg-H-blue-600"
+          >
+            <input type="radio" name="month" value="all" class="hidden" checked />
+            <span class="dark:text-white">Todos</span>
+          </label>
+        </div>
+      </article>
+      <div
+        class="flex justify-end gap-4 mt-4 [&>button]:px-4 [&>button]:py-2 [&>button]:rounded-md [&>button]:cursor-pointer"
+      >
+        <button
+          id="clear-filters"
+          class="bg-gray-300 text-gray-800 dark:text-black hover:bg-gray-400 dark:hover:bg-H-gray-700 transition-colors duration-200"
+          >Limpiar filtro</button
+        >
+        <button
+          id="apply-filters"
+          class="bg-H-blue-700 text-white dark:bg-H-blue-600 hover:bg-H-blue-600 dark:hover:bg-H-blue-500 transition-colors duration-200"
+          >Aplicar filtro</button
+        >
+      </div>
+    </div>
+  </dialog>
 </div>
+
+<style>
+  dialog::backdrop {
+    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.5);
+    transition:
+      backdrop-filter 0.3s ease-in-out,
+      background-color 0.3s ease-in-out;
+  }
+
+  dialog[open]::backdrop {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  dialog {
+    opacity: 0;
+    transform: scale(0.95);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease,
+      display 0.3s ease allow-discrete;
+  }
+
+  dialog[open] {
+    opacity: 1;
+    transform: scale(1);
+
+    @starting-style {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+</style>
+
+<script>
+  const filterIcon = document.getElementById("filter-icon");
+  const filterModal = document.getElementById("filter-modal") as HTMLDialogElement;
+  const clearFiltersButton = document.getElementById("clear-filters");
+  const applyFiltersButton = document.getElementById("apply-filters");
+
+  filterIcon?.addEventListener("click", () => {
+    if (filterModal) {
+      filterModal.showModal();
+    }
+  });
+
+  clearFiltersButton?.addEventListener("click", () => {
+    if (filterModal) {
+      filterModal.close();
+    }
+  });
+
+  applyFiltersButton?.addEventListener("click", () => {
+    if (filterModal) {
+      filterModal.close();
+    }
+  });
+</script>
