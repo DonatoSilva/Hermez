@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Children, useEffect, useRef, useState } from 'react';
 import { isOpen as statusOpenModal } from 'src/stores/DeliverySelectStore';
 import styles from '../assets/styles/index.module.css'
-import BodyDetails from './BodyDetails';
 
-const DeliveryDetails: React.FC = () => {
+const DeliveryDetails: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
     const dialogRef = useRef<HTMLDialogElement>(null)
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
@@ -47,7 +46,7 @@ const DeliveryDetails: React.FC = () => {
             <div className="mx-auto w-full max-w-[1224px] h-full flex flex-col gap-4">
                 <div className='w-full max-w-52 h-2 bg-gray-300 dark:bg-H-blue-900 rounded-full mx-auto transition-colors duration-200 cursor-pointer'></div>
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-semibold">Detalles del domicilio</h2>
+                    <h2 className="text-2xl font-semibold">{title}</h2>
                     <button
                         onClick={handleClose}
                         className="p-2 dark:bg-gray-800 hover:bg-H-blue-300 rounded-full border-2 border-transparent hover:border-H-blue-300 cursor-pointer transition-all"
@@ -68,7 +67,7 @@ const DeliveryDetails: React.FC = () => {
                         </svg>
                     </button>
                 </div>
-                <BodyDetails />
+                {children}
             </div>
         </dialog>
     );

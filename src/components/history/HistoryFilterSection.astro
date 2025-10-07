@@ -223,26 +223,31 @@
 </style>
 
 <script>
-  const filterIcon = document.getElementById("filter-icon");
-  const filterModal = document.getElementById("filter-modal") as HTMLDialogElement;
-  const clearFiltersButton = document.getElementById("clear-filters");
-  const applyFiltersButton = document.getElementById("apply-filters");
+  const main = () => {
+    const filterIcon = document.getElementById("filter-icon");
+    const filterModal = document.getElementById("filter-modal") as HTMLDialogElement;
+    const clearFiltersButton = document.getElementById("clear-filters");
+    const applyFiltersButton = document.getElementById("apply-filters");
 
-  filterIcon?.addEventListener("click", () => {
-    if (filterModal) {
-      filterModal.showModal();
-    }
-  });
+    filterIcon?.addEventListener("click", () => {
+      if (filterModal) {
+        filterModal.showModal();
+      }
+    });
 
-  clearFiltersButton?.addEventListener("click", () => {
-    if (filterModal) {
-      filterModal.close();
-    }
-  });
+    clearFiltersButton?.addEventListener("click", () => {
+      if (filterModal) {
+        filterModal.close();
+      }
+    });
 
-  applyFiltersButton?.addEventListener("click", () => {
-    if (filterModal) {
-      filterModal.close();
-    }
-  });
+    applyFiltersButton?.addEventListener("click", () => {
+      if (filterModal) {
+        filterModal.close();
+      }
+    });
+  };
+
+  document.addEventListener("astro:page-load", main);
+  document.addEventListener("DOMContentLoaded", main);
 </script>

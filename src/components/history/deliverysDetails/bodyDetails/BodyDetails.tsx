@@ -1,7 +1,31 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import { MessageOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
+import styles from './styles/fill-Bar.module.css'
 
 const BodyDetails = () => {
+    const [isPressing, setIsPressing] = useState<boolean | undefined>(undefined)
+    const timeoutId = useRef<NodeJS.Timeout | null>(null)
+    const CANCEL_TIMER = 2000
+
+    const handlePress = () => {
+        setIsPressing(true)
+        timeoutId.current = setTimeout(() => {
+            console.log('Cancelar domicilio')
+            setIsPressing(false)
+
+            timeoutId.current = null
+        }, CANCEL_TIMER)
+    }
+
+    const handleRelease = () => {
+        if (timeoutId.current) {
+            setIsPressing(false)
+            console.log('Liberar cancelar domicilio')
+            clearTimeout(timeoutId.current)
+            timeoutId.current = null
+        }
+    }
+
     return (
         <div className='w-full h-full flex flex-col lg:flex-row lg:items-start gap-8 dark:text-white text-H-black'>
             <div className='flex-1 flex flex-col gap-8 lg:pb-8'>
@@ -145,8 +169,8 @@ const BodyDetails = () => {
                     <button className="cursor-pointer flex-1 bg-H-blue-900 hover:bg-H-blue-700 text-white py-2 px-4 rounded-lg transition-colors font-medium">
                         Listo
                     </button>
-                    <button className="cursor-pointer flex-1 border-2 border-red-500 text-red-500 hover:bg-red-50 py-2 px-4 rounded-lg transition-colors font-medium">
-                        Cancelar
+                    <button onMouseDown={handlePress} onMouseUp={handleRelease} onMouseLeave={handleRelease} className={`relative overflow-hidden bg-transparent cursor-pointer flex-1 border-2 border-red-500 text-red-500 py-2 px-4 rounded-lg transition-all font-medium ${styles["animate-container"]} ${isPressing === true ? styles["animate-fill-bar"] : isPressing === false ? styles["animate-fill-bar-reverse"] : ''}`}>
+                        Cancelar Domicilio
                     </button>
                 </div>
             </div>

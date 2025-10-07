@@ -1,0 +1,48 @@
+.animate-container {
+    &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background-color: rgba(255, 0, 0, 0.5);
+        transform-origin: left;
+    }
+
+    &.animate-fill-bar::after {
+        animation: fill-bar 2s ease-in-out forwards;
+    }
+
+    &.animate-fill-bar-reverse::after {
+        animation: fill-bar-reverse 0.3s ease-out forwards;
+    }
+}
+
+
+
+@keyframes fill-bar {
+    0% {
+        width: 0;
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.5;
+    }
+    100% {
+        width: 100%;
+        opacity: 0.5;
+    }
+}
+
+@keyframes fill-bar-reverse {
+    from {
+        width: 100%;
+        opacity: 0.5;
+        transform: scaleX(1);
+    }
+    to {
+        width: 0;
+        opacity: 0;
+        transform: scaleX(0);
+    }
+}
