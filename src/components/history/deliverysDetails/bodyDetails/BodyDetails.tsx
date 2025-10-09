@@ -1,16 +1,21 @@
 import React, { useRef, useState } from 'react'
 import { MessageOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
 import styles from './styles/fill-Bar.module.css'
+import { isOpen } from 'src/stores/DeliverySelectStore';
 
 const BodyDetails = () => {
     const [isPressing, setIsPressing] = useState<boolean | undefined>(undefined)
     const timeoutId = useRef<NodeJS.Timeout | null>(null)
     const CANCEL_TIMER = 2000
 
+    const onClose = () => {
+        isOpen.set(false)
+    }
+
     const handlePress = () => {
         setIsPressing(true)
         timeoutId.current = setTimeout(() => {
-            console.log('Cancelar domicilio')
+            onClose()
             setIsPressing(false)
 
             timeoutId.current = null
@@ -166,8 +171,8 @@ const BodyDetails = () => {
                     </div>
                 </div>
                 <div className="flex gap-4 mt-4">
-                    <button className="cursor-pointer flex-1 bg-H-blue-900 hover:bg-H-blue-700 text-white py-2 px-4 rounded-lg transition-colors font-medium">
-                        Listo
+                    <button onClick={onClose} className="cursor-pointer flex-1 bg-H-blue-900 hover:bg-H-blue-700 text-white py-2 px-4 rounded-lg transition-colors font-medium">
+                        Cerrar
                     </button>
                     <button onMouseDown={handlePress} onMouseUp={handleRelease} onMouseLeave={handleRelease} className={`relative overflow-hidden bg-transparent cursor-pointer flex-1 border-2 border-red-500 text-red-500 py-2 px-4 rounded-lg transition-all font-medium ${styles["animate-container"]} ${isPressing === true ? styles["animate-fill-bar"] : isPressing === false ? styles["animate-fill-bar-reverse"] : ''}`}>
                         Cancelar Domicilio
