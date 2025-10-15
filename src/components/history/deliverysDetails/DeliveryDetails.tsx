@@ -6,6 +6,13 @@ const DeliveryDetails: React.FC<{ title: string; children: React.ReactNode }> = 
     const dialogRef = useRef<HTMLDialogElement>(null)
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
+    const handleClose: () => void = (event?: MouseEvent) => {
+        if (event?.target === dialogRef.current) {
+            setIsOpen(false)
+            return
+        }
+    }
+
     useEffect(() => {
         const unsubscribe = statusOpenModal.subscribe((status) => {
             setIsOpen(status)
@@ -27,23 +34,14 @@ const DeliveryDetails: React.FC<{ title: string; children: React.ReactNode }> = 
 
         return () => {
             unsubscribe()
-            dialogRef.current?.removeEventListener('click', handleClose)
             document.removeEventListener('keydown', handleKeyDown)
+            dialogRef.current?.removeEventListener('click', handleClose)
         }
     }, [])
 
     useEffect(() => {
         statusOpenModal.set(isOpen)
     }, [isOpen])
-
-    const handleClose: () => void = (event?: MouseEvent) => {
-        if (event?.target === dialogRef.current) {
-            setIsOpen(false)
-            return
-        }
-
-        setIsOpen(false)
-    }
 
     return (
         <dialog
