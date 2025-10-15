@@ -82,7 +82,7 @@
           <label
             class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
           >
-            <input type="radio" name="payment" value="all" class="hidden" checked />
+            <input type="radio" name="payment" value="" class="hidden" checked />
             <span class="dark:text-white">Todos</span>
           </label>
         </div>
@@ -164,9 +164,9 @@
             <span class="dark:text-white">Diciembre</span>
           </label>
           <label
-            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-H-blue-800 dark:text-white dark:has-[:checked]:bg-H-blue-600"
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-[:checked]:bg-H-blue-700 has-[:checked]:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-[:checked]:bg-H-blue-600"
           >
-            <input type="radio" name="month" value="all" class="hidden" checked />
+            <input type="radio" name="month" value="" class="hidden" checked />
             <span class="dark:text-white">Todos</span>
           </label>
         </div>
@@ -237,17 +237,60 @@
 
     clearFiltersButton?.addEventListener("click", () => {
       if (filterModal) {
+        const selectedStatus: HTMLInputElement | null = document.querySelector(
+          'input[name="status"][value=""]'
+        );
+        const selectedPayment: HTMLInputElement | null = document.querySelector(
+          'input[name="payment"][value=""]'
+        );
+        const selectedMonth: HTMLInputElement | null = document.querySelector(
+          'input[name="month"][value=""]'
+        );
+
+        if (selectedStatus) {
+          selectedStatus.checked = true;
+        }
+        if (selectedPayment) {
+          selectedPayment.checked = true;
+        }
+        if (selectedMonth) {
+          selectedMonth.checked = true;
+        }
+
+        /// Limpiamos los valores de los queryParams y resetamos los inputs a su valor por defecto
         filterModal.close();
       }
     });
 
     applyFiltersButton?.addEventListener("click", () => {
       if (filterModal) {
+        const selectedStatus: HTMLInputElement | null = document.querySelector(
+          'input[name="status"]:checked'
+        );
+        const selectedPayment: HTMLInputElement | null = document.querySelector(
+          'input[name="payment"]:checked'
+        );
+        const selectedMonth: HTMLInputElement | null = document.querySelector(
+          'input[name="month"]:checked'
+        );
+
+        const urlSearchParams: Record<string, string> = {};
+
+        if (selectedStatus?.value) {
+          urlSearchParams.status = selectedStatus.value;
+        }
+        if (selectedPayment?.value) {
+          urlSearchParams.payment = selectedPayment.value;
+        }
+        if (selectedMonth?.value) {
+          urlSearchParams.month = selectedMonth.value;
+        }
+
+        // logramos hacer la url de queryParams
         filterModal.close();
       }
     });
   };
 
   document.addEventListener("astro:page-load", main);
-  document.addEventListener("DOMContentLoaded", main);
 </script>

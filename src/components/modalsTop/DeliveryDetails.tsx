@@ -1,6 +1,6 @@
-import React, { Children, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { isOpen as statusOpenModal } from 'src/stores/DeliverySelectStore';
-import styles from '../assets/styles/index.module.css'
+import styles from './styles/index.module.css'
 
 const DeliveryDetails: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
     const dialogRef = useRef<HTMLDialogElement>(null)
