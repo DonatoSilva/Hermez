@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { isOpen as statusOpenModal } from 'src/stores/DeliverySelectStore';
 import styles from './styles/index.module.css'
 
-const DeliveryDetails: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
+const Modal: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
     const dialogRef = useRef<HTMLDialogElement>(null)
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
@@ -54,7 +54,7 @@ const DeliveryDetails: React.FC<{ title: string; children: React.ReactNode }> = 
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-2xl font-semibold">{title}</h2>
                         <button
-                            onClick={handleClose}
+                            onClick={() => setIsOpen(false)}
                             className="p-2 dark:bg-gray-800 hover:bg-H-blue-300 rounded-full border-2 border-transparent hover:border-H-blue-300 cursor-pointer transition-all"
                         >
                             <svg
@@ -80,4 +80,4 @@ const DeliveryDetails: React.FC<{ title: string; children: React.ReactNode }> = 
     );
 };
 
-export default DeliveryDetails;
+export default Modal;

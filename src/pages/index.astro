@@ -1,10 +1,8 @@
 ---
+import HomeClientePage from "@components/roles/client/home/HomePage.astro";
 import UserRegistrationForm from "../components/user/UserRegistrationForm.astro";
 import Layout from "@layouts/Layout.astro";
-import Banner from "@components/banner/Banner.astro";
-import Button from "@components/button/Button.astro";
-import HistoryItem from "@components/history/historyItem/HistoryItem.js";
-import ContentItems from "@components/history/ContentItems.astro";
+import HomeDeleveryPage from "@components/roles/delivery/home/HomePage.astro";
 
 const { userId } = Astro.locals.auth();
 
@@ -12,6 +10,7 @@ if (!userId) {
   Astro.redirect("/sign-in");
 }
 
+const isClient = Astro.locals.userRole === "User";
 const userExistsAPI = Astro.locals.userExistsAPI;
 ---
 
@@ -19,137 +18,14 @@ const userExistsAPI = Astro.locals.userExistsAPI;
   <section>
     {
       userExistsAPI ? (
-        <Banner title="Nosotros podemos" className="gap-4">
-          <p
-            slot="optional-content"
-            class="text-H-blue-100 text-balance text-base font-normal max-w-prose z-10"
-          >
-            Nos encanta que seas ese usuario que confía y prefiere nuestros
-            servicios 🔥🚀.
-          </p>
-          <Button slot="button" color="bg-H-blue-900 text-white">
-            Pedir domicilio
-          </Button>
-          <img
-            slot="image"
-            src="/images/domiciliarioConCajas-min.webp"
-            alt="Domiciliario con cajas"
-            class="min-w-26 w-full max-w-48 h-full object-cover z-0 transition-all md:max-w-62 blur-xs"
-          />
-        </Banner>
-        <section id="historyToday" class="box-border flex flex-col gap-[15px] items-start justify-start overflow-clip py-2.5 w-full">
-          <div class="flex flex-row justify-between items-center w-full">
-            <h3 class="font-normal text-H-black dark:text-white text-2xl text-nowrap">
-              Historial solicitudes
-            </h3>
-            <button
-              id="btnHistoryToday"
-              type="button"
-              class="ml-4 flex items-center gap-1 px-3 py-2 text-H-blue-300 hover:text-H-blue-900 transition-colors transform-border duration-300 text-sm border border-H-blue-300 hover:border-H-blue-500 rounded-3xl cursor-pointer"
-            >
-              Mas
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-          <ContentItems>
-            <HistoryItem id="add32" type="moto" price="4000" address="Cra 10 #20-30 ➝ Av. 5 #45-12" status="en camino"/>
-          </ContentItems>
-        </section>
+        isClient ? (
+          <HomeClientePage />
+        ) : (
+          <HomeDeleveryPage />
+        )
       ) : (
         <UserRegistrationForm userId={userId!} />
       )
     }
   </section>
-  
 </Layout>
-
-<script>
-  import { API_USERS, URL_LOCAL_BACKEND } from "astro:env/client";
-  import { navigate } from "astro:transitions/client";
-  import { toastStore } from "src/stores/StoreToast";
-
-  const onFormsubmit = () => {
-    const form = document.getElementById(
-      "userDataForm"
-    ) as HTMLFormElement | null;
-    if (!form) return;
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const btnSubmit = form.querySelector("button[type='submit']");
-      btnSubmit?.setAttribute("disabled", "true");
-
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData);
-
-      if (!data.userid) return;
-
-      const url = URL_LOCAL_BACKEND + API_USERS;
-      const AUTO_CLOSE_DELAY = 2500;
-
-      fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      })
-        .then((resq) => {
-          if (!resq.ok) {
-            toastStore.set({
-              visible: true,
-              title: "Error al guardar los datos",
-              message: "Por favor, intenta nuevamente más tarde.",
-              emoji: "⚠️",
-              type: "error",
-              autoClose: true,
-              autoCloseDelay: AUTO_CLOSE_DELAY,
-            });
-            return;
-          }
-          toastStore.set({
-            visible: true,
-            title: "Datos guardados",
-            message: "Tus datos se han guardado correctamente.",
-            emoji: "✅",
-            type: "success",
-            autoClose: true,
-            autoCloseDelay: AUTO_CLOSE_DELAY,
-          });
-          setTimeout(async () => {
-            await navigate("/");
-          }, AUTO_CLOSE_DELAY);
-        })
-        .catch(() => {
-          toastStore.set({
-            visible: true,
-            title: "Error al guardar los datos",
-            message: "Por favor, intenta nuevamente más tarde.",
-            emoji: "⚠️",
-            type: "error",
-            autoClose: true,
-            autoCloseDelay: AUTO_CLOSE_DELAY,
-          });
-        })
-        .finally(() => {
-          btnSubmit?.removeAttribute("disabled");
-        });
-    });
-  };
-
-  function main() {
-    onFormsubmit();
-
-    const historyToday = document.getElementById("historyToday");
-    const btnHistoryToday = historyToday?.querySelector("#btnHistoryToday");
-
-    if (!btnHistoryToday) return;
-
-    btnHistoryToday.addEventListener("click", () => {
-      navigate("/history");
-    });
-  }
-
-  document.addEventListener("astro:page-load", main);
-  document.addEventListener("DOMContentLoaded", main);
-</script>

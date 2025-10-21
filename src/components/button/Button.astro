@@ -1,11 +1,13 @@
 ---
 interface Props {
+  id?: string;
   className?: string;
   color?: string;
   onClick?: string;
 }
 
 const {
+  id = "",
   className = "",
   color = "bg-H-blue-700 text-H-blue-100 hover:bg-H-blue-900",
   onClick,
@@ -13,6 +15,7 @@ const {
 ---
 
 <button
+  id={id}
   class={`flex flex-row items-center justify-center gap-2.5 px-4 py-2 rounded-md transition-colors cursor-pointer ${color} ${className}`}
   onclick={onClick}
 >

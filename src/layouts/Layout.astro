@@ -58,9 +58,15 @@ const orgId: string | null = Astro.locals.orgId;
     <ThemeToggle
       className="hidden md:flex fixed bottom-4 right-4 border border-H-blue-300/30 hover:shadow-md hover:border-H-blue-300 transition-all"
     />
-    <div class="fixed bottom-4 left-4">
-      <UserProfile className="lg:hidden" position="up" />
-    </div>
+    {
+      orgId ? (
+        ""
+      ) : (
+        <div class="fixed bottom-4 left-4">
+          <UserProfile className="lg:hidden" position="up" />
+        </div>
+      )
+    }
     <script src="../scripts/Clerk/organizationHandler.js"></script>
   </body></html
 >
