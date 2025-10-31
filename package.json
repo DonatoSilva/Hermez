@@ -2,23 +2,23 @@
   "name": "hermez",
   "version": "0.0.2",
   "dependencies": {
-    "@ant-design/icons": "5.x",
+    "@ant-design/icons": "^5.6.1",
     "@astrojs/react": "4.4.0",
     "@astrojs/vercel": "8.2.10",
-    "@clerk/astro": "^2.8.2",
-    "@clerk/clerk-js": "^5.68.0",
-    "@clerk/localizations": "^3.16.3",
-    "@iconify-json/solar": "^1.2.2",
-    "@tailwindcss/vite": "^4.1.8",
-    "@types/react": "^19.1.6",
-    "@types/react-dom": "^19.1.5",
+    "@clerk/astro": "^2.14.2",
+    "@clerk/clerk-js": "^5.103.1",
+    "@clerk/localizations": "^3.26.4",
+    "@iconify-json/solar": "^1.2.5",
+    "@tailwindcss/vite": "^4.1.16",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
     "astro": "5.14.6",
     "astro-icon": "^1.1.5",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "svix": "^1.66.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "svix": "^1.81.0",
     "tailwind-scrollbar-hide": "^4.0.0",
-    "tailwindcss": "^4.1.8"
+    "tailwindcss": "^4.1.16"
   },
   "scripts": {
     "dev": "astro dev",
@@ -28,14 +28,14 @@
   },
   "type": "module",
   "devDependencies": {
-    "@eslint/js": "^9.34.0",
-    "@types/node": "^24.0.0",
-    "eslint": "^9.34.0",
+    "@eslint/js": "^9.38.0",
+    "@types/node": "^24.9.2",
+    "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-config-standard": "^17.1.0",
-    "globals": "^16.3.0",
+    "globals": "^16.4.0",
     "prettier": "3.6.2",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.40.0"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2"
   }
 }
