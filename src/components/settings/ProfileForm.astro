@@ -66,8 +66,31 @@ const { gender, phone, age } = userData ?? {
     </label>
 
     <div class="flex gap-3 mt-2">
-      <Button color="bg-H-blue-900 text-white w-full">Guardar</Button>
-      <Button color="bg-white text-H-blue-900 w-full">Cancelar</Button>
+      <Button id="save-button" color="bg-H-blue-900 text-white w-full">Guardar</Button>
+      <Button id="cancel-button" color="bg-white text-H-blue-900 w-full">Cancelar</Button>
     </div>
   </form>
 </section>
+
+<script>
+  import { navigate } from "astro:transitions/client";
+
+  const sectionProfile: Element | null = document.querySelector("#section-profile");
+  const saveButton: HTMLElement | null | undefined = sectionProfile?.querySelector("#save-button");
+  const cancelButton: HTMLElement | null | undefined =
+    sectionProfile?.querySelector("#cancel-button");
+
+  if (saveButton) {
+    saveButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log("Los cambios del perfil deberia cambiarse");
+    });
+  }
+
+  if (cancelButton) {
+    cancelButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      navigate("/");
+    });
+  }
+</script>
