@@ -12,12 +12,10 @@
   class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-2xl mx-auto px-4 sm:px-6 hidden opacity-0"
 >
   <div
-    class="notification-content bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 sm:p-6 rounded-xl shadow-lg border-l-4 border-blue-600"
+    class="notification-content bg-linear-to-r from-blue-500 to-blue-600 text-white p-4 sm:p-6 rounded-xl shadow-lg border-l-4 border-blue-600"
   >
-    <div
-      class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4"
-    >
-      <div class="flex-shrink-0">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+      <div class="shrink-0">
         <div
           class="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 rounded-full flex items-center justify-center"
         >
@@ -30,7 +28,7 @@
       </div>
       <button
         id="close-notification"
-        class="flex-shrink-0 ml-auto sm:ml-0 text-white/80 hover:text-white transition-colors duration-200 p-1"
+        class="shrink-0 ml-auto sm:ml-0 text-white/80 hover:text-white transition-colors duration-200 p-1"
         aria-label="Cerrar notificación"
       >
         <svg
@@ -78,13 +76,9 @@
   };
 
   function initNotification() {
-    const notificationContainer = document.getElementById(
-      "notification-container"
-    );
+    const notificationContainer = document.getElementById("notification-container");
     const closeButton = document.getElementById("close-notification");
-    const notificationContent = notificationContainer?.querySelector(
-      ".notification-content"
-    );
+    const notificationContent = notificationContainer?.querySelector(".notification-content");
     const titleElement = notificationContainer?.querySelector(".title");
     const messageElement = notificationContainer?.querySelector(".message");
     const emojiElement = notificationContainer?.querySelector(".emoji");
