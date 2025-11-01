@@ -1,6 +1,5 @@
-import React from "react";
-import type { FC } from "react";
 import MenuIcon from "@header/icons/MenuIcon";
+import type { FC } from "react";
 import type { TargetCardProps } from "src/types/setting/TargetProps";
 
 const TargetCard: FC<TargetCardProps> = ({ title, last, expiry, id }) => {
@@ -18,7 +17,7 @@ const TargetCard: FC<TargetCardProps> = ({ title, last, expiry, id }) => {
 
   return (
     <article className="w-full max-w-full relative flex items-start justify-between">
-      <div className="mx-auto relative w-full max-w-sm rounded-tl-lg rounded-tr-lg bg-gradient-to-r from-black to-gray-500 px-6 pt-6 pb-10 select-none cursor-pointer">
+      <div className="mx-auto relative w-full max-w-sm rounded-tl-lg rounded-tr-lg  from-black to-gray-500 px-6 pt-6 pb-10 select-none cursor-pointer">
         <div className="flex items-center">
           <span className="w-6 h-6 rounded-full  bg-red-700/80 inline-block" />
           <span className="w-6 h-6 rounded-full -m-2 bg-yellow-400/80 inline-block" />

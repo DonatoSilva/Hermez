@@ -72,8 +72,6 @@ if (!sectionActivite) {
         );
         const oldSection: HTMLElement | null = document.querySelector("section.active");
 
-        console.log(`newSection: `, newSection);
-        console.log(`oldSection: `, oldSection);
         oldSection?.classList.remove("active");
         newSection?.classList.add("active");
 

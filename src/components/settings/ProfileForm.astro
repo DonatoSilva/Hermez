@@ -14,7 +14,6 @@ const token =
   (await Astro.locals.auth().getToken({
     template: "jwt-back-hermez",
   })) ?? "";
-console.log(token);
 
 const { data: userData } = await Astro.callAction(actions.getUserData, {
   id: userId ?? "",
@@ -91,7 +90,6 @@ const { gender, phone, age } = userData ?? {
   if (saveButton) {
     saveButton.addEventListener("click", (e) => {
       e.preventDefault();
-      console.log("Los cambios del perfil deberia cambiarse");
     });
   }
 

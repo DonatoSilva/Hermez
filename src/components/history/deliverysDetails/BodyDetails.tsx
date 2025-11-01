@@ -1,7 +1,7 @@
-import React, { useRef, useState } from 'react'
 import { MessageOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
-import styles from './styles/fill-Bar.module.css'
+import { useRef, useState } from 'react';
 import { isOpen } from 'src/stores/DeliverySelectStore';
+import styles from './styles/fill-Bar.module.css';
 
 const BodyDetails = () => {
     const [isPressing, setIsPressing] = useState<boolean | undefined>(undefined)
@@ -25,7 +25,6 @@ const BodyDetails = () => {
     const handleRelease = () => {
         if (timeoutId.current) {
             setIsPressing(false)
-            console.log('Liberar cancelar domicilio')
             clearTimeout(timeoutId.current)
             timeoutId.current = null
         }
@@ -135,7 +134,7 @@ const BodyDetails = () => {
                             </span>
                         </div>
                     </div>
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                         <img
                             src="/images/tiposEnvio/paquete-min.png"
                             alt="Tipo de envío"
