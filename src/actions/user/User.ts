@@ -28,9 +28,8 @@ export const User = {
                 const users = await response.json();
                 const firstUser = users[0];
 
-                const { gender: userGender, phone, age } = firstUser;
+                const { gender, phone, age } = firstUser;
 
-                const gender = userGender === 'male' ? 'masculino' : 'femenino';
                 return { gender, phone, age };
             } catch (error) {
                 if (error instanceof ActionError) {
@@ -45,17 +44,19 @@ export const User = {
     }),
     update: defineAction({
         input: z.object({
-            token: z.string(),
             user: z.object({
                 gender: z.string().optional(),
                 phone: z.string().optional(),
-                age: z.number().optional(),
+                age: z.string().optional(),
             }),
         }),
-        handler: async ({ token, user }) => {
+        handler: async ({ user }, { locals }) => {
+            const token = await locals.auth().getToken({
+                template: "jwt-back-hermez",
+            });
             try {
                 const response = await fetch(
-                    `${URL_LOCAL_BACKEND}${API_USERS}`, {
+                    `${URL_LOCAL_BACKEND}${API_USERS}update/`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -63,14 +64,18 @@ export const User = {
                     },
                     body: JSON.stringify(user),
                 });
+
+                const responseData = await response.json();
+
                 if (!response.ok) {
+                    const message = Object.values(responseData).join(', ');
                     throw new ActionError({
-                        message: 'Error al actualizar el usuario',
+                        message: message || 'Error al actualizar el usuario',
                         code: 'BAD_REQUEST',
                     });
                 }
-                const updatedUser = await response.json();
-                return updatedUser;
+
+                return responseData;
             } catch (error) {
                 if (error instanceof ActionError) {
                     throw error;

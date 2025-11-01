@@ -27,22 +27,18 @@ if (error) {
   throw new Error("Backend error: " + error);
 } else {
   userData = data ?? {
-    gender: "2",
+    gender: "notFound",
     phone: "notFound",
     age: 0,
   };
 }
 
-const { gender, phone, age } = userData ?? {
-  gender: "notFound",
-  phone: "notFound",
-  age: 0,
-};
+const { gender, phone, age } = userData;
 ---
 
 <section class:list={["min-w-full", { active: isActive }]} id="section-profile">
   <h5 class="text-lg font-semibold mb-3">Mi perfil</h5>
-  <form class="w-full mx-auto flex flex-col gap-4">
+  <form class="w-full mx-auto flex flex-col gap-4" aria-label="formulario-perfil" id="profile-form">
     <div class="flex items-center gap-4">
       <img
         src={imageUrl ?? "/images/clienteFelizEnPuerta-min.webp"}
@@ -73,17 +69,30 @@ const { gender, phone, age } = userData ?? {
 
     <label class="flex flex-col gap-2">
       <span class="text-sm">Teléfono</span>
-      <input type="tel" class="border border-gray-300 rounded-md px-3 py-2" value={phone} />
+      <input
+        name="phone"
+        type="tel"
+        class="border border-gray-300 rounded-md px-3 py-2"
+        value={phone}
+      />
     </label>
 
     <label class="flex flex-col gap-2">
       <span class="text-sm">Edad</span>
-      <input class="border border-gray-300 rounded-md px-3 py-2" value={age} />
+      <input
+        name="age"
+        type="number"
+        class="border border-gray-300 rounded-md px-3 py-2"
+        value={age}
+      />
     </label>
 
     <label class="flex flex-col gap-2">
       <span class="text-sm">Género</span>
-      <input class="border border-gray-300 rounded-md px-3 py-2" value={gender} />
+      <select name="gender" class="border border-gray-300 rounded-md px-3 py-2">
+        <option value="male" selected={gender === "male"}>Masculino</option>
+        <option value="female" selected={gender === "female"}>Femenino</option>
+      </select>
     </label>
 
     <div class="flex gap-3 mt-2">
@@ -94,6 +103,7 @@ const { gender, phone, age } = userData ?? {
 </section>
 
 <script>
+  import { actions } from "astro:actions";
   import { navigate } from "astro:transitions/client";
 
   const sectionProfile: Element | null = document.querySelector("#section-profile");
@@ -102,8 +112,32 @@ const { gender, phone, age } = userData ?? {
     sectionProfile?.querySelector("#cancel-button");
 
   if (saveButton) {
-    saveButton.addEventListener("click", (e) => {
+    saveButton.addEventListener("click", async (e) => {
       e.preventDefault();
+      const form: HTMLFormElement | null | undefined =
+        sectionProfile?.querySelector("#profile-form");
+      if (form) {
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        if (!data) {
+          throw new Error("Data not found");
+        }
+
+        Object.keys(data).forEach((key) => {
+          if (data[key] === "") {
+            delete data[key];
+          }
+        });
+
+        const { error } = await actions.User.update({ user: data });
+        if (error) {
+          console.error("Backend error:", error);
+          throw new Error("Backend error: " + error);
+        } else {
+          navigate("/");
+        }
+      }
     });
   }
 
