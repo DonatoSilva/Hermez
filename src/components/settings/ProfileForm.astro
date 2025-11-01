@@ -10,15 +10,29 @@ const { isActive } = Astro.props;
 const { userId } = Astro.locals.auth();
 
 const { imageUrl, firstName, lastName, emailAddresses } = (await Astro.locals.currentUser()) ?? {};
-const token =
-  (await Astro.locals.auth().getToken({
-    template: "jwt-back-hermez",
-  })) ?? "";
+let userData = { gender: "notFound", phone: "notFound", age: 0 };
 
-const { data: userData } = await Astro.callAction(actions.getUserData, {
-  id: userId ?? "",
-  token,
+const token = await Astro.locals.auth().getToken({
+  template: "jwt-back-hermez",
 });
+
+if (token === null) {
+  throw new Error("Token not found");
+}
+
+const { data, error } = await Astro.callAction(actions.User.get, { token });
+
+if (error) {
+  console.error("Backend error:", error);
+  throw new Error("Backend error: " + error);
+} else {
+  userData = data ?? {
+    gender: "2",
+    phone: "notFound",
+    age: 0,
+  };
+}
+
 const { gender, phone, age } = userData ?? {
   gender: "notFound",
   phone: "notFound",

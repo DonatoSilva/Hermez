@@ -1,10 +1,10 @@
 // @ts-check
-import { defineConfig, envField } from 'astro/config'
 import clerk from "@clerk/astro"
 import { esES } from '@clerk/localizations'
+import { defineConfig, envField } from 'astro/config'
 
-import vercel from '@astrojs/vercel'
 import react from '@astrojs/react'
+import vercel from '@astrojs/vercel'
 import icon from 'astro-icon'
 
 import tailwindcss from "@tailwindcss/vite"
@@ -41,7 +41,11 @@ export default defineConfig({
       API_USERS: envField.string({
         context: "client",
         access: "public",
-      })
+      }),
+      API_ADDRESSES: envField.string({
+        context: "client",
+        access: "public",
+      }),
     }
   },
   integrations: [clerk({
