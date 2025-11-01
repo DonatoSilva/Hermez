@@ -1,9 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/astro/server'
-import { ID_ORG_CLIENT, ID_ORG_DOMICILIARY } from 'astro:env/server'
 import { API_USERS, URL_LOCAL_BACKEND } from 'astro:env/client'
-import { log } from 'console'
+import { ID_ORG_CLIENT, ID_ORG_DOMICILIARY } from 'astro:env/server'
 const isProtectedRoute = createRouteMatcher(['/(.*)'])
-const isPublicRoute = createRouteMatcher(["/404"])
+const isPublicRoute = createRouteMatcher(['/404'])
 const isAuthRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/forgot-password'])
 
 const isAPIRoute = createRouteMatcher(['/api(.*)'])
@@ -22,46 +21,46 @@ export const onRequest = clerkMiddleware(
         const hasUserDataCookie = cookies.get('data-user')?.value
 
         if (userId && hasUserDataCookie !== userId) {
-            let userExists = false;
+            let userExists = false
 
             try {
-                const url = `${URL_LOCAL_BACKEND}${API_USERS}${userId}`;
-                console.log(`Fetching user data from: ${url}`);
-                const res = await fetch(url);
-                userExists = res.status !== 404;
+                const url = `${URL_LOCAL_BACKEND}${API_USERS}${userId}`
+                console.log(`Fetching user data from: ${url}`)
+                const res = await fetch(url)
+                userExists = res.status !== 404
 
                 /// guardamos la existencia del usuario en la cookie para evitar futuras consultas
                 if (userExists) cookies.set('data-user', userId, { path: '/', maxAge: 60 * 60 * 24 * 15 }) // 15 days;
             } catch (e) {
-                userExists = false;
+                userExists = false
             }
 
-            locals.userExistsAPI = userExists;
+            locals.userExistsAPI = userExists
         }
 
         switch (sessionClaims?.o?.id) {
             case ID_ORG_CLIENT:
-                locals.userRole = 'User';
-                break;
+                locals.userRole = 'User'
+                break
             case ID_ORG_DOMICILIARY:
-                locals.userRole = 'Domiciliary';
-                break;
+                locals.userRole = 'Domiciliary'
+                break
             default:
-                locals.userRole = null;
+                locals.userRole = null
         }
 
         if (url) {
             const urlObj = new URL(url)
             const orgParam = urlObj.searchParams.get('org')
             if (!locals.userRole) {
-                locals.orgId = ID_ORG_CLIENT;
+                locals.orgId = ID_ORG_CLIENT
             } else if (orgParam) {
                 if (orgParam === 'User') {
-                    locals.orgId = ID_ORG_CLIENT;
+                    locals.orgId = ID_ORG_CLIENT
                 }
 
                 if (orgParam === 'Domiciliary') {
-                    locals.orgId = ID_ORG_DOMICILIARY;
+                    locals.orgId = ID_ORG_DOMICILIARY
                 }
             } else {
                 locals.orgId = null

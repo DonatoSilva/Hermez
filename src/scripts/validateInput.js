@@ -1,53 +1,53 @@
 export function validateEmail(email) {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
+    const re = /\S+@\S+\.\S+/
+    return re.test(email)
 }
 
 export const validateInput = (input, alertText) => {
-    if (!isEmpty(input, alertText)) return;
+    if (!isEmpty(input, alertText)) return
 
     if (input.type === "number") {
-        if (!isNumber(input)) return;
+        if (!isNumber(input)) return
     }
 
     if (input.type === "tel") {
-        if (!isPhoneNumber(input)) return;
+        if (!isPhoneNumber(input)) return
     }
 
-    return true;
+    return true
 }
 
 
 export const isEmpty = (input, alertText) => {
     if (!input.value.trim()) {
-        input.focus();
-        alert(alertText);
-        return false;
+        input.focus()
+        alert(alertText)
+        return false
     }
 
-    return true;
-};
+    return true
+}
 
 export const isNumber = (input) => {
-    const re = /^\d+$/;
+    const re = /^\d+$/
     if (re.test(input)) {
-        input.focus();
-        alert("Ingrese un número válido");
-        return false;
+        input.focus()
+        alert("Ingrese un número válido")
+        return false
     }
 
-    return true;
-};
+    return true
+}
 
 
 export const isPhoneNumber = (phoneNumber) => {
     if (phoneNumber.value.trim().length !== 10) {
-        phoneNumber.focus();
-        alert("El número de celular debe tener 10 dígitos");
-        return false;
+        phoneNumber.focus()
+        alert("El número de celular debe tener 10 dígitos")
+        return false
     }
 
-    return true;
-};
+    return true
+}
 
 

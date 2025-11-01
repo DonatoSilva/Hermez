@@ -29,7 +29,7 @@ export default function AddressItem({
   };
 
   return (
-    <article className="w-full max-w-full rounded-lg overflow-hidden bg-gradient-to-r from-H-blue-900 to-H-blue-700 relative px-4 py-3 flex items-center justify-between transition-all duration-200">
+    <article className="w-full max-w-full rounded-lg overflow-hidden from-H-blue-900 to-H-blue-700 relative px-4 py-3 flex items-center justify-between transition-all duration-200">
       <div className="flex-1">
         <h4 className="text-sm text-white">{name}</h4>
         <p className="text-xl text-white font-semibold">{address}</p>

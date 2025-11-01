@@ -1,13 +1,13 @@
 // @ts-check
-import { defineConfig, envField } from 'astro/config';
-import clerk from "@clerk/astro";
+import { defineConfig, envField } from 'astro/config'
+import clerk from "@clerk/astro"
 import { esES } from '@clerk/localizations'
 
-import vercel from '@astrojs/vercel';
-import react from '@astrojs/react';
-import icon from 'astro-icon';
+import vercel from '@astrojs/vercel'
+import react from '@astrojs/react'
+import icon from 'astro-icon'
 
-import tailwindcss from "@tailwindcss/vite";
+import tailwindcss from "@tailwindcss/vite"
 
 // https://astro.build/config
 export default defineConfig({
@@ -55,4 +55,4 @@ export default defineConfig({
   },
   output: 'server',
   adapter: vercel()
-});
+})

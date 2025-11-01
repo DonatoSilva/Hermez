@@ -2,8 +2,8 @@
 /** @type {import("prettier").Config} */
 export default {
     plugins: ['prettier-plugin-astro'],
-    semi: false,
-    singleQuote: true,
+    semi: true,
+    singleQuote: false,
     printWidth: 80,
     trailingComma: 'none',
     overrides: [
@@ -14,4 +14,4 @@ export default {
             },
         },
     ],
-};
+}

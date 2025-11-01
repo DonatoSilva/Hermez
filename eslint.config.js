@@ -1,11 +1,30 @@
-import js from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import standard from "eslint-plugin-standard";
-import { defineConfig } from "eslint/config";
+import globals from "globals"
+import pluginJs from "@eslint/js"
+import prettier from "eslint-config-prettier"
+import { FlatCompat } from "@eslint/eslintrc"
+import path from "path"
+import { fileURLToPath } from "url"
 
-export default defineConfig([
-  standard,
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: globals.browser } },
-  tseslint.configs.recommended,
-]);
+// mimic CommonJS variables -- not needed if using CommonJS
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+})
+
+export default [
+  {
+    languageOptions: {
+      globals: globals.browser,
+    },
+  },
+  pluginJs.configs.recommended,
+  ...compat.extends("standard"), // Usando FlatCompat para extender la configuración 'standard'
+  prettier,
+  {
+    rules: {
+      semi: ["error", "never"],
+    },
+  },
+]

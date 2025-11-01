@@ -3,5 +3,5 @@
  * @returns {string}
  */
 export function formatPrice(price) {
-    return price.toLocaleString("es-CO");
+    return price.toLocaleString("es-CO")
 }

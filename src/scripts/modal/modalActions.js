@@ -3,18 +3,18 @@
  * @param {HTMLDialogElement} modal
  */
 export function openModal(modal) {
-    modal.showModal();
+    modal.showModal()
 
     modal.addEventListener("click", (e) => {
         if (e.target === modal) {
-            closeModal(modal);
+            closeModal(modal)
         }
-    }, { once: true });
+    }, { once: true })
 
-    const btnCloseModal = modal.querySelector(".btnCloseModal");
+    const btnCloseModal = modal.querySelector(".btnCloseModal")
     btnCloseModal?.addEventListener("click", () => {
-        closeModal(modal);
-    }, { once: true });
+        closeModal(modal)
+    }, { once: true })
 }
 
 
@@ -23,13 +23,13 @@ export function openModal(modal) {
  * @param {HTMLDialogElement} modal
  */
 export function closeModal(modal) {
-    modal.classList.add("closing");
+    modal.classList.add("closing")
     modal.addEventListener("animationend", () => {
-        const isClosing = modal.classList.contains("closing");
+        const isClosing = modal.classList.contains("closing")
 
         if (isClosing) {
-            modal.classList.remove("closing");
-            modal.close();
+            modal.classList.remove("closing")
+            modal.close()
         }
-    }, { once: true });
+    }, { once: true })
 }

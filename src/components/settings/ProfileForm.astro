@@ -10,8 +10,16 @@ const { isActive } = Astro.props;
 const { userId } = Astro.locals.auth();
 
 const { imageUrl, firstName, lastName, emailAddresses } = (await Astro.locals.currentUser()) ?? {};
+const token =
+  (await Astro.locals.auth().getToken({
+    template: "jwt-back-hermez",
+  })) ?? "";
+console.log(token);
 
-const { data: userData } = await Astro.callAction(actions.getUserData, { id: userId ?? "" });
+const { data: userData } = await Astro.callAction(actions.getUserData, {
+  id: userId ?? "",
+  token,
+});
 const { gender, phone, age } = userData ?? {
   gender: "notFound",
   phone: "notFound",
