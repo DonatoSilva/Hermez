@@ -7,20 +7,11 @@ interface Props {
 }
 
 const { isActive } = Astro.props;
-const { userId } = Astro.locals.auth();
 
 const { imageUrl, firstName, lastName, emailAddresses } = (await Astro.locals.currentUser()) ?? {};
 let userData = { gender: "notFound", phone: "notFound", age: 0 };
 
-const token = await Astro.locals.auth().getToken({
-  template: "jwt-back-hermez",
-});
-
-if (token === null) {
-  throw new Error("Token not found");
-}
-
-const { data, error } = await Astro.callAction(actions.User.get, { token });
+const { data, error } = await Astro.callAction(actions.User.get, {});
 
 if (error) {
   console.error("Backend error:", error);
@@ -38,99 +29,243 @@ const { gender, phone, age } = userData;
 
 <section class:list={["min-w-full", { active: isActive }]} id="section-profile">
   <h5 class="text-lg font-semibold mb-3">Mi perfil</h5>
-  <form class="w-full mx-auto flex flex-col gap-4" aria-label="formulario-perfil" id="profile-form">
-    <div class="flex items-center gap-4">
+  <form
+    class="w-full mx-auto grid grid-cols-1 gap-4 lg:grid-cols-2"
+    aria-label="formulario-perfil"
+    id="profile-form"
+  >
+    <div
+      class="flex flex-col md:flex-row lg:flex-col items-center justify-center gap-4 lg:col-span-1"
+    >
       <img
         src={imageUrl ?? "/images/clienteFelizEnPuerta-min.webp"}
         alt="avatar"
-        class="w-full h-full object-cover max-w-24 max-h-24 rounded-md bg-H-blue-100"
+        class="w-full h-full object-cover max-w-24 max-h-24 lg:max-w-62 lg:max-h-62 rounded-md bg-H-blue-100"
       />
-      <div class="flex flex-col gap-2 flex-1">
-        <Button color="bg-white text-H-blue-900" onClick="handleRemove">Eliminar foto</Button>
-        <Button color="bg-H-blue-900 text-white" onClick="handleUpload">Subir foto</Button>
+      <div class="flex flex-col gap-2 w-full max-w-62">
+        <Button
+          id="remove-button"
+          color="bg-white text-H-blue-900 disabled:text-gray-400 disabled:bg-gray-100 disabled:opacity-70"
+          className="disabled:cursor-not-allowed text-sm w-full"
+        >
+          Eliminar foto
+        </Button>
+        <Button
+          id="upload-button"
+          color="bg-H-blue-900 text-white"
+          className="disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-70 w-full"
+        >
+          Subir foto
+        </Button>
       </div>
     </div>
 
-    <label class="flex flex-col gap-2">
-      <span class="text-sm">Nombre completo</span>
-      <input
-        class="border border-gray-300 rounded-md px-3 py-2"
-        value={firstName + " " + lastName}
-      />
-    </label>
+    <div class="flex flex-col gap-4 lg:col-span-1">
+      <label class="flex flex-col gap-2">
+        <span class="text-sm">Nombre</span>
+        <input
+          name="firstName"
+          type="text"
+          class="border border-gray-300 rounded-md px-3 py-2"
+          value={firstName}
+        />
+      </label>
 
-    <label class="flex flex-col gap-2">
-      <span class="text-sm">Correo</span>
-      <input
-        class="border border-gray-300 rounded-md px-3 py-2"
-        value={emailAddresses?.[0]?.emailAddress}
-      />
-    </label>
+      <label class="flex flex-col gap-2">
+        <span class="text-sm">Apellido</span>
+        <input
+          name="lastName"
+          type="text"
+          class="border border-gray-300 rounded-md px-3 py-2"
+          value={lastName}
+        />
+      </label>
 
-    <label class="flex flex-col gap-2">
-      <span class="text-sm">Teléfono</span>
-      <input
-        name="phone"
-        type="tel"
-        class="border border-gray-300 rounded-md px-3 py-2"
-        value={phone}
-      />
-    </label>
+      <label class="flex flex-col gap-2">
+        <span class="text-sm">Correo</span>
+        <input
+          class="border border-gray-300 rounded-md px-3 py-2 bg-gray-100 dark:bg-gray-700 cursor-crosshair"
+          value={emailAddresses?.[0]?.emailAddress}
+          readonly
+        />
+        <span class="text-xs text-gray-500">El correo no se puede modificar desde aquí</span>
+      </label>
 
-    <label class="flex flex-col gap-2">
-      <span class="text-sm">Edad</span>
-      <input
-        name="age"
-        type="number"
-        class="border border-gray-300 rounded-md px-3 py-2"
-        value={age}
-      />
-    </label>
+      <label class="flex flex-col gap-2">
+        <span class="text-sm">Teléfono</span>
+        <input
+          name="phone"
+          type="tel"
+          class="border border-gray-300 rounded-md px-3 py-2"
+          value={phone}
+        />
+      </label>
 
-    <label class="flex flex-col gap-2">
-      <span class="text-sm">Género</span>
-      <select name="gender" class="border border-gray-300 rounded-md px-3 py-2">
-        <option value="male" selected={gender === "male"}>Masculino</option>
-        <option value="female" selected={gender === "female"}>Femenino</option>
-      </select>
-    </label>
+      <label class="flex flex-col gap-2">
+        <span class="text-sm">Edad</span>
+        <input
+          name="age"
+          type="number"
+          class="border border-gray-300 rounded-md px-3 py-2"
+          value={age}
+        />
+      </label>
 
-    <div class="flex gap-3 mt-2">
-      <Button
-        id="save-button"
-        color="bg-H-blue-900 text-white w-full"
-        className="disabled:opacity-50 disabled:cursor-not-allowed"
-        disabled>Guardar</Button
-      >
-      <Button id="cancel-button" color="bg-white text-H-blue-900 w-full">Cancelar</Button>
+      <label class="flex flex-col gap-2">
+        <span class="text-sm">Género</span>
+        <select name="gender" class="border border-gray-300 rounded-md px-3 py-2">
+          <option value="male" selected={gender === "male"}>Masculino</option>
+          <option value="female" selected={gender === "female"}>Femenino</option>
+        </select>
+      </label>
+      <div class="flex flex-col md:flex-row gap-3 mt-2">
+        <Button
+          id="save-button"
+          color="bg-H-blue-900 text-white w-full"
+          className="disabled:opacity-50 disabled:cursor-not-allowed  "
+          disabled>Guardar</Button
+        >
+        <Button id="cancel-button" color="bg-white text-H-blue-900 w-full">Cancelar</Button>
+      </div>
     </div>
   </form>
 </section>
 
 <script>
+  import { $userStore } from "@clerk/astro/client";
   import { actions } from "astro:actions";
   import { navigate } from "astro:transitions/client";
   import { toastStore } from "src/stores/StoreToast";
 
   function initProfileForm() {
+    // Lógica para la gestión de la imagen de perfil
     const sectionProfile: Element | null = document.querySelector("#section-profile");
-    const saveButton: HTMLButtonElement | null | undefined =
-      sectionProfile?.querySelector("#save-button");
-    const cancelButton: HTMLElement | null | undefined =
-      sectionProfile?.querySelector("#cancel-button");
     const form: HTMLFormElement | null | undefined = sectionProfile?.querySelector("#profile-form");
 
-    if (!form || !saveButton) return;
+    if (!form) return;
+
+    async function handleUploadPhoto(button: HTMLButtonElement) {
+      const user = $userStore.get();
+      if (!user) {
+        toastStore.set({
+          type: "error",
+          title: "Error",
+          visible: true,
+          autoClose: true,
+          autoCloseDelay: 5000,
+          message: "Usuario no autenticado",
+          emoji: "🧐",
+        });
+        return;
+      }
+
+      let fileInput = document.getElementById("fileUpload") as HTMLInputElement | null;
+      if (!fileInput) {
+        fileInput = document.createElement("input");
+        fileInput.id = "fileUpload";
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.onchange = async (e) => {
+          const file = (e.target as HTMLInputElement).files?.[0];
+          if (file) {
+            try {
+              button.disabled = true;
+              await user.setProfileImage({ file });
+              toastStore.set({
+                type: "success",
+                title: "Foto actualizada",
+                visible: true,
+                autoClose: true,
+                autoCloseDelay: 5000,
+                message: "Tu foto de perfil ha sido actualizada.",
+                emoji: "📸",
+              });
+
+              navigate(window.location.pathname);
+            } catch (error: any) {
+              toastStore.set({
+                type: "error",
+                title: "Error al subir foto",
+                visible: true,
+                autoClose: true,
+                autoCloseDelay: 5000,
+                message: error.errors?.[0]?.longMessage || "Hubo un error al subir la foto.",
+                emoji: "🧐",
+              });
+            } finally {
+              button.disabled = false;
+            }
+          }
+        };
+      }
+
+      fileInput.click();
+    }
+
+    async function handleRemovePhoto(button: HTMLButtonElement) {
+      const user = $userStore.get();
+      if (!user) {
+        toastStore.set({
+          type: "error",
+          title: "Error",
+          visible: true,
+          autoClose: true,
+          autoCloseDelay: 5000,
+          message: "Usuario no autenticado",
+          emoji: "🧐",
+        });
+        return;
+      }
+
+      try {
+        button.disabled = true;
+        const hasImage = user.hasImage;
+        if (!hasImage) {
+          toastStore.set({
+            type: "warning",
+            title: "Oyeee... ¡que hace?",
+            visible: true,
+            autoClose: true,
+            autoCloseDelay: 5000,
+            message: "No hay foto de perfil para eliminar.",
+            emoji: "🧐",
+          });
+          return;
+        }
+        await user.setProfileImage({ file: null });
+        toastStore.set({
+          type: "success",
+          title: "Foto eliminada",
+          visible: true,
+          autoClose: true,
+          autoCloseDelay: 5000,
+          message: "Tu foto de perfil ha sido eliminada.",
+          emoji: "🗑️",
+        });
+
+        navigate(window.location.pathname);
+      } catch (error: any) {
+        toastStore.set({
+          type: "error",
+          title: "Error al eliminar foto",
+          visible: true,
+          autoClose: true,
+          autoCloseDelay: 5000,
+          message: error.errors?.[0]?.longMessage || "Hubo un error al eliminar la foto.",
+          emoji: "🧐",
+        });
+      } finally {
+        setTimeout(() => {
+          button.disabled = false;
+        }, 1000);
+      }
+    }
+
+    const saveButton = form?.querySelector<HTMLButtonElement>("#save-button");
+    if (!saveButton) return;
 
     // Obtener valores iniciales del formulario
     const initialValues: Record<string, string> = {};
-    const formInputs: NodeListOf<HTMLInputElement | HTMLSelectElement> = form.querySelectorAll(
-      "input[name], select[name]"
-    );
-
-    formInputs.forEach((input: HTMLInputElement | HTMLSelectElement) => {
-      initialValues[input.name] = input.value;
-    });
 
     // Función para verificar si hay cambios
     function checkForChanges() {
@@ -158,6 +293,14 @@ const { gender, phone, age } = userData;
         saveButton.classList.remove("hover:bg-H-blue-800");
       }
     }
+
+    const formInputs: NodeListOf<HTMLInputElement | HTMLSelectElement> = form.querySelectorAll(
+      "input[name], select[name]"
+    );
+
+    formInputs.forEach((input: HTMLInputElement | HTMLSelectElement) => {
+      initialValues[input.name] = input.value;
+    });
 
     // Agregar event listeners a todos los campos
     formInputs.forEach((input) => {
@@ -220,6 +363,26 @@ const { gender, phone, age } = userData;
       });
     }
 
+    const uploadButton = form?.querySelector<HTMLButtonElement>("#upload-button");
+    const removeButton = form?.querySelector<HTMLButtonElement>("#remove-button");
+
+    if (!uploadButton || !removeButton) return;
+
+    uploadButton.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const button = e.currentTarget as HTMLButtonElement;
+
+      handleUploadPhoto(button);
+    });
+
+    removeButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      const button = e.currentTarget as HTMLButtonElement;
+      handleRemovePhoto(button);
+    });
+
+    const cancelButton = form?.querySelector<HTMLButtonElement>("#cancel-button");
+
     if (cancelButton) {
       cancelButton.addEventListener("click", (e) => {
         e.preventDefault();
@@ -230,5 +393,4 @@ const { gender, phone, age } = userData;
 
   // Inicializar cuando la página carga
   document.addEventListener("astro:page-load", initProfileForm);
-  document.addEventListener("DOMContentLoaded", initProfileForm);
 </script>
