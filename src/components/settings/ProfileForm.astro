@@ -7,7 +7,7 @@ interface Props {
   isActive: boolean;
 }
 
-const { isActive } = Astro.props;
+const { isActive } = Astro.props as Props;
 
 const { imageUrl, firstName, lastName, emailAddresses } = (await Astro.locals.currentUser()) ?? {};
 let userData = { gender: "notFound", phone: "notFound", age: 0 };
@@ -62,9 +62,9 @@ const { gender, phone, age } = userData;
     </div>
 
     <div class="flex flex-col gap-4 lg:col-span-1">
-      <InputField label="Nombre" name="firstName" type="text" value={firstName} />
+      <InputField textLabel="Nombre" name="firstName" type="text" value={firstName} />
 
-      <InputField label="Apellido" name="lastName" type="text" value={lastName} />
+      <InputField textLabel="Apellido" name="lastName" type="text" value={lastName} />
 
       <label class="flex flex-col gap-2">
         <span class="text-sm">Correo</span>

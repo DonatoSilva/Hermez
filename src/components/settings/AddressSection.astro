@@ -52,7 +52,7 @@ const { isActive } = Astro.props;
   <form class="space-y-4 p-4">
     <div>
       <InputField
-        label="Nombre de la dirección"
+        textLabel="Nombre de la dirección"
         name="name"
         type="text"
         required
@@ -62,7 +62,7 @@ const { isActive } = Astro.props;
 
     <div>
       <InputField
-        label="Descripción (opcional)"
+        textLabel="Descripción (opcional)"
         name="description"
         as="textarea"
         rows={3}
@@ -87,7 +87,7 @@ const { isActive } = Astro.props;
 
     <div>
       <InputField
-        label="Dirección física"
+        textLabel="Dirección física"
         name="address"
         type="text"
         required

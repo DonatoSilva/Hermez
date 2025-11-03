@@ -12,7 +12,7 @@ type InputType =
   | "reset"
   | "button";
 
-interface Props {
+interface InputFieldProps {
   id?: string;
   textLabel?: string;
   name?: string;
@@ -42,7 +42,7 @@ const {
   helperText = "",
   as = "input",
   rows = 3,
-} = Astro.props as Props;
+} = Astro.props as InputFieldProps;
 ---
 
 <label class="flex flex-col gap-2">
