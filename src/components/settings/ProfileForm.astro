@@ -1,6 +1,6 @@
 ---
-import Button from "@components/form-elements/Button.astro";
-import InputField from "@components/form-elements/InputField.astro";
+import Button from "@components/forms/elements/buttons/Button.astro";
+import InputField from "@components/forms/elements/inputs/InputField.astro";
 import { server as actions } from "@actions/index";
 
 interface Props {
@@ -79,7 +79,7 @@ const { gender, phone, age } = userData;
       <InputField textLabel="Teléfono" name="phone" type="tel" value={phone} />
 
       <InputField
-        textLabel="Edad"
+        textLabel={"Edad"}
         name="age"
         type="number"
         value={age}
