@@ -1,0 +1,79 @@
+---
+type InputType =
+  | "text"
+  | "number"
+  | "tel"
+  | "email"
+  | "password"
+  | "checkbox"
+  | "radio"
+  | "file"
+  | "submit"
+  | "reset"
+  | "button";
+
+interface Props {
+  id?: string;
+  textLabel?: string;
+  name?: string;
+  type?: InputType; // text, number, tel, etc.
+  value?: string | number;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  readonly?: boolean;
+  className?: string; // extra classes for input
+  helperText?: string; // message below the input
+  as?: "input" | "textarea";
+  rows?: number;
+}
+
+const {
+  id = "",
+  textLabel = "",
+  name = "",
+  type = "text",
+  value,
+  placeholder = "",
+  required = false,
+  disabled = false,
+  readonly = false,
+  className = "",
+  helperText = "",
+  as = "input",
+  rows = 3,
+} = Astro.props as Props;
+---
+
+<label class="flex flex-col gap-2">
+  {textLabel && <span class="text-sm">{textLabel}</span>}
+  {
+    as === "textarea" ? (
+      <textarea
+        id={id || name}
+        name={name}
+        rows={rows}
+        class={`border border-gray-300 rounded-md px-3 py-2 ${className}`}
+        placeholder={placeholder}
+        required={required}
+        disabled={disabled}
+        readonly={readonly}
+      >
+        {value ?? ""}
+      </textarea>
+    ) : (
+      <input
+        id={id || name}
+        name={name}
+        type={type}
+        class={`border border-gray-300 rounded-md px-3 py-2 ${className}`}
+        value={value}
+        placeholder={placeholder}
+        required={required}
+        disabled={disabled}
+        readonly={readonly}
+      />
+    )
+  }
+  {helperText && <span class="text-xs text-gray-500">{helperText}</span>}
+</label>

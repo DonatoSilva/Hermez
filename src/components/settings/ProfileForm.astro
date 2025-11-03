@@ -1,5 +1,6 @@
 ---
-import Button from "@components/button/Button.astro";
+import Button from "@components/form-elements/Button.astro";
+import InputField from "@components/form-elements/InputField.astro";
 import { server as actions } from "@actions/index";
 
 interface Props {
@@ -61,25 +62,9 @@ const { gender, phone, age } = userData;
     </div>
 
     <div class="flex flex-col gap-4 lg:col-span-1">
-      <label class="flex flex-col gap-2">
-        <span class="text-sm">Nombre</span>
-        <input
-          name="firstName"
-          type="text"
-          class="border border-gray-300 rounded-md px-3 py-2"
-          value={firstName}
-        />
-      </label>
+      <InputField label="Nombre" name="firstName" type="text" value={firstName} />
 
-      <label class="flex flex-col gap-2">
-        <span class="text-sm">Apellido</span>
-        <input
-          name="lastName"
-          type="text"
-          class="border border-gray-300 rounded-md px-3 py-2"
-          value={lastName}
-        />
-      </label>
+      <InputField label="Apellido" name="lastName" type="text" value={lastName} />
 
       <label class="flex flex-col gap-2">
         <span class="text-sm">Correo</span>
@@ -91,25 +76,15 @@ const { gender, phone, age } = userData;
         <span class="text-xs text-gray-500">El correo no se puede modificar desde aquí</span>
       </label>
 
-      <label class="flex flex-col gap-2">
-        <span class="text-sm">Teléfono</span>
-        <input
-          name="phone"
-          type="tel"
-          class="border border-gray-300 rounded-md px-3 py-2"
-          value={phone}
-        />
-      </label>
+      <InputField textLabel="Teléfono" name="phone" type="tel" value={phone} />
 
-      <label class="flex flex-col gap-2">
-        <span class="text-sm">Edad</span>
-        <input
-          name="age"
-          type="number"
-          class="border border-gray-300 rounded-md px-3 py-2"
-          value={age}
-        />
-      </label>
+      <InputField
+        textLabel="Edad"
+        name="age"
+        type="number"
+        value={age}
+        helperText="Disponible solo para Barichara, Santander"
+      />
 
       <label class="flex flex-col gap-2">
         <span class="text-sm">Género</span>

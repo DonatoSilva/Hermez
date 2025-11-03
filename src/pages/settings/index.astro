@@ -19,12 +19,9 @@ if (!sectionActivite) {
 }
 ---
 
-<Layout sizeLogo="md" title="Configuración - Hermez" class="flex flex-col gap-4">
+<Layout sizeLogo="md" title="Configuración - Hermez" class="flex flex-col gap-4 overflow-x-hidden">
   <SettingsMenu sectionActivite={sectionActivite ?? "profile"} />
-  <main
-    id="containerSectionsSetting"
-    class="w-full min-h-fit flex flex-row overflow-x-scroll scrollbar-hide"
-  >
+  <main id="containerSectionsSetting" class="w-full min-h-fit flex flex-row scrollbar-hide">
     <ProfileForm isActive={sectionActivite == "profile" ? true : false} />
     <AddressSection isActive={sectionActivite == "locations" ? true : false} />
     <section
@@ -65,7 +62,6 @@ if (!sectionActivite) {
       checkbox.addEventListener("change", (e) => {
         const target = e.target as HTMLInputElement;
         const checkId = target.id;
-        console.log(checkId);
 
         const newSection: HTMLElement | null = document.querySelector(
           `section[id="section-${checkId}"]`
