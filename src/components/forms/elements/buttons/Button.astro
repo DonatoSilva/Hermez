@@ -1,6 +1,8 @@
 ---
-interface Props {
+type ButtonType = "submit" | "reset" | "button";
+interface ButtonProps {
   id?: string;
+  type?: ButtonType;
   className?: string;
   color?: string; // backward compatibility
   onClick?: string;
@@ -10,12 +12,13 @@ interface Props {
 
 const {
   id = "",
+  type = "button",
   className = "",
   color,
   onClick,
   disabled = false,
   variant = "default",
-} = Astro.props as Props;
+} = Astro.props as ButtonProps;
 
 const variants: Record<string, string> = {
   text: "bg-transparent text-H-blue-900 hover:text-H-blue-700",
@@ -32,7 +35,8 @@ const colorClasses = color ?? variants[variant];
 ---
 
 <button
-  id={id}
+  {...id && { id }}
+  type={type}
   class={`${base} ${colorClasses} ${className}`}
   onclick={onClick}
   disabled={disabled}

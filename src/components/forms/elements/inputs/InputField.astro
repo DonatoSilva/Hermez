@@ -15,6 +15,7 @@ type InputType =
 interface InputFieldProps {
   id?: string;
   textLabel?: string;
+  classLabel?: string;
   name?: string;
   type?: InputType; // text, number, tel, etc.
   value?: string | number;
@@ -31,6 +32,7 @@ interface InputFieldProps {
 const {
   id = "",
   textLabel = "",
+  classLabel = "",
   name = "",
   type = "text",
   value,
@@ -45,7 +47,7 @@ const {
 } = Astro.props as InputFieldProps;
 ---
 
-<label class="flex flex-col gap-2">
+<label class={`flex flex-col gap-2 ${classLabel}`}>
   {textLabel && <span class="text-sm">{textLabel}</span>}
   {
     as === "textarea" ? (

@@ -1,13 +1,21 @@
-<div class="flex items-center h-10">
-  <input
+---
+import Button from "../../elements/buttons/Button.astro";
+import InputField from "../../elements/inputs/InputField.astro";
+---
+
+<div class="flex">
+  <InputField
     type="text"
     placeholder="Desde..."
-    class="flex-1 px-3 py-2 border h-full border-H-blue-300 rounded-s-md focus:ring-1 focus:ring-H-blue-500"
+    name="origin"
+    id="origin"
+    className="rounded-e-none"
+    classLabel="flex-1"
   />
-  <button
+  <Button
     type="button"
-    class="rounded-e-md text-H-blue-700 hover:bg-H-blue-700 hover:text-white dark:text-H-blue-300 dark:hover:bg-H-blue-600 dark:hover:text-white hover:scale-105 transition-all cursor-pointer border p-2 h-full"
     aria-label="Seleccionar origen en el mapa"
+    className="min-h-full rounded-s-none"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -28,18 +36,21 @@
         stroke-width="2"
         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
     </svg>
-  </button>
+  </Button>
 </div>
-<div class="flex items-center h-10">
-  <input
+<div class="flex">
+  <InputField
     type="text"
     placeholder="Hacia..."
-    class="flex-1 px-3 py-2 border h-full border-H-blue-300 rounded-s-md focus:ring-1 focus:ring-H-blue-500"
+    name="destination"
+    id="destination"
+    classLabel="flex-1"
+    className="rounded-e-none"
   />
-  <button
+  <Button
     type="button"
-    class="rounded-e-md text-H-blue-700 hover:bg-H-blue-700 hover:text-white dark:text-H-blue-300 dark:hover:bg-H-blue-600 dark:hover:text-white hover:scale-105 transition-all cursor-pointer border p-2 h-full"
     aria-label="Seleccionar destino en el mapa"
+    className="min-h-full rounded-s-none"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +71,7 @@
         stroke-width="2"
         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
     </svg>
-  </button>
+  </Button>
 </div>
 
 <div class="space-y-4">
@@ -71,7 +82,7 @@
     <!-- Lista de ubicaciones -->
     <div class="space-y-2">
       <!-- Ubicación 1 -->
-      <button
+      <span
         class="w-full flex items-center gap-3 p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-H-blue-300 dark:hover:border-H-blue-500 transition-colors group cursor-pointer"
       >
         <div
@@ -112,10 +123,10 @@
           </svg>
           <span>2.1 km</span>
         </div>
-      </button>
+      </span>
 
       <!-- Ubicación 2 -->
-      <button
+      <span
         class="w-full flex items-center gap-3 p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-H-blue-300 dark:hover:border-H-blue-500 transition-colors group cursor-pointer"
       >
         <div
@@ -156,10 +167,10 @@
           </svg>
           <span>5.7 km</span>
         </div>
-      </button>
+      </span>
 
       <!-- Ubicación 3 -->
-      <button
+      <span
         class="w-full flex items-center gap-3 p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-H-blue-300 dark:hover:border-H-blue-500 transition-colors group cursor-pointer"
       >
         <div
@@ -207,13 +218,14 @@
           </svg>
           <span>3.2 km</span>
         </div>
-      </button>
+      </span>
     </div>
 
     <!-- Opción para agregar nueva ubicación -->
-    <span
+    <Button
       id="btnAddLocation"
-      class="cursor-pointer w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-H-blue-400 dark:hover:border-H-blue-500 transition-colors group"
+      variant="bordered"
+      className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-H-blue-400 dark:hover:border-H-blue-500 transition-colors group"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -233,6 +245,6 @@
       >
         Agregar nueva ubicación
       </span>
-    </span>
+    </Button>
   </div>
 </div>
