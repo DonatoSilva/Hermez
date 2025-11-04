@@ -1,15 +1,19 @@
 import { MessageOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRef, useState } from 'react';
-import { isOpen } from 'src/stores/DeliverySelectStore';
+import { changeStatusModal } from 'src/stores/DeliverySelectStore';
 import styles from './styles/fill-Bar.module.css';
 
-const BodyDetails = () => {
+interface BodyDetailsProps {
+    id: string;
+}
+
+const BodyDetails = ({ id }: BodyDetailsProps) => {
     const [isPressing, setIsPressing] = useState<boolean | undefined>(undefined)
     const timeoutId = useRef<NodeJS.Timeout | null>(null)
     const CANCEL_TIMER = 2000
 
     const onClose = () => {
-        isOpen.set(false)
+        changeStatusModal(id as never, false as never);
     }
 
     const handlePress = () => {

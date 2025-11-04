@@ -1,10 +1,12 @@
 ---
 import Banner from "@components/banner/Banner.astro";
 import Button from "@components/forms/elements/buttons/Button.astro";
-import HistoryItem from "@components/history/historyItem/HistoryItem.js";
+import HistoryItem from "@components/history/historyItem/HistoryItem";
 import ContentItems from "@components/history/ContentItems.astro";
 import Modal from "@components/modals/Modal.tsx";
 import BodyForm from "@components/forms/delivery requests/BodyForm.astro";
+
+import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
 ---
 
 <Banner title="Nosotros podemos" className="gap-4">
@@ -57,39 +59,31 @@ import BodyForm from "@components/forms/delivery requests/BodyForm.astro";
       price="4000"
       address="Cra 10 #20-30 ➝ Av. 5 #45-12"
       status="en camino"
+      client:visible
     />
   </ContentItems>
-  <Modal title="Solicita un domicilio" client:load>
+  <Modal keyModal="new-delivery" title="Solicita un domicilio" client:load>
     <BodyForm />
   </Modal>
 </section>
 <script>
   import { navigate } from "astro:transitions/client";
-  import { isOpen as isModalOpen } from "src/stores/DeliverySelectStore";
+  import { changeStatusModal } from "src/stores/DeliverySelectStore";
 
   function main() {
     const historyToday = document.getElementById("historyToday");
-    const btnAddLocation = historyToday?.querySelector("#btnAddLocation");
     const btnHistoryToday = historyToday?.querySelector("#btnHistoryToday");
     const newDeliveryModal = document?.querySelector("#newDeliveryModal");
 
     if (!btnHistoryToday) return;
     if (!newDeliveryModal) return;
-    if (!btnAddLocation) return;
-
-    btnAddLocation.addEventListener("click", () => {
-      if (isModalOpen) {
-        isModalOpen.set(false);
-      }
-      navigate("/settings?section=locations");
-    });
 
     btnHistoryToday.addEventListener("click", () => {
       navigate("/history");
     });
 
     newDeliveryModal.addEventListener("click", () => {
-      isModalOpen.set(true);
+      changeStatusModal("new-delivery" as never, true as never);
     });
   }
 

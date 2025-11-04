@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   typeAddress,
   type AddressItemProps,
@@ -8,7 +9,9 @@ export default function AddressItem({
   name = "",
   address = "",
   id = "",
+  hasFavorite = false
 }: AddressItemProps) {
+  const [isFavorite, setIsFavorite] = useState(hasFavorite);
   // Función para editar la dirección
   const onEdit = () => {
     // Aquí puedes abrir un modal o navegar a la pantalla de edición
@@ -24,7 +27,7 @@ export default function AddressItem({
   // Función para marcar como favorita la dirección
   const onFavorite = () => {
     // Aquí puedes actualizar el estado de favorita
-    console.log(`Marcar como favorita la dirección con id: ${id}`);
+    setIsFavorite(!isFavorite);
   };
 
   return (
@@ -57,7 +60,20 @@ export default function AddressItem({
           className="w-9 h-9 rounded-md flex items-center justify-center text-white hover:bg-white/10 transition cursor-pointer"
           title="Favorito"
         >
-          <img src="/icons/heart-icon.svg" alt="Favorito" className="w-5 h-5" />
+          <svg
+            className={`w-5 h-5 ${!isFavorite ? "text-white" : "text-red-600"}`}
+            fill={!isFavorite ? "none" : "currentColor"}
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            />
+          </svg>
         </button>
       </nav>
       <img

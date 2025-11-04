@@ -1,12 +1,10 @@
 ---
-import HistoryItem from "@components/history/historyItem/HistoryItem";
-import Layout from "../../layouts/Layout.astro";
-import ContentItems from "@components/history/ContentItems.astro";
-import UserRegistrationForm from "@components/user/UserRegistrationForm.astro";
-import HistoryFilterSection from "@components/history/HistoryFilterSection.astro";
 import AccumulatedAmountCard from "@components/history/AccumulatedAmountCard.astro";
-import Modal from "@components/modals/Modal";
-import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
+import ContentItems from "@components/history/ContentItems.astro";
+import HistoryFilterSection from "@components/history/HistoryFilterSection.astro";
+import HistoryItem from "@components/history/historyItem/HistoryItem";
+import UserRegistrationForm from "@components/user/UserRegistrationForm.astro";
+import Layout from "../../layouts/Layout.astro";
 
 const { userId } = Astro.locals.auth();
 
@@ -25,9 +23,6 @@ const userExistsAPI = Astro.locals.userExistsAPI;
         <AccumulatedAmountCard amount="$12.000" description="Monto acumulado" />
         <section class="flex gap-4 flex-col">
           <h5 class="text-lg font-semibold">Historial de solicitudes</h5>
-          <Modal title="Detalles del pedido" client:load>
-            <BodyDetailsItem client:visible />
-          </Modal>
           <p class="text-sm text-gray-600 dark:text-gray-400">hoy</p>
           <ContentItems>
             <HistoryItem
