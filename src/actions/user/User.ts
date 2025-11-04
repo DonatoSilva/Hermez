@@ -1,3 +1,4 @@
+import { $userStore } from "@clerk/astro/client";
 import { createClerkClient } from "@clerk/astro/server";
 import { ActionError } from "astro/actions/runtime/shared.js";
 import { defineAction } from "astro:actions";
@@ -120,6 +121,28 @@ export const User = {
                 throw new ActionError({
                     message: 'Error inesperado al actualizar el usuario desde el action',
                     code: 'INTERNAL_SERVER_ERROR',
+                });
+            }
+        }
+    }),
+    delete: defineAction({
+        handler: async ({ }, { locals }) => {
+            const user = $userStore.get();
+            if (user && user.deleteSelfEnabled) {
+                try {
+                    await user.delete();
+                    return { success: true, message: 'Usuario eliminado con éxito', code: 'OK' };
+                } catch (error) {
+                    throw new ActionError({
+                        message: 'Error al eliminar el usuario',
+                        code: 'INTERNAL_SERVER_ERROR',
+                    });
+                }
+
+            } else {
+                throw new ActionError({
+                    message: 'El usuario no tiene permisos para eliminar su cuenta',
+                    code: 'FORBIDDEN',
                 });
             }
         }

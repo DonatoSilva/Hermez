@@ -1,0 +1,70 @@
+---
+import Button from "@components/forms/elements/buttons/Button.astro";
+import Modal from "@components/modals/Modal";
+import { changeStatusModal } from "src/stores/DeliverySelectStore";
+
+interface PlusSettingsProps {
+  isActive: boolean;
+}
+
+const { isActive } = Astro.props as PlusSettingsProps;
+---
+
+<section class:list={["min-w-full flex flex-col gap-4", { active: isActive }]} id="section-more">
+  <header class="flex flex-col justify-between items-start">
+    <h5 class="text-lg font-semibold mb-3">Configuraciones avanzadas</h5>
+    <div class="flex gap-2 items-center">
+      <svg
+        class="w-5 h-5 text-gray-500"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"
+        ></path>
+      </svg>
+      <p>Funciones extra para el usuario; muévelo todo con cuidado.</p>
+    </div>
+  </header>
+  <div>
+    <Button id="delete-user" color="bg-H-red-700 text-H-red-100 hover:bg-H-red-900"
+      >Eliminar cuenta</Button
+    >
+  </div>
+</section>
+
+<Modal title="Configuraciones avanzadas" keyModal="delete-user" client:load>
+  <div class="flex items-center gap-4 w-full justify-center align-center min-h-fit">
+    <img
+      src="/images/clienteFelizEnPuerta-min.webp"
+      alt="Hasta pronto"
+      class="w-24 h-24 rounded-md object-cover"
+      loading="lazy"
+    />
+    <div class="flex flex-col gap-2">
+      <h3 class="text-xl font-semibold">¿Confirmas eliminar tu cuenta?</h3>
+      <p class="text-sm text-H-blue-900">
+        Gracias por acompañarnos. Esta acción es irreversible; si te animas, estaremos aquí para
+        darte la bienvenida cuando regreses.
+      </p>
+      <div class="flex justify-end gap-2">
+        <Button variant="default">Cancelar</Button>
+        <Button variant="danger">Eliminar</Button>
+      </div>
+    </div>
+  </div>
+</Modal>
+
+<script>
+  import { changeStatusModal } from "src/stores/DeliverySelectStore";
+
+  const deleteUserButton = document.getElementById("delete-user");
+  deleteUserButton?.addEventListener("click", () => {
+    changeStatusModal("delete-user" as never, true as never);
+  });
+</script>

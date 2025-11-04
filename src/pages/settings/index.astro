@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import ProfileForm from "@components/settings/ProfileForm.astro";
 import AddressSection from "@components/settings/AddressSection.astro";
 import SettingsMenu from "@components/settings/SettingsMenu.astro";
+import PlusSettings from "@components/settings/PlusSettings.astro";
 
 const { userId } = Astro.locals.auth();
 
@@ -24,12 +25,7 @@ if (!sectionActivite) {
   <main id="containerSectionsSetting" class="w-full min-h-fit flex flex-row scrollbar-hide">
     <ProfileForm isActive={sectionActivite == "profile" ? true : false} />
     <AddressSection isActive={sectionActivite == "locations" ? true : false} />
-    <section
-      class:list={["min-w-full", { active: sectionActivite == "more" ? true : false }]}
-      id="section-more"
-    >
-      <h5 class="text-lg font-semibold mb-3">Más</h5>
-    </section>
+    <PlusSettings isActive={sectionActivite == "more" ? true : false} />
   </main>
 </Layout>
 

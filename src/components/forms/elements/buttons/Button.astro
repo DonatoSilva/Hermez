@@ -5,7 +5,6 @@ interface ButtonProps {
   type?: ButtonType;
   className?: string;
   color?: string; // backward compatibility
-  onClick?: string;
   disabled?: boolean;
   variant?: "text" | "bordered" | "default" | "danger";
 }
@@ -15,7 +14,6 @@ const {
   type = "button",
   className = "",
   color,
-  onClick,
   disabled = false,
   variant = "default",
 } = Astro.props as ButtonProps;
@@ -38,7 +36,6 @@ const colorClasses = color ?? variants[variant];
   {...id && { id }}
   type={type}
   class={`${base} ${colorClasses} ${className}`}
-  onclick={onClick}
   disabled={disabled}
 >
   <slot />
