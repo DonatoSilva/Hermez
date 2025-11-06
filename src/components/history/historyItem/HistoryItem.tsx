@@ -1,6 +1,6 @@
 import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
 import Modal from "@components/modals/Modal";
-import { changeStatusModal } from "src/stores/DeliverySelectStore";
+import { changeStatusModal } from "src/stores/ModalStore";
 import type { HistoryItemProps } from "src/types/history/HistoryItemProps";
 
 export const statusColors = {

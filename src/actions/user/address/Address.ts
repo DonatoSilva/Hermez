@@ -27,7 +27,6 @@ export const Address = {
             }
         }
     }),
-
     create: defineAction({
         accept: 'form',
         handler: async (formData, ctx) => {
@@ -41,12 +40,20 @@ export const Address = {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`,
                     },
-                    body: JSON.stringify(payload),
+                    body: JSON.stringify({
+                        ...payload,
+                        city: "Barichara", /// Por ahora solo se acepta Barichara
+                    }),
                 });
+
+                const data = await response.json();
+
                 if (!response.ok) {
-                    throw new ActionError({ message: 'Error al crear la dirección', code: 'BAD_REQUEST' });
+                    const message = Object.keys(data).map(key => `${key}: ${data[key]}`).join(', ');
+                    throw new ActionError({ message: message || 'Error al crear la dirección', code: 'BAD_REQUEST' });
                 }
-                return await response.json();
+
+                return data;
             } catch (error) {
                 console.error('Error al crear la dirección:', error);
                 if (error instanceof ActionError) throw error;
@@ -54,7 +61,6 @@ export const Address = {
             }
         }
     }),
-
     detail: defineAction({
         accept: 'form',
         handler: async (formData, ctx) => {
@@ -83,7 +89,6 @@ export const Address = {
             }
         }
     }),
-
     update: defineAction({
         accept: 'form',
         handler: async (formData, ctx) => {
@@ -115,7 +120,6 @@ export const Address = {
             }
         }
     }),
-
     delete: defineAction({
         accept: 'form',
         handler: async (formData, ctx) => {
@@ -143,7 +147,6 @@ export const Address = {
             }
         }
     }),
-
     favorite: defineAction({
         accept: 'form',
         handler: async (formData, ctx) => {
@@ -161,12 +164,23 @@ export const Address = {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
+                const data = await response.json();
+
                 if (!response.ok) {
+                    if (response.status === 400) {
+                        throw new ActionError({ message: data.message, code: 'BAD_REQUEST' });
+                    }
+
+                    if (response.status === 404) {
+                        throw new ActionError({ message: data.message, code: 'NOT_FOUND' });
+                    }
+
                     throw new ActionError({ message: 'Error al marcar favorita', code: 'BAD_REQUEST' });
                 }
-                return await response.json();
+
+                return data;
             } catch (error) {
-                console.error('Error al marcar favorita:', error);
+
                 if (error instanceof ActionError) throw error;
                 throw new ActionError({ message: 'Error inesperado al marcar favorita', code: 'INTERNAL_SERVER_ERROR' });
             }

@@ -1,6 +1,6 @@
 import { MessageOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRef, useState } from 'react';
-import { changeStatusModal } from 'src/stores/DeliverySelectStore';
+import { changeStatusModal } from 'src/stores/ModalStore';
 import styles from './styles/fill-Bar.module.css';
 
 interface BodyDetailsProps {

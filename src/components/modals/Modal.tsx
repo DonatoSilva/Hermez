@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { changeStatusModal, statusModal } from 'src/stores/DeliverySelectStore';
+import { changeStatusModal, statusModal } from 'src/stores/ModalStore';
 import styles from './styles/index.module.css';
 
 const Modal: React.FC<{ title: string; keyModal: string; children: React.ReactNode }> = ({ title, keyModal = crypto.randomUUID(), children }) => {

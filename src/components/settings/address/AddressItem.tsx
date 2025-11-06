@@ -1,5 +1,5 @@
 import { Icon } from "@iconify-icon/react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   typeAddress,
   type AddressItemProps,
@@ -9,7 +9,7 @@ export default function AddressItem({
   type,
   name = "",
   address = "",
-  id = "",
+  addressId = "",
   isFavorite = false,
   handleFavorite,
   handleDelete,
@@ -17,26 +17,23 @@ export default function AddressItem({
 }: AddressItemProps) {
   const [favorite, setFavorite] = useState(isFavorite);
   const [isHovered, setIsHovered] = useState(false);
+
   // Función para editar la dirección
-  const onEdit = () => {
-    // Aquí puedes abrir un modal o navegar a la pantalla de edición
-    console.log(`Editar dirección con id: ${id}`);
-    handleEdit?.(id);
-  };
+  const onEdit = useCallback(() => {
+    handleEdit?.(addressId);
+  }, [handleEdit]);
 
   // Función para eliminar la dirección
-  const onDelete = () => {
-    // Aquí puedes mostrar una confirmación y luego eliminar la dirección
-    console.log(`Eliminar dirección con id: ${id}`);
-    handleDelete?.(id);
-  };
+  const onDelete = useCallback(() => {
+    handleDelete?.(addressId);
+  }, [handleDelete]);
 
   // Función para marcar como favorita la dirección
-  const onFavorite = () => {
+  const onFavorite = useCallback(() => {
     // Aquí puedes actualizar el estado de favorita
-    setFavorite(!favorite);
-    handleFavorite?.(id);
-  };
+    setFavorite((prev) => !prev);
+    handleFavorite?.(addressId);
+  }, [handleFavorite]);
 
   return (
     <div className="w-full max-w-full rounded-lg bg-linear-to-r from-H-blue-900 to-H-blue-700 relative px-4 py-3 flex items-center justify-between transition-all duration-200 overflow-hidden">

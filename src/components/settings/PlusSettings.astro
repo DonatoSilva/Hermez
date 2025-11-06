@@ -60,7 +60,7 @@ const { isActive } = Astro.props as PlusSettingsProps;
 
 <script>
   import { actions } from "astro:actions";
-  import { changeStatusModal } from "src/stores/DeliverySelectStore";
+  import { changeStatusModal } from "src/stores/ModalStore";
   import { toastStore } from "src/stores/StoreToast";
 
   document.addEventListener("astro:page-load", () => {

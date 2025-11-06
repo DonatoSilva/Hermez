@@ -1,8 +1,10 @@
 import { withState } from '@astrojs/react/actions';
+import { useStore } from '@nanostores/react';
 import { actions } from 'astro:actions';
-import { startTransition, useActionState, useEffect, useState } from "react";
+import { startTransition, useActionState, useCallback, useEffect, useState } from "react";
 import { SolarPointOnMapBoldDuotone } from 'src/icons/SolarPointOnMapBoldDuotone';
-import type { AddressItemProps } from "src/types/Address/AddressProps";
+import { allAddresses as $allAddresses, favorites as $favorites, addressToEdit } from 'src/stores/AddressStore';
+import { toastStore } from 'src/stores/StoreToast';
 import AddressItem from "./AddressItem";
 
 const SkeletonAddresses = () => (
@@ -24,11 +26,11 @@ const SkeletonAddresses = () => (
  * @param children - Elemento que se mostrará cuando no haya direcciones guardadas.
  * @returns JSX.Element
  */
-export default function ContentAddresses({ emptyFavorite, emptyPoints }: { className?: string, emptyFavorite?: React.JSX.Element, emptyPoints?: React.JSX.Element }) {
-    const [addresses, setAddresses] = useState<AddressItemProps[]>([]);
-    const [favorites, setFavorites] = useState<AddressItemProps[]>([]);
-    const [initload, setInitload] = useState(true);
+export default function ContentAddresses({ emptyFavorite, emptyPoints }: { emptyFavorite?: React.JSX.Element, emptyPoints?: React.JSX.Element }) {
+    const addresses = useStore($allAddresses);
+    const favorites = useStore($favorites);
 
+    const [initload, setInitload] = useState(true);
     const [reqGet, getAddresses, pendingGet = true] = useActionState(
         withState(actions.User.Address.get),
         { data: [], error: undefined }
@@ -46,24 +48,104 @@ export default function ContentAddresses({ emptyFavorite, emptyPoints }: { class
         }
 
         if (reqGet?.data) {
-            setAddresses(reqGet.data);
-            setFavorites(reqGet.data.filter((address: AddressItemProps) => address.isFavorite));
+            $allAddresses.set(reqGet.data);
         }
     }, [reqGet, pendingGet]);
 
 
 
-    const handleFavorite = (id: string) => {
+    const handleFavorite = useCallback(async (id: string) => {
+        const prevAddresses = addresses;
+        const toggled = addresses.map(a => a.addressId === id ? { ...a, isFavorite: !a.isFavorite } : a);
+        $allAddresses.set(toggled);
 
-    }
+        try {
+            const form = new FormData();
+            form.set('addressId', id);
+            const { data, error } = await actions.User.Address.favorite(form);
 
-    const handleDelete = (id: string) => {
+            if (error) {
+                // revert optimist update
+                $allAddresses.set(prevAddresses);
+                toastStore.set({
+                    visible: true,
+                    message: error.message,
+                    type: 'error',
+                    autoClose: true,
+                    autoCloseDelay: 3000,
+                });
+                return;
+            }
 
-    }
+            toastStore.set({
+                visible: true,
+                message: data?.message || 'Dirección marcada como favorita',
+                type: data?.isFavorite ? 'success' : 'info',
+                emoji: data?.isFavorite ? '⭐' : '😥',
+                autoClose: true,
+                autoCloseDelay: 3000,
+            });
+        } catch (err) {
+            // revert optimist update
+            $allAddresses.set(prevAddresses);
+            toastStore.set({
+                visible: true,
+                message: 'Error inesperado al marcar favorita',
+                type: 'error',
+                autoClose: true,
+                autoCloseDelay: 3000,
+            });
+        }
+    }, [addresses]);
 
-    const handleEdit = (id: string) => {
+    const handleDelete = useCallback(async (id: string) => {
+        const confirmed = window.confirm('¿Deseas eliminar esta dirección?');
+        if (!confirmed) return;
 
-    }
+        try {
+            const form = new FormData();
+            form.set('addressId', id);
+            const { data, error } = await actions.User.Address.delete(form);
+
+            if (error) {
+                toastStore.set({
+                    visible: true,
+                    message: error.message,
+                    type: 'error',
+                    autoClose: true,
+                    autoCloseDelay: 3000,
+                });
+                return;
+            }
+
+            $allAddresses.set(addresses.filter(a => a.addressId !== id));
+
+            toastStore.set({
+                visible: true,
+                message: (data as any)?.message || 'Dirección eliminada con éxito',
+                type: 'success',
+                autoClose: true,
+                autoCloseDelay: 3000,
+            });
+        } catch (err) {
+            toastStore.set({
+                visible: true,
+                message: 'Error inesperado al eliminar la dirección',
+                type: 'error',
+                autoClose: true,
+                autoCloseDelay: 3000,
+            });
+        }
+    }, []);
+
+    const handleEdit = useCallback((id: string) => {
+        const address = addresses.find(a => a.addressId === id);
+        if (address) {
+            // reset previous edit
+            addressToEdit.set(undefined);
+            addressToEdit.set(address);
+        }
+    }, [addresses]);
 
     if (pendingGet || initload) {
         return <SkeletonAddresses />
@@ -85,7 +167,7 @@ export default function ContentAddresses({ emptyFavorite, emptyPoints }: { class
                 <div className="flex flex-col gap-4">
                     {
                         addresses?.length > 0 ? addresses.map((address) => (
-                            <AddressItem key={address.id} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
+                            <AddressItem key={address.addressId} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
                         )) : emptyPoints
                     }
                 </div>
@@ -97,7 +179,7 @@ export default function ContentAddresses({ emptyFavorite, emptyPoints }: { class
                         <div className="flex flex-col gap-4">
                             {
                                 favorites.length > 0 ? favorites.map((address) => (
-                                    <AddressItem key={address.id} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
+                                    <AddressItem key={address.addressId} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
                                 )) : emptyFavorite
                             }
                         </div>
