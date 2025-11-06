@@ -56,13 +56,12 @@ export default function ContentAddresses({ emptyFavorite, emptyPoints }: { empty
 
 
     const handleFavorite = useCallback(async (id: string) => {
-        const prevAddresses = addresses;
-        const toggled = addresses.map(a => a.addressId === id ? { ...a, isFavorite: !a.isFavorite } : a);
-        $allAddresses.set(toggled);
-
+        const prevAddresses = $allAddresses.get();
+        const toggled = prevAddresses.map(a => a.addressId === id ? { ...a, isFavorite: !a.isFavorite } : a);
         try {
             const form = new FormData();
             form.set('addressId', id);
+            $allAddresses.set(toggled);
             const { data, error } = await actions.User.Address.favorite(form);
 
             if (error) {
@@ -97,7 +96,7 @@ export default function ContentAddresses({ emptyFavorite, emptyPoints }: { empty
                 autoCloseDelay: 3000,
             });
         }
-    }, [addresses]);
+    }, []);
 
     const handleDelete = useCallback(async (id: string) => {
         const confirmed = window.confirm('¿Deseas eliminar esta dirección?');
@@ -183,7 +182,7 @@ export default function ContentAddresses({ emptyFavorite, emptyPoints }: { empty
                             <div className="flex flex-col gap-4">
                                 {
                                     favorites.length > 0 ? favorites.map((address) => (
-                                        <AddressItem key={address.addressId} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
+                                        <AddressItem key={address.addressId + "-favorite"} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
                                     )) : emptyFavorite
                                 }
                             </div>
@@ -195,7 +194,7 @@ export default function ContentAddresses({ emptyFavorite, emptyPoints }: { empty
                     <div className="flex flex-col gap-4">
                         {
                             addresses?.length > 0 ? addresses.map((address) => (
-                                <AddressItem key={address.addressId} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
+                                <AddressItem key={address.addressId + "-all"} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
                             )) : emptyPoints
                         }
                     </div>

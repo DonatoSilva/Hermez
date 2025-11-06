@@ -8,7 +8,5 @@ export const addressToEdit = atom<AddressItemProps | undefined>(undefined);
 
 /// Effect to update the favorites atom when the allAddresses atom changes
 effect(allAddresses, (addresses) => {
-    if (!addresses.length) return
-
     favorites.set(addresses.filter((address) => address.isFavorite));
 })

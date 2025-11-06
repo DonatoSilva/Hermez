@@ -1,5 +1,5 @@
 import { Icon } from "@iconify-icon/react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   typeAddress,
   type AddressItemProps,
@@ -17,6 +17,10 @@ export default function AddressItem({
 }: AddressItemProps) {
   const [favorite, setFavorite] = useState(isFavorite);
   const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    setFavorite(isFavorite);
+  }, [isFavorite]);
 
   // Función para editar la dirección
   const onEdit = useCallback(() => {
