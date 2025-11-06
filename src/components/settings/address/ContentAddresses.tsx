@@ -4,6 +4,7 @@ import { actions } from 'astro:actions';
 import { startTransition, useActionState, useCallback, useEffect, useState } from "react";
 import { SolarPointOnMapBoldDuotone } from 'src/icons/SolarPointOnMapBoldDuotone';
 import { allAddresses as $allAddresses, favorites as $favorites, addressToEdit } from 'src/stores/AddressStore';
+import { changeStatusModal, getStatusModal } from 'src/stores/ModalStore';
 import { toastStore } from 'src/stores/StoreToast';
 import AddressItem from "./AddressItem";
 
@@ -144,6 +145,13 @@ export default function ContentAddresses({ emptyFavorite, emptyPoints }: { empty
             // reset previous edit
             addressToEdit.set(undefined);
             addressToEdit.set(address);
+            changeStatusModal(
+                "edit-address" as never,
+                {
+                    ...getStatusModal("edit-address" as never),
+                    isOpen: true,
+                } as never
+            );
         }
     }, [addresses]);
 
@@ -161,31 +169,33 @@ export default function ContentAddresses({ emptyFavorite, emptyPoints }: { empty
     }
 
     return (
-        <div className="flex flex-col w-full lg:flex-row gap-10">
-            <article className={'w-full flex flex-col gap-4'}>
-                <h6 className="text-sm dark:text-white">Direcciones guardadas</h6>
-                <div className="flex flex-col gap-4">
-                    {
-                        addresses?.length > 0 ? addresses.map((address) => (
-                            <AddressItem key={address.addressId} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
-                        )) : emptyPoints
-                    }
-                </div>
-            </article>
-            {
-                addresses?.length > 0 && (
-                    <article className={'w-full flex flex-col gap-4'}>
-                        <h6 className="text-sm dark:text-white">Favoritas</h6>
-                        <div className="flex flex-col gap-4">
-                            {
-                                favorites.length > 0 ? favorites.map((address) => (
-                                    <AddressItem key={address.addressId} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
-                                )) : emptyFavorite
-                            }
-                        </div>
-                    </article>
-                )
-            }
-        </div>
+        <>
+            <div className="flex flex-col w-full lg:flex-row gap-10">
+                {
+                    addresses?.length > 0 && (
+                        <article className={'w-full flex flex-col gap-4'}>
+                            <h6 className="text-sm dark:text-white">Favoritas</h6>
+                            <div className="flex flex-col gap-4">
+                                {
+                                    favorites.length > 0 ? favorites.map((address) => (
+                                        <AddressItem key={address.addressId} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
+                                    )) : emptyFavorite
+                                }
+                            </div>
+                        </article>
+                    )
+                }
+                <article className={'w-full flex flex-col gap-4'}>
+                    <h6 className="text-sm dark:text-white">Direcciones guardadas</h6>
+                    <div className="flex flex-col gap-4">
+                        {
+                            addresses?.length > 0 ? addresses.map((address) => (
+                                <AddressItem key={address.addressId} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
+                            )) : emptyPoints
+                        }
+                    </div>
+                </article>
+            </div>
+        </>
     )
 }

@@ -68,7 +68,7 @@ import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
 </section>
 <script>
   import { navigate } from "astro:transitions/client";
-  import { changeStatusModal } from "src/stores/DeliverySelectStore";
+  import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
 
   function main() {
     const historyToday = document.getElementById("historyToday");
@@ -83,7 +83,15 @@ import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
     });
 
     newDeliveryModal.addEventListener("click", () => {
-      changeStatusModal("new-delivery" as never, true as never);
+      changeStatusModal(
+        "new-delivery" as never,
+        {
+          ...getStatusModal("new-delivery" as never),
+          isOpen: true,
+        } as never
+      );
+
+      console.log(getStatusModal("new-delivery" as never));
     });
   }
 

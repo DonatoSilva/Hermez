@@ -1,6 +1,6 @@
 import { MessageOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRef, useState } from 'react';
-import { changeStatusModal } from 'src/stores/ModalStore';
+import { changeStatusModal, getStatusModal } from 'src/stores/ModalStore';
 import styles from './styles/fill-Bar.module.css';
 
 interface BodyDetailsProps {
@@ -13,7 +13,10 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
     const CANCEL_TIMER = 2000
 
     const onClose = () => {
-        changeStatusModal(id as never, false as never);
+        changeStatusModal(id as never, {
+            ...getStatusModal(id as never),
+            isOpen: false,
+        } as never);
     }
 
     const handlePress = () => {

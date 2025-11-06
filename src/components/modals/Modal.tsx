@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { changeStatusModal, statusModal } from 'src/stores/ModalStore';
+import { changeStatusModal, getStatusModal, statusModal, type DataKey } from 'src/stores/ModalStore';
 import styles from './styles/index.module.css';
 
 const Modal: React.FC<{ title: string; keyModal: string; children: React.ReactNode }> = ({ title, keyModal = crypto.randomUUID(), children }) => {
@@ -7,21 +7,40 @@ const Modal: React.FC<{ title: string; keyModal: string; children: React.ReactNo
 
     const handleClose: () => void = (event?: MouseEvent) => {
         if (event?.target === dialogRef.current) {
-            changeStatusModal(keyModal as never, false as never)
+            changeStatusModal(keyModal as never, {
+                ...getStatusModal(keyModal as never),
+                isOpen: false
+            } as never)
             return
         }
     }
 
     useEffect(() => {
-        changeStatusModal(keyModal as never, false as never)
+        if (!getStatusModal(keyModal as never)) {
+            changeStatusModal(keyModal as never, {
+                isOpen: false,
+                acction: '',
+                metaData: {}
+            } as never)
+        }
 
         const unsubscribe = statusModal.subscribe((status, _, key) => {
             if (key === keyModal) {
-                if (status[keyModal]) {
-                    dialogRef.current?.showModal()
-                    return
+                const dato: DataKey = getStatusModal(keyModal as never)
+                if (dato.metaData?.title !== title) {
+                    changeStatusModal(keyModal as never, {
+                        ...dato,
+                        metaData: {
+                            ...dato.metaData,
+                            title
+                        }
+                    } as never)
                 }
-                dialogRef.current?.close()
+                if (status[keyModal].isOpen) {
+                    dialogRef.current?.showModal()
+                } else {
+                    dialogRef.current?.close()
+                }
             }
         })
 
@@ -53,7 +72,12 @@ const Modal: React.FC<{ title: string; keyModal: string; children: React.ReactNo
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-2xl font-semibold">{title}</h2>
                         <button
-                            onClick={() => changeStatusModal(keyModal as never, false as never)}
+                            onClick={() => {
+                                changeStatusModal(keyModal as never, {
+                                    ...getStatusModal(keyModal as never),
+                                    isOpen: false
+                                } as never)
+                            }}
                             className="p-2 dark:bg-gray-800 hover:bg-H-blue-300 rounded-full border-2 border-transparent hover:border-H-blue-300 cursor-pointer transition-all"
                         >
                             <svg

@@ -1,6 +1,6 @@
 import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
 import Modal from "@components/modals/Modal";
-import { changeStatusModal } from "src/stores/ModalStore";
+import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
 import type { HistoryItemProps } from "src/types/history/HistoryItemProps";
 
 export const statusColors = {
@@ -39,7 +39,10 @@ function HistoryItem({ price, address, status, type, id }: HistoryItemProps) {
         className="flex relative md:flex-row items-center justify-between p-4 rounded-lg bg-H-blue-100 dark:bg-gray-800 overflow-auto w-full group cursor-pointer"
         id={id}
         onClick={() => {
-          changeStatusModal(id as never, true as never);
+          changeStatusModal(id as never, {
+            ...getStatusModal(id as never),
+            isOpen: true,
+          } as never);
         }}
       >
         <img

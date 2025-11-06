@@ -4,6 +4,7 @@ import InputField from "@components/forms/elements/inputs/InputField.astro";
 import Modal from "@components/modals/Modal";
 import ContentAddresses from "./address/ContentAddresses";
 import EmptyAddress from "./address/favorite/EmptyAddress.astro";
+import { Icon } from "astro-icon/components";
 
 interface Props {
   isActive: boolean;
@@ -18,18 +19,9 @@ const { isActive } = Astro.props;
 >
   <header class="flex justify-between items-center">
     <h5 class="text-lg font-semibold mb-3">Direcciones</h5>
-    <Button id="new-address" color="bg-H-blue-700 text-H-blue-100 hover:bg-H-blue-900">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-4 w-4 mr-1 inline"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
-      </svg>
-      Nueva
+    <Button id="new-address" color="bg-H-blue-700 text-H-blue-100 hover:bg-H-blue-900 ">
+      <Icon name="solar:add-square-bold-duotone" width={20} height={20} />
+      <span class="text-sm font-medium">Nueva dirección</span>
     </Button>
   </header>
 
@@ -115,13 +107,19 @@ const { isActive } = Astro.props;
 
 <script>
   import { actions } from "astro:actions";
-  import { changeStatusModal } from "src/stores/ModalStore";
+  import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
   import { toastStore } from "src/stores/StoreToast";
 
   document.addEventListener("astro:page-load", () => {
     const btnNewAddress = document.getElementById("new-address");
     btnNewAddress?.addEventListener("click", () => {
-      changeStatusModal("new-address" as never, true as never);
+      changeStatusModal(
+        "new-address" as never,
+        {
+          ...getStatusModal("new-address" as never),
+          isOpen: true,
+        } as never
+      );
     });
 
     const formNewAddress = document.getElementById("form-new-address") as HTMLFormElement | null;
@@ -160,7 +158,13 @@ const { isActive } = Astro.props;
           autoCloseDelay: 3000,
         });
       } finally {
-        changeStatusModal("new-address" as never, false as never);
+        changeStatusModal(
+          "new-address" as never,
+          {
+            ...getStatusModal("new-address" as never),
+            isOpen: false,
+          } as never
+        );
       }
     });
   });

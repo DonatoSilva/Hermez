@@ -1,5 +1,6 @@
 ---
 import Button from "@components/forms/elements/buttons/Button.astro";
+import InputField from "@components/forms/elements/inputs/InputField.astro";
 import Modal from "@components/modals/Modal";
 interface PlusSettingsProps {
   isActive: boolean;
@@ -33,6 +34,9 @@ const { isActive } = Astro.props as PlusSettingsProps;
     <Button id="delete-user" color="bg-H-red-700 text-H-red-100 hover:bg-H-red-900"
       >Eliminar cuenta</Button
     >
+    <Button id="change-password" color="bg-H-yellow-700 text-H-yellow-100 hover:bg-H-yellow-900"
+      >Cambiar contraseña</Button
+    >
   </div>
 </section>
 
@@ -58,9 +62,55 @@ const { isActive } = Astro.props as PlusSettingsProps;
   </div>
 </Modal>
 
+<Modal title="Configuraciones avanzadas" keyModal="change-password" client:load>
+  <div class="flex items-center gap-4 w-full justify-center align-center min-h-fit">
+    <img
+      src="/images/clienteFelizEnPuerta-min.webp"
+      alt="Hasta pronto"
+      class="w-24 h-24 rounded-md object-cover"
+      loading="lazy"
+    />
+    <div class="flex flex-col gap-2">
+      <h3 class="text-xl font-semibold">¿Confirmas cambiar tu contraseña?</h3>
+      <p class="text-sm text-H-blue-900">
+        Recomendamos que uses una contraseña segura y única para tu cuenta. - Debería contener al
+        menos 8 caracteres, incluir letras mayúsculas y minúsculas, números y caracteres especiales.
+      </p>
+      <form class="flex flex-col gap-4">
+        <InputField
+          id="old-password"
+          textLabel="Contraseña actual"
+          name="old-password"
+          type="password"
+          required={true}
+        />
+        <InputField
+          id="new-password"
+          textLabel="Nueva contraseña"
+          name="new-password"
+          type="password"
+          required={true}
+        />
+        <InputField
+          id="confirm-password"
+          textLabel="Confirmar contraseña"
+          name="confirm-password"
+          type="password"
+          required={true}
+        />
+      </form>
+      <div class="flex justify-end gap-2">
+        <Button id="close-change-password" variant="default">Cancelar</Button>
+        <Button id="confirm-change-password" variant="danger">Cambiar</Button>
+      </div>
+    </div>
+  </div>
+</Modal>
+
 <script>
+  import { isEmpty } from "@scripts/validateInput";
   import { actions } from "astro:actions";
-  import { changeStatusModal } from "src/stores/ModalStore";
+  import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
   import { toastStore } from "src/stores/StoreToast";
 
   document.addEventListener("astro:page-load", () => {
@@ -68,12 +118,114 @@ const { isActive } = Astro.props as PlusSettingsProps;
     const confirmDeleteUserButton = document.getElementById("confirm-delete-user");
     const closeDeleteUserButton = document.getElementById("close-delete-user");
 
+    const changePasswordButton = document.getElementById("change-password");
+    const confirmChangePasswordButton = document.getElementById("confirm-change-password");
+    const closeChangePasswordButton = document.getElementById("close-change-password");
+
+    changePasswordButton?.addEventListener("click", () => {
+      changeStatusModal(
+        "change-password" as never,
+        {
+          ...getStatusModal("change-password" as never),
+          isOpen: true,
+        } as never
+      );
+    });
+
+    closeChangePasswordButton?.addEventListener("click", () => {
+      changeStatusModal(
+        "change-password" as never,
+        {
+          ...getStatusModal("change-password" as never),
+          isOpen: false,
+        } as never
+      );
+    });
+
+    confirmChangePasswordButton?.addEventListener("click", async () => {
+      try {
+        const oldPassword = document.getElementById("old-password") as HTMLInputElement;
+        const password = document.getElementById("new-password") as HTMLInputElement;
+        const confirmPassword = document.getElementById("confirm-password") as HTMLInputElement;
+
+        if (isEmpty(oldPassword)) {
+          toastStore.set({
+            visible: true,
+            message: "Por favor, ingresa tu contraseña actual.",
+            type: "error",
+            emoji: "⚠️",
+            autoClose: true,
+            autoCloseDelay: 3000,
+          });
+        }
+
+        if (password.value !== confirmPassword.value) {
+          toastStore.set({
+            visible: true,
+            message: "Las contraseñas nuevas no coinciden.",
+            type: "error",
+            autoClose: true,
+            autoCloseDelay: 3000,
+          });
+          return;
+        }
+        const { data, error } = await actions.User.changePassword({
+          oldPassword: oldPassword.value || "",
+          password: password.value || "",
+          confirmPassword: confirmPassword.value || "",
+        });
+
+        if (error) {
+          toastStore.set({
+            visible: true,
+            message: error.message,
+            type: "error",
+            autoClose: true,
+            autoCloseDelay: 3000,
+          });
+          return;
+        }
+
+        if (data?.message) {
+          toastStore.set({
+            visible: true,
+            message: `${data?.message}, Esto es un adiós 😥.` || "Contraseña cambiada con éxito",
+            type: "success",
+            autoClose: true,
+            autoCloseDelay: 3000,
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        changeStatusModal(
+          "change-password" as never,
+          {
+            ...getStatusModal("change-password" as never),
+            isOpen: false,
+          } as never
+        );
+      }
+    });
+
     deleteUserButton?.addEventListener("click", () => {
-      changeStatusModal("delete-user" as never, true as never);
+      changeStatusModal(
+        "delete-user" as never,
+        {
+          ...getStatusModal("delete-user" as never),
+          isOpen: true,
+        } as never
+      );
     });
 
     closeDeleteUserButton?.addEventListener("click", () => {
-      changeStatusModal("delete-user" as never, false as never);
+      changeStatusModal(
+        "delete-user" as never,
+        {
+          ...getStatusModal("delete-user" as never),
+          isOpen: false,
+        } as never
+      );
 
       toastStore.set({
         visible: true,
@@ -117,7 +269,13 @@ const { isActive } = Astro.props as PlusSettingsProps;
       } catch (error) {
         console.error(error);
       } finally {
-        changeStatusModal("delete-user" as never, false as never);
+        changeStatusModal(
+          "delete-user" as never,
+          {
+            ...getStatusModal("delete-user" as never),
+            isOpen: false,
+          } as never
+        );
       }
     });
   });
