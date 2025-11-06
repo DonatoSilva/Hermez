@@ -1,8 +1,6 @@
 ---
 import Button from "@components/forms/elements/buttons/Button.astro";
 import Modal from "@components/modals/Modal";
-import { changeStatusModal } from "src/stores/DeliverySelectStore";
-
 interface PlusSettingsProps {
   isActive: boolean;
 }
@@ -53,18 +51,74 @@ const { isActive } = Astro.props as PlusSettingsProps;
         darte la bienvenida cuando regreses.
       </p>
       <div class="flex justify-end gap-2">
-        <Button variant="default">Cancelar</Button>
-        <Button variant="danger">Eliminar</Button>
+        <Button id="close-delete-user" variant="default">Cancelar</Button>
+        <Button id="confirm-delete-user" variant="danger">Eliminar</Button>
       </div>
     </div>
   </div>
 </Modal>
 
 <script>
+  import { actions } from "astro:actions";
   import { changeStatusModal } from "src/stores/DeliverySelectStore";
+  import { toastStore } from "src/stores/StoreToast";
 
-  const deleteUserButton = document.getElementById("delete-user");
-  deleteUserButton?.addEventListener("click", () => {
-    changeStatusModal("delete-user" as never, true as never);
+  document.addEventListener("astro:page-load", () => {
+    const deleteUserButton = document.getElementById("delete-user");
+    const confirmDeleteUserButton = document.getElementById("confirm-delete-user");
+    const closeDeleteUserButton = document.getElementById("close-delete-user");
+
+    deleteUserButton?.addEventListener("click", () => {
+      changeStatusModal("delete-user" as never, true as never);
+    });
+
+    closeDeleteUserButton?.addEventListener("click", () => {
+      changeStatusModal("delete-user" as never, false as never);
+
+      toastStore.set({
+        visible: true,
+        message: "Que buena decisión, esperamos verte pronto.",
+        type: "info",
+        emoji: "🥳",
+        autoClose: true,
+        autoCloseDelay: 3000,
+      });
+    });
+
+    confirmDeleteUserButton?.addEventListener("click", async () => {
+      try {
+        const { data, error } = await actions.User.delete({});
+
+        if (error) {
+          toastStore.set({
+            visible: true,
+            message: error.message,
+            type: "error",
+            autoClose: true,
+            autoCloseDelay: 3000,
+          });
+          return;
+        }
+
+        if (data?.message) {
+          toastStore.set({
+            visible: true,
+            message: `${data?.message}, Esto es un adiós 😥.` || "Cuenta eliminada con éxito",
+            type: "success",
+            autoClose: true,
+            autoCloseDelay: 3000,
+          });
+
+          data.success &&
+            setTimeout(() => {
+              window.Clerk.signOut();
+            }, 3000);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        changeStatusModal("delete-user" as never, false as never);
+      }
+    });
   });
 </script>

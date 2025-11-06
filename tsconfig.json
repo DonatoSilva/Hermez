@@ -31,6 +31,9 @@
       "@actions/*": [
         "./src/actions/*"
       ],
+      "@icons/*": [
+        "./src/assets/icons/*"
+      ]
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react"

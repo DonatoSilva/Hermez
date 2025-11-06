@@ -1,7 +1,7 @@
+import { createClerkClient } from "@clerk/astro/server";
 import { type APIRoute } from "astro";
 import { CLERK_SECRET_KEY, getSecret } from "astro:env/server";
 import { Webhook } from "svix";
-import { createClerkClient } from "@clerk/astro/server";
 import type { UserCreatedEvent } from "../../../types/clerkType";
 
 export const POST: APIRoute = async ({ request }: { request: Request }) => {

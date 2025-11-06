@@ -1,3 +1,4 @@
+import icon from 'astro-icon'
 // @ts-check
 import clerk from "@clerk/astro"
 import { esES } from '@clerk/localizations'
@@ -5,10 +6,8 @@ import { defineConfig, envField } from 'astro/config'
 
 import react from '@astrojs/react'
 import vercel from '@astrojs/vercel'
-import icon from 'astro-icon'
 
 import tailwindcss from "@tailwindcss/vite"
-
 // https://astro.build/config
 export default defineConfig({
   env: {
@@ -53,6 +52,19 @@ export default defineConfig({
   }), react(), icon()],
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        '@icons': '/src/assets/icons',
+        '@components': '/src/components',
+        '@layouts': '/src/layouts',
+        '@pages': '/src/pages',
+        '@styles': '/src/styles',
+        '@scripts': '/src/scripts',
+        '@stores': '/src/stores',
+        '@types': '/src/types',
+        '@actions': '/src/actions',
+      },
+    },
     server: {
       allowedHosts: ['.ngrok-free.app'],
     }

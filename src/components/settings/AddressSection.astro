@@ -4,6 +4,7 @@ import InputField from "@components/forms/elements/inputs/InputField.astro";
 import Modal from "@components/modals/Modal";
 import ContentAddresses from "./address/ContentAddresses";
 import EmptyAddress from "./address/favorite/EmptyAddress.astro";
+import AddressItem from "./address/AddressItem";
 
 interface Props {
   isActive: boolean;
@@ -32,23 +33,22 @@ const { isActive } = Astro.props;
       Nueva
     </Button>
   </header>
-  <div class="flex flex-col lg:flex-row gap-10">
-    <ContentAddresses client:visible title="Direcciones favoritas" isFavorite={true}>
-      <EmptyAddress
-        className="opacity-40"
-        title="Sin direcciones favoritas"
-        helperText="¡Añade una dirección favorita! eso da suerte 🫢"
-      />
-    </ContentAddresses>
-    <ContentAddresses client:visible title="Direcciones guardadas">
-      <EmptyAddress
-        className="opacity-40"
-        emoji="📍"
-        title="Sin direcciones guardadas"
-        helperText="¡Añade una dirección!"
-      />
-    </ContentAddresses>
-  </div>
+
+  <ContentAddresses client:visible>
+    <EmptyAddress
+      slot="emptyPoints"
+      className="opacity-40"
+      emoji="📍"
+      title="Sin direcciones guardadas"
+      helperText="¡Añade una dirección!"
+    />
+    <EmptyAddress
+      slot="emptyFavorite"
+      className="opacity-40"
+      title="Sin direcciones favoritas"
+      helperText="¡Añade una dirección favorita! eso da suerte 🫢"
+    />
+  </ContentAddresses>
 </section>
 
 <Modal keyModal="new-address" title="Nueva dirección" client:load>

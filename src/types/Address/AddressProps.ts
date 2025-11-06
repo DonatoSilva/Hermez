@@ -18,5 +18,8 @@ export type AddressItemProps = {
     name: string;
     address: string;
     id: string;
-    hasFavorite?: boolean;
+    isFavorite?: boolean;
+    handleFavorite?: (id: string) => void;
+    handleDelete?: (id: string) => void;
+    handleEdit?: (id: string) => void;
 };

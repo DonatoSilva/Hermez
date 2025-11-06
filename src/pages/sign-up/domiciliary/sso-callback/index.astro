@@ -7,48 +7,49 @@ export const prerender = false;
 ---
 
 <Layout title={title} sizeLogo="sm" class="relative">
-    <Spinner
-        size="md"
-        color="blue-900"
-        title="Completando tu registro..."
-        message="Por favor espera mientras completamos tu registro como domiciliario."
-    />
+  <Spinner
+    size="md"
+    color="blue-900"
+    title="Completando tu registro..."
+    message="Por favor espera mientras completamos tu registro como domiciliario."
+  />
 </Layout>
 
 <script>
-    import { Clerk } from "@clerk/clerk-js";
-    import { PUBLIC_CLERK_PUBLISHABLE_KEY } from "astro:env/client";
+  import { Clerk } from "@clerk/clerk-js";
+  import { PUBLIC_CLERK_PUBLISHABLE_KEY } from "astro:env/client";
 
-    async function handleOAuthCallback() {
-        const clerk = new Clerk(PUBLIC_CLERK_PUBLISHABLE_KEY);
-        try {
-            await clerk.load();
-            const user = await clerk.handleRedirectCallback();
+  async function handleOAuthCallback() {
+    const clerk = new Clerk(PUBLIC_CLERK_PUBLISHABLE_KEY);
+    console.log("Iniciando callback de OAuth...");
+    try {
+      await clerk.load();
+      const user = await clerk.handleRedirectCallback();
 
-            if (user) {
-                window.location.href = "/?org=Domiciliary";
-            } else {
-                window.location.href = "/sign-up/domiciliary";
-            }
-        } catch (error) {
-            window.location.href = "/sign-up/domiciliary";
-        }
+      if (user) {
+        window.location.href = "/?org=Domiciliary";
+      } else {
+        window.location.href = "/sign-up/domiciliary";
+      }
+    } catch (error) {
+      window.location.href = "/sign-up/domiciliary";
     }
+  }
 
-    // Ejecutar inmediatamente cuando la página carga
-    document.addEventListener("astro:page-load", handleOAuthCallback);
+  // Ejecutar inmediatamente cuando la página carga
+  document.addEventListener("astro:page-load", handleOAuthCallback);
 
-    // También ejecutar si la página ya está cargada
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", handleOAuthCallback);
-    } else {
-        handleOAuthCallback();
+  // También ejecutar si la página ya está cargada
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", handleOAuthCallback);
+  } else {
+    handleOAuthCallback();
+  }
+
+  // Timeout de seguridad - si después de 10 segundos no se resuelve, redirigir
+  setTimeout(() => {
+    if (window.location.pathname.includes("sso-callback")) {
+      window.location.href = "/sign-up/domiciliary";
     }
-
-    // Timeout de seguridad - si después de 10 segundos no se resuelve, redirigir
-    setTimeout(() => {
-        if (window.location.pathname.includes("sso-callback")) {
-            window.location.href = "/sign-up/domiciliary";
-        }
-    }, 10000);
+  }, 10000);
 </script>

@@ -1,4 +1,3 @@
-import { $userStore } from "@clerk/astro/client";
 import { createClerkClient } from "@clerk/astro/server";
 import { ActionError } from "astro/actions/runtime/shared.js";
 import { defineAction } from "astro:actions";
@@ -27,6 +26,7 @@ export const User = {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
+
                 if (!response.ok) {
                     throw new ActionError({
                         message: 'Error al obtener el usuario',
@@ -125,24 +125,103 @@ export const User = {
             }
         }
     }),
+    changePassword: defineAction({
+        input: z.object({
+            oldPassword: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
+            password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
+            confirmPassword: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
+        }),
+        handler: async ({ oldPassword, password, confirmPassword }, { locals }) => {
+            if (password !== confirmPassword) {
+                throw new ActionError({
+                    message: 'Las contraseñas no coinciden',
+                    code: 'BAD_REQUEST',
+                });
+            }
+            const userId = locals.auth()?.userId || '';
+            if (!userId) {
+                throw new ActionError({
+                    message: 'No se proporcionó un ID de usuario válido',
+                    code: 'BAD_REQUEST',
+                });
+            }
+            // se actualiza la contraseña en clerk
+            const clerkClient = createClerkClient({
+                secretKey: import.meta.env.CLERK_SECRET_KEY,
+            });
+            try {
+                await clerkClient.users.verifyPassword({
+                    userId,
+                    password: oldPassword,
+                });
+            } catch (error) {
+                throw new ActionError({
+                    message: 'La contraseña actual es incorrecta.',
+                    code: 'BAD_REQUEST',
+                });
+            }
+
+            await clerkClient.users.updateUser(userId, {
+                password,
+            });
+
+            return { success: true, message: 'Contraseña actualizada con éxito', code: 'OK' };
+        }
+    }),
     delete: defineAction({
-        handler: async ({ }, { locals }) => {
-            const user = $userStore.get();
-            if (user && user.deleteSelfEnabled) {
-                try {
-                    await user.delete();
-                    return { success: true, message: 'Usuario eliminado con éxito', code: 'OK' };
-                } catch (error) {
+        input: z.object({}),
+        handler: async (input, { locals }) => {
+            const userId = locals.auth()?.userId || '';
+            try {
+                if (!userId) {
                     throw new ActionError({
-                        message: 'Error al eliminar el usuario',
+                        message: 'No se proporcionó un ID de usuario válido',
+                        code: 'BAD_REQUEST',
+                    });
+                }
+
+                // se elimina el usuario de la base de datos
+                const token = await locals.auth().getToken({
+                    template: "jwt-back-hermez",
+                });
+
+                const response = await fetch(
+                    `${URL_LOCAL_BACKEND}/${API_USERS}/me/delete/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    const responseData = await response.json();
+                    const message = Object.values(responseData).join(', ');
+                    throw new ActionError({
+                        message: message || 'Error al eliminar el usuario en la base de datos',
                         code: 'INTERNAL_SERVER_ERROR',
                     });
                 }
 
-            } else {
+                if (response.status === 204) {
+                    // se elimina el usuario de clerk
+                    const clerkClient = createClerkClient({
+                        secretKey: import.meta.env.CLERK_SECRET_KEY,
+                    });
+                    await clerkClient.users.deleteUser(userId);
+
+                    return { success: true, message: 'Usuario eliminado con éxito', code: 'OK' };
+                }
+
                 throw new ActionError({
-                    message: 'El usuario no tiene permisos para eliminar su cuenta',
-                    code: 'FORBIDDEN',
+                    message: `Este mensaje no se deberia ver, el usuario no fue eliminado de Clerk, el servidor respondio con ${response.status}`,
+                    code: 'GONE',
+                })
+            } catch (error) {
+                console.error('Error al eliminar usuario:', error);
+                throw new ActionError({
+                    message: 'Error al eliminar el usuario',
+                    code: 'INTERNAL_SERVER_ERROR',
                 });
             }
         }
