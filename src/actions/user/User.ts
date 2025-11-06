@@ -127,45 +127,54 @@ export const User = {
     }),
     changePassword: defineAction({
         input: z.object({
-            oldPassword: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
+            oldPassword: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres').optional(),
             password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
             confirmPassword: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
         }),
         handler: async ({ oldPassword, password, confirmPassword }, { locals }) => {
             if (password !== confirmPassword) {
-                throw new ActionError({
-                    message: 'Las contraseñas no coinciden',
-                    code: 'BAD_REQUEST',
-                });
+                throw new ActionError({ message: 'Las contraseñas no coinciden', code: 'BAD_REQUEST' });
             }
+
             const userId = locals.auth()?.userId || '';
             if (!userId) {
-                throw new ActionError({
-                    message: 'No se proporcionó un ID de usuario válido',
-                    code: 'BAD_REQUEST',
-                });
+                throw new ActionError({ message: 'No se proporcionó un ID de usuario válido', code: 'BAD_REQUEST' });
             }
-            // se actualiza la contraseña en clerk
-            const clerkClient = createClerkClient({
-                secretKey: import.meta.env.CLERK_SECRET_KEY,
-            });
-            try {
-                await clerkClient.users.verifyPassword({
-                    userId,
-                    password: oldPassword,
-                });
-            } catch (error) {
+
+            const clerkClient = createClerkClient({ secretKey: import.meta.env.CLERK_SECRET_KEY });
+            const user = await clerkClient.users.getUser(userId);
+
+            const hasPassword =
+                (user as any).passwordEnabled ?? (user as any).password_enabled ?? false;
+
+            // Requerir email verificado para crear primera contraseña
+            const primaryEmail = user.emailAddresses.find(e => e.id === user.primaryEmailAddressId);
+            const isEmailVerified = primaryEmail?.verification?.status === 'verified';
+            if (!hasPassword && !isEmailVerified) {
                 throw new ActionError({
-                    message: 'La contraseña actual es incorrecta.',
+                    message: 'Verifica tu email antes de crear una contraseña.',
                     code: 'BAD_REQUEST',
                 });
             }
 
-            await clerkClient.users.updateUser(userId, {
-                password,
-            });
+            if (hasPassword) {
+                if (!oldPassword) {
+                    throw new ActionError({ message: 'Debes ingresar tu contraseña actual.', code: 'BAD_REQUEST' });
+                }
+                try {
+                    await clerkClient.users.verifyPassword({ userId, password: oldPassword });
+                } catch {
+                    throw new ActionError({ message: 'La contraseña actual es incorrecta.', code: 'BAD_REQUEST' });
+                }
+            }
 
-            return { success: true, message: 'Contraseña actualizada con éxito', code: 'OK' };
+            await clerkClient.users.updateUser(userId, { password });
+
+            return {
+                success: true,
+                message: hasPassword ? 'Contraseña actualizada con éxito' : 'Contraseña creada con éxito',
+                code: 'OK',
+            };
         }
     }),
     delete: defineAction({

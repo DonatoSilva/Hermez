@@ -1,9 +1,12 @@
-import { deepMap } from 'nanostores'
+import { deepMap } from 'nanostores';
 
 export interface DataKey {
-    isOpen: boolean
-    acction: string
-    metaData: Record<string, unknown>
+    isOpen: boolean;
+    action?: string;
+    metaData?: {
+        title?: string;
+        [key: string]: unknown;
+    }
 }
 
 export const statusModal = deepMap({} as Record<string, DataKey>)

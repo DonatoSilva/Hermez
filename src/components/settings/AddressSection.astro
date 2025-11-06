@@ -42,27 +42,24 @@ const { isActive } = Astro.props;
   </ContentAddresses>
 </section>
 
-<Modal keyModal="new-address" title="Nueva dirección" client:load>
-  <form id="form-new-address" class="space-y-4 p-4">
-    <div>
-      <InputField
-        textLabel="Nombre de la dirección"
-        name="name"
-        type="text"
-        required
-        placeholder="Ej: Casa, Trabajo, Casa de la abuela"
-      />
-    </div>
+<Modal keyModal="form-address" title="Nueva dirección" client:load>
+  <form id="form-new-address" class="">
+    <input type="hidden" name="addressId" value="" disabled={true} />
+    <InputField
+      textLabel="Nombre de la dirección"
+      name="name"
+      type="text"
+      required
+      placeholder="Ej: Casa, Trabajo, Casa de la abuela"
+    />
 
-    <div>
-      <InputField
-        textLabel="Descripción (opcional)"
-        name="description"
-        as="textarea"
-        rows={3}
-        placeholder="Ej: Apartamento 3B, al lado del parque"
-      />
-    </div>
+    <InputField
+      textLabel="Descripción (opcional)"
+      name="description"
+      as="textarea"
+      rows={3}
+      placeholder="Ej: Apartamento 3B, al lado del parque"
+    />
 
     <div>
       <label for="type" class="block text-sm font-medium text-gray-700">Tipo de dirección</label>
@@ -79,15 +76,13 @@ const { isActive } = Astro.props;
       </select>
     </div>
 
-    <div>
-      <InputField
-        textLabel="Dirección física"
-        name="address"
-        type="text"
-        required
-        placeholder="Ej: Calle Falsa 123"
-      />
-    </div>
+    <InputField
+      textLabel="Dirección física"
+      name="address"
+      type="text"
+      required
+      placeholder="Ej: Calle Falsa 123"
+    />
 
     <div>
       <InputField
@@ -101,44 +96,131 @@ const { isActive } = Astro.props;
       />
     </div>
 
-    <Button type="submit" variant="default"> Guardar Dirección </Button>
+    <div class="flex flex-col sm:flex-row justify-between gap-2">
+      <Button id="btn-cancel-address" type="button" variant="text">Cancelar </Button>
+      <div class="flex flex-col sm:flex-row justify-end gap-2">
+        <Button id="btn-clear-address" type="button" variant={"bordered"}>Limpiar </Button>
+        <Button
+          id="btn-action-address"
+          type="submit"
+          variant="default"
+          disabled={true}
+          className="disabled:opacity-50 disabled:bg-gray-500"
+          ><Icon name="solar:diskette-bold-duotone" width={20} height={20} />
+          <span id="text-action-address">Guardar dirección</span>
+        </Button>
+      </div>
+    </div>
   </form>
 </Modal>
 
 <script>
+  import type { Actions } from "astro:actions";
   import { actions } from "astro:actions";
-  import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
+  import { listenKeys } from "nanostores";
+  import { addressToEdit } from "src/stores/AddressStore";
+  import { changeStatusModal, getStatusModal, statusModal } from "src/stores/ModalStore";
   import { toastStore } from "src/stores/StoreToast";
 
   document.addEventListener("astro:page-load", () => {
+    let fnAction:
+      | Actions["User"]["Address"]["create"]
+      | Actions["User"]["Address"]["update"]
+      | null = null;
+    const formNewAddress = document.getElementById("form-new-address") as HTMLFormElement | null;
     const btnNewAddress = document.getElementById("new-address");
     btnNewAddress?.addEventListener("click", () => {
+      addressToEdit.set(undefined);
+      formNewAddress?.reset();
       changeStatusModal(
-        "new-address" as never,
+        "form-address" as never,
         {
-          ...getStatusModal("new-address" as never),
+          ...getStatusModal("form-address" as never),
+          metaData: {
+            ...getStatusModal("form-address" as never).metaData,
+            title: "Nueva dirección",
+          },
+          action: "create",
           isOpen: true,
         } as never
       );
     });
 
-    const formNewAddress = document.getElementById("form-new-address") as HTMLFormElement | null;
+    const btnCancelAddress = document.getElementById(
+      "btn-cancel-address"
+    ) as HTMLButtonElement | null;
+    btnCancelAddress?.addEventListener("click", () => {
+      addressToEdit.set(undefined);
+      formNewAddress?.reset();
+      changeStatusModal(
+        "form-address" as never,
+        {
+          ...getStatusModal("form-address" as never),
+          isOpen: false,
+        } as never
+      );
+    });
+
+    const btnActionAddress = document.getElementById(
+      "btn-action-address"
+    ) as HTMLButtonElement | null;
+
+    const btnClearAddress = document.getElementById(
+      "btn-clear-address"
+    ) as HTMLButtonElement | null;
+    btnClearAddress?.addEventListener("click", () => {
+      formNewAddress?.reset();
+    });
+
+    listenKeys(statusModal, ["form-address"], (newValues) => {
+      const { action } = newValues["form-address"];
+
+      const span = btnActionAddress?.getElementsByTagName("span")[0];
+      if (span)
+        span.textContent = action == "create" ? "Guardar dirección" : "Actualizar dirección";
+
+      const addressId = document?.querySelector("[name='addressId']") as HTMLInputElement | null;
+      if (addressId) addressId.disabled = action == "edit" ? false : true;
+
+      fnAction = action == "create" ? actions.User.Address.create : actions.User.Address.update;
+
+      const data = addressToEdit.get();
+
+      data &&
+        Object.keys(data).forEach((key) => {
+          const element = formNewAddress?.querySelector(`[name="${key}"]`) as
+            | HTMLInputElement
+            | HTMLTextAreaElement
+            | HTMLSelectElement
+            | null;
+
+          if (element) element.value = (data as any)[key] || "";
+        });
+    });
+
+    formNewAddress?.addEventListener("change", () => {
+      if (formNewAddress?.checkValidity()) {
+        console.log("Formulario no válido");
+        btnActionAddress?.removeAttribute("disabled");
+      } else {
+        console.log("Formulario válido");
+        btnActionAddress?.setAttribute("disabled", "");
+      }
+    });
+
     formNewAddress?.addEventListener("submit", async (event) => {
       event.preventDefault();
       const formData = new FormData(formNewAddress);
 
       try {
-        const { data, error } = await actions.User.Address.create(formData);
+        if (typeof fnAction !== "function") {
+          throw { message: "No se ha seleccionado una acción válida" };
+        }
+
+        const { data, error } = await (fnAction as Function)(formData);
 
         if (error) {
-          toastStore.set({
-            visible: true,
-            message: error.message,
-            type: "error",
-            autoClose: true,
-            autoCloseDelay: 3000,
-          });
-          return;
+          throw error;
         }
 
         toastStore.set({
@@ -149,19 +231,19 @@ const { isActive } = Astro.props;
           autoCloseDelay: 3000,
         });
       } catch (err) {
-        console.error(err);
         toastStore.set({
           visible: true,
-          message: "Error inesperado al crear la dirección",
+          message:
+            (err as { message?: string })?.message || "Error inesperado al crear la dirección",
           type: "error",
           autoClose: true,
           autoCloseDelay: 3000,
         });
       } finally {
         changeStatusModal(
-          "new-address" as never,
+          "form-address" as never,
           {
-            ...getStatusModal("new-address" as never),
+            ...getStatusModal("form-address" as never),
             isOpen: false,
           } as never
         );

@@ -61,7 +61,7 @@ const {
         disabled={disabled}
         readonly={readonly}
         value={value}
-      ></textarea>
+      />
     ) : (
       <input
         id={id || name}
@@ -76,5 +76,11 @@ const {
       />
     )
   }
-  {helperText && <span class="text-xs text-gray-500">{helperText}</span>}
+  {
+    helperText != null && (
+      <span id={`${id || name}-helper`} class="text-xs text-gray-500">
+        {helperText}
+      </span>
+    )
+  }
 </label>

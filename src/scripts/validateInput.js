@@ -18,10 +18,9 @@ export const validateInput = (input, alertText) => {
 }
 
 
-export const isEmpty = (input, alertText) => {
+export const isEmpty = (input) => {
     if (!input.value.trim()) {
         input.focus()
-        alert(alertText)
         return false
     }
 
@@ -32,7 +31,6 @@ export const isNumber = (input) => {
     const re = /^\d+$/
     if (re.test(input)) {
         input.focus()
-        alert("Ingrese un número válido")
         return false
     }
 

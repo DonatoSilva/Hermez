@@ -2,6 +2,11 @@
 import Button from "@components/forms/elements/buttons/Button.astro";
 import InputField from "@components/forms/elements/inputs/InputField.astro";
 import Modal from "@components/modals/Modal";
+import { Icon } from "astro-icon/components";
+
+const currentUser = await Astro.locals.currentUser();
+const hasPassword = currentUser?.passwordEnabled;
+
 interface PlusSettingsProps {
   isActive: boolean;
 }
@@ -13,39 +18,28 @@ const { isActive } = Astro.props as PlusSettingsProps;
   <header class="flex flex-col justify-between items-start">
     <h5 class="text-lg font-semibold mb-3">Configuraciones avanzadas</h5>
     <div class="flex gap-2 items-center">
-      <svg
-        class="w-5 h-5 text-gray-500"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"
-        ></path>
-      </svg>
-      <p>Funciones extra para el usuario; muévelo todo con cuidado.</p>
+      <p>Funciones extra para el usuario, muévelo todo con cuidado.</p>
     </div>
   </header>
-  <div>
-    <Button id="delete-user" color="bg-H-red-700 text-H-red-100 hover:bg-H-red-900"
-      >Eliminar cuenta</Button
+  <div class="flex flex-col sm:flex-row gap-2">
+    <Button id="change-password" variant="bordered"
+      ><Icon name="solar:password-bold-duotone" width="24" height="24" />
+      {hasPassword ? "Cambiar contraseña" : "Añadir contraseña"}</Button
     >
-    <Button id="change-password" color="bg-H-yellow-700 text-H-yellow-100 hover:bg-H-yellow-900"
-      >Cambiar contraseña</Button
+    <Button id="delete-user" variant="danger"
+      ><Icon name="solar:user-cross-bold" width="24" height="24" /> Eliminar cuenta</Button
     >
   </div>
 </section>
 
 <Modal title="Configuraciones avanzadas" keyModal="delete-user" client:load>
-  <div class="flex items-center gap-4 w-full justify-center align-center min-h-fit">
+  <div
+    class="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full justify-center align-center min-h-fit max-w-3xl mx-auto"
+  >
     <img
       src="/images/clienteFelizEnPuerta-min.webp"
       alt="Hasta pronto"
-      class="w-24 h-24 rounded-md object-cover"
+      class="w-52 h-52 rounded-md object-cover"
       loading="lazy"
     />
     <div class="flex flex-col gap-2">
@@ -55,7 +49,7 @@ const { isActive } = Astro.props as PlusSettingsProps;
         darte la bienvenida cuando regreses.
       </p>
       <div class="flex justify-end gap-2">
-        <Button id="close-delete-user" variant="default">Cancelar</Button>
+        <Button id="close-delete-user" variant="text">Cancelar</Button>
         <Button id="confirm-delete-user" variant="danger">Eliminar</Button>
       </div>
     </div>
@@ -63,44 +57,62 @@ const { isActive } = Astro.props as PlusSettingsProps;
 </Modal>
 
 <Modal title="Configuraciones avanzadas" keyModal="change-password" client:load>
-  <div class="flex items-center gap-4 w-full justify-center align-center min-h-fit">
+  <div
+    class="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full justify-center align-center min-h-fit max-w-3xl mx-auto"
+  >
     <img
       src="/images/clienteFelizEnPuerta-min.webp"
       alt="Hasta pronto"
-      class="w-24 h-24 rounded-md object-cover"
+      class="w-52 h-52 rounded-md object-cover"
       loading="lazy"
     />
     <div class="flex flex-col gap-2">
-      <h3 class="text-xl font-semibold">¿Confirmas cambiar tu contraseña?</h3>
+      <h3 class="text-xl font-semibold">
+        {hasPassword ? "Cambiar contraseña" : "Añadir contraseña"}
+      </h3>
       <p class="text-sm text-H-blue-900">
         Recomendamos que uses una contraseña segura y única para tu cuenta. - Debería contener al
         menos 8 caracteres, incluir letras mayúsculas y minúsculas, números y caracteres especiales.
       </p>
-      <form class="flex flex-col gap-4">
-        <InputField
-          id="old-password"
-          textLabel="Contraseña actual"
-          name="old-password"
-          type="password"
-          required={true}
-        />
+      {
+        !hasPassword && (
+          <span class="text-red-500">
+            (No tienes una contraseña, crea una y añade una forma mas de acceder a tu cuenta.)
+          </span>
+        )
+      }
+      <form id="change-password-form" class="flex flex-col gap-4">
+        {
+          hasPassword && (
+            <InputField
+              id="old-password"
+              textLabel="Contraseña actual"
+              helperText=""
+              name="old-password"
+              type="password"
+              required={true}
+            />
+          )
+        }
         <InputField
           id="new-password"
           textLabel="Nueva contraseña"
           name="new-password"
+          helperText=""
           type="password"
           required={true}
         />
         <InputField
           id="confirm-password"
           textLabel="Confirmar contraseña"
+          helperText=""
           name="confirm-password"
           type="password"
           required={true}
         />
       </form>
       <div class="flex justify-end gap-2">
-        <Button id="close-change-password" variant="default">Cancelar</Button>
+        <Button id="close-change-password" variant="text">Cancelar</Button>
         <Button id="confirm-change-password" variant="danger">Cambiar</Button>
       </div>
     </div>
@@ -108,12 +120,16 @@ const { isActive } = Astro.props as PlusSettingsProps;
 </Modal>
 
 <script>
+  import { $userStore } from "@clerk/astro/client";
   import { isEmpty } from "@scripts/validateInput";
   import { actions } from "astro:actions";
+  import { navigate } from "astro:transitions/client";
   import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
   import { toastStore } from "src/stores/StoreToast";
 
   document.addEventListener("astro:page-load", () => {
+    const changePasswordForm = document.getElementById("change-password-form") as HTMLFormElement;
+
     const deleteUserButton = document.getElementById("delete-user");
     const confirmDeleteUserButton = document.getElementById("confirm-delete-user");
     const closeDeleteUserButton = document.getElementById("close-delete-user");
@@ -147,33 +163,76 @@ const { isActive } = Astro.props as PlusSettingsProps;
         const oldPassword = document.getElementById("old-password") as HTMLInputElement;
         const password = document.getElementById("new-password") as HTMLInputElement;
         const confirmPassword = document.getElementById("confirm-password") as HTMLInputElement;
+        const hasPassword = $userStore.get()?.passwordEnabled;
 
-        if (isEmpty(oldPassword)) {
-          toastStore.set({
-            visible: true,
-            message: "Por favor, ingresa tu contraseña actual.",
-            type: "error",
-            emoji: "⚠️",
-            autoClose: true,
-            autoCloseDelay: 3000,
-          });
+        if (hasPassword) {
+          if (!isEmpty(oldPassword)) {
+            const helperText = document.getElementById("old-password-helper") as HTMLSpanElement;
+            helperText.textContent = "Por favor, ingresa tu contraseña actual.";
+            helperText.classList.remove("text-gray-500");
+            helperText.classList.add("text-red-500");
+            return;
+          } else {
+            const helperText = document.getElementById("old-password-helper") as HTMLSpanElement;
+            helperText.textContent = "";
+            helperText.classList.remove("text-red-500");
+            helperText.classList.add("text-gray-500");
+          }
+        }
+
+        if (!isEmpty(password)) {
+          const helperText = document.getElementById("new-password-helper") as HTMLSpanElement;
+          helperText.textContent = "Por favor, ingresa tu contraseña nueva.";
+          helperText.classList.remove("text-gray-500");
+          helperText.classList.add("text-red-500");
+          return;
+        } else {
+          const helperText = document.getElementById("new-password-helper") as HTMLSpanElement;
+          helperText.textContent = "";
+          helperText.classList.remove("text-red-500");
+          helperText.classList.add("text-gray-500");
+        }
+
+        if (!isEmpty(confirmPassword)) {
+          const helperText = document.getElementById("confirm-password-helper") as HTMLSpanElement;
+          helperText.textContent = "Por favor, confirma tu contraseña nueva.";
+          helperText.classList.remove("text-gray-500");
+          helperText.classList.add("text-red-500");
+          return;
+        } else {
+          const helperText = document.getElementById("confirm-password-helper") as HTMLSpanElement;
+          helperText.textContent = "";
+          helperText.classList.remove("text-red-500");
+          helperText.classList.add("text-gray-500");
         }
 
         if (password.value !== confirmPassword.value) {
-          toastStore.set({
-            visible: true,
-            message: "Las contraseñas nuevas no coinciden.",
-            type: "error",
-            autoClose: true,
-            autoCloseDelay: 3000,
-          });
+          const helperText = document.getElementById("confirm-password-helper") as HTMLSpanElement;
+          helperText.textContent = "Las contraseñas nuevas no coinciden.";
+          helperText.classList.remove("text-gray-500");
+          helperText.classList.add("text-red-500");
           return;
+        } else {
+          const helperText = document.getElementById("confirm-password-helper") as HTMLSpanElement;
+          helperText.textContent = "";
+          helperText.classList.remove("text-red-500");
+          helperText.classList.add("text-gray-500");
         }
-        const { data, error } = await actions.User.changePassword({
-          oldPassword: oldPassword.value || "",
+
+        const payload: {
+          password: string;
+          confirmPassword: string;
+          oldPassword?: string;
+        } = {
           password: password.value || "",
           confirmPassword: confirmPassword.value || "",
-        });
+        };
+
+        if (hasPassword) {
+          payload.oldPassword = oldPassword.value || "";
+        }
+
+        const { data, error } = await actions.User.changePassword(payload);
 
         if (error) {
           toastStore.set({
@@ -183,21 +242,26 @@ const { isActive } = Astro.props as PlusSettingsProps;
             autoClose: true,
             autoCloseDelay: 3000,
           });
+          changeStatusModal(
+            "change-password" as never,
+            {
+              ...getStatusModal("change-password" as never),
+              isOpen: false,
+            } as never
+          );
           return;
         }
 
         if (data?.message) {
           toastStore.set({
             visible: true,
-            message: `${data?.message}, Esto es un adiós 😥.` || "Contraseña cambiada con éxito",
+            message: `${data?.message} 😎` || "Contraseña cambiada con éxito",
             type: "success",
             autoClose: true,
             autoCloseDelay: 3000,
           });
         }
-      } catch (error) {
-        console.error(error);
-      } finally {
+
         changeStatusModal(
           "change-password" as never,
           {
@@ -205,6 +269,28 @@ const { isActive } = Astro.props as PlusSettingsProps;
             isOpen: false,
           } as never
         );
+
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
+      } catch (error) {
+        console.error(error);
+        toastStore.set({
+          visible: true,
+          message: (error as any).message || "Error al cambiar la contraseña",
+          type: "error",
+          autoClose: true,
+          autoCloseDelay: 3000,
+        });
+        changeStatusModal(
+          "change-password" as never,
+          {
+            ...getStatusModal("change-password" as never),
+            isOpen: false,
+          } as never
+        );
+      } finally {
+        changePasswordForm?.reset();
       }
     });
 

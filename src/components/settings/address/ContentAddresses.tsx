@@ -146,9 +146,14 @@ export default function ContentAddresses({ emptyFavorite, emptyPoints }: { empty
             addressToEdit.set(undefined);
             addressToEdit.set(address);
             changeStatusModal(
-                "edit-address" as never,
+                "form-address" as never,
                 {
-                    ...getStatusModal("edit-address" as never),
+                    ...getStatusModal("form-address" as never),
+                    metaData: {
+                        ...getStatusModal("form-address" as never).metaData,
+                        title: "Editar dirección",
+                    },
+                    action: "edit",
                     isOpen: true,
                 } as never
             );
