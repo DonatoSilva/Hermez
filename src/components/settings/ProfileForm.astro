@@ -2,6 +2,7 @@
 import Button from "@components/forms/elements/buttons/Button.astro";
 import InputField from "@components/forms/elements/inputs/InputField.astro";
 import { server as actions } from "@actions/index";
+import SelectField from "@components/forms/elements/selects/SelectField.astro";
 
 interface Props {
   isActive: boolean;
@@ -9,7 +10,8 @@ interface Props {
 
 const { isActive } = Astro.props as Props;
 
-const { imageUrl, firstName, lastName, emailAddresses } = (await Astro.locals.currentUser()) ?? {};
+const { imageUrl, firstName, lastName, emailAddresses, username } =
+  (await Astro.locals.currentUser()) ?? {};
 let userData = { gender: "notFound", phone: "notFound", age: 0 };
 
 const { data, error } = await Astro.callAction(actions.User.get, {});
@@ -62,6 +64,8 @@ const { gender, phone, age } = userData;
     </div>
 
     <div class="flex flex-col gap-4 lg:col-span-1">
+      <InputField textLabel="Nombre de usuario" name="username" type="text" value={username} />
+
       <InputField textLabel="Nombre" name="firstName" type="text" value={firstName} />
 
       <InputField textLabel="Apellido" name="lastName" type="text" value={lastName} />
@@ -86,13 +90,20 @@ const { gender, phone, age } = userData;
         helperText="Disponible solo para Barichara, Santander"
       />
 
-      <label class="flex flex-col gap-2">
-        <span class="text-sm">Género</span>
-        <select name="gender" class="border border-gray-300 rounded-md px-3 py-2">
-          <option value="male" selected={gender === "male"}>Masculino</option>
-          <option value="female" selected={gender === "female"}>Femenino</option>
-        </select>
-      </label>
+      <SelectField
+        id="gender"
+        name="gender"
+        textLabel="Género"
+        required
+        className="mt-1 block w-full sm:text-sm"
+        custom={true}
+        placeholder="Selecciona un género"
+        options={[
+          { value: "male", label: "Masculino" },
+          { value: "female", label: "Femenino" },
+        ]}
+      />
+
       <div class="flex flex-col md:flex-row gap-3 mt-2">
         <Button
           id="save-button"

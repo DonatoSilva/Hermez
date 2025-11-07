@@ -1,6 +1,7 @@
 ---
 import Button from "@components/forms/elements/buttons/Button.astro";
 import InputField from "@components/forms/elements/inputs/InputField.astro";
+import SelectField from "@components/forms/elements/selects/SelectField.astro";
 import Modal from "@components/modals/Modal";
 import ContentAddresses from "./address/ContentAddresses";
 import EmptyAddress from "./address/favorite/EmptyAddress.astro";
@@ -43,48 +44,47 @@ const { isActive } = Astro.props;
 </section>
 
 <Modal keyModal="form-address" title="Nueva dirección" client:load>
-  <form id="form-new-address" class="">
+  <form
+    id="form-new-address"
+    class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl mx-auto"
+  >
     <input type="hidden" name="addressId" value="" disabled={true} />
-    <InputField
-      textLabel="Nombre de la dirección"
-      name="name"
-      type="text"
-      required
-      placeholder="Ej: Casa, Trabajo, Casa de la abuela"
-    />
-
-    <InputField
-      textLabel="Descripción (opcional)"
-      name="description"
-      as="textarea"
-      rows={3}
-      placeholder="Ej: Apartamento 3B, al lado del parque"
-    />
-
-    <div>
-      <label for="type" class="block text-sm font-medium text-gray-700">Tipo de dirección</label>
-      <select
-        id="type"
-        name="type"
+    <div class="md:col-span-1">
+      <InputField
+        textLabel="Nombre de la dirección"
+        name="name"
+        type="text"
         required
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-      >
-        <option value="">Selecciona un tipo</option>
-        <option value="casa">Casa</option>
-        <option value="trabajo">Trabajo</option>
-        <option value="edificio">Edificio</option>
-      </select>
+        placeholder="Ej: Casa, Trabajo, Casa de la abuela"
+      />
     </div>
 
-    <InputField
-      textLabel="Dirección física"
-      name="address"
-      type="text"
-      required
-      placeholder="Ej: Calle Falsa 123"
-    />
+    <div class="md:col-span-1">
+      <SelectField
+        id="type"
+        name="type"
+        textLabel="Tipo de dirección"
+        required
+        placeholder="Selecciona un tipo"
+        options={[
+          { value: "casa", label: "Casa" },
+          { value: "trabajo", label: "Trabajo" },
+          { value: "edificio", label: "Edificio" },
+        ]}
+      />
+    </div>
 
-    <div>
+    <div class="md:col-span-1">
+      <InputField
+        textLabel="Dirección física"
+        name="address"
+        type="text"
+        required
+        placeholder="Ej: Calle Falsa 123"
+      />
+    </div>
+
+    <div class="md:col-span-1">
       <InputField
         textLabel="Ciudad"
         name="city"
@@ -96,7 +96,17 @@ const { isActive } = Astro.props;
       />
     </div>
 
-    <div class="flex flex-col sm:flex-row justify-between gap-2">
+    <div class="col-span-full">
+      <InputField
+        textLabel="Descripción (opcional)"
+        name="description"
+        as="textarea"
+        rows={3}
+        placeholder="Ej: Apartamento 3B, al lado del parque"
+      />
+    </div>
+
+    <div class="col-span-full flex flex-col sm:flex-row justify-between gap-2">
       <Button id="btn-cancel-address" type="button" variant="text">Cancelar </Button>
       <div class="flex flex-col sm:flex-row justify-end gap-2">
         <Button id="btn-clear-address" type="button" variant={"bordered"}>Limpiar </Button>

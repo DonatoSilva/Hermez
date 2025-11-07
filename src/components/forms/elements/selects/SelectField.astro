@@ -1,0 +1,170 @@
+---
+type OptionItem = {
+  value: string | number;
+  label: string;
+  disabled?: boolean;
+};
+
+type OptionGroup = {
+  label: string;
+  options: OptionItem[];
+};
+
+interface SelectFieldProps {
+  id?: string;
+  textLabel?: string;
+  classLabel?: string;
+  name?: string;
+  value?: string | number | Array<string | number>;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  readonly?: boolean;
+  className?: string;
+  helperText?: string;
+  multiple?: boolean;
+  options?: OptionItem[];
+  groups?: OptionGroup[];
+  variant?: "default" | "error" | "success";
+}
+
+const {
+  id = "",
+  textLabel = "",
+  classLabel = "",
+  name = "",
+  value = "",
+  placeholder = "",
+  required = false,
+  disabled = false,
+  readonly = false,
+  className = "",
+  helperText = "",
+  options = [],
+} = Astro.props as SelectFieldProps;
+---
+
+<select-field class={`relative flex flex-col gap-1 ${classLabel}`}>
+  {textLabel && <span class="text-sm">{textLabel}</span>}
+  <input type="hidden" name="" value="{value}" />
+
+  <div
+    id="select"
+    class="relative border border-gray-300 rounded-md px-3 py-2 ${className} disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
+  >
+    <span id={`${id || name}-placeholder`}>{placeholder}</span>
+    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M6 9l6 6 6-6"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </span>
+  </div>
+
+  <div
+    class="absolute top-full left-0 bg-white border border-gray-300 rounded-md shadow-lg z-10 options w-full overflow-hidden"
+  >
+    {
+      options.map((option, index) => (
+        <div
+          id={`${id || name}-option-${index}`}
+          class="px-3 py-2 cursor-pointer hover:bg-gray-100"
+        >
+          {option.disabled ? (
+            <span class="text-gray-400" data-disabled>
+              {option.label}
+            </span>
+          ) : (
+            <span class="text-black" data-value={option.value}>
+              {option.label}
+            </span>
+          )}
+        </div>
+      ))
+    }
+  </div>
+
+  {helperText != null && <span class="text-sm text-gray-500">{helperText}</span>}
+</select-field>
+
+<style>
+  [data-disabled] {
+    cursor: not-allowed;
+  }
+  .options {
+    max-width: inherit;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .options.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .selected {
+    background: #e0e7ff;
+    font-weight: bold;
+  }
+  svg {
+    transition: transform 0.3s;
+  }
+  .rotate {
+    transform: rotate(180deg);
+  }
+</style>
+
+<script>
+  class SelectField extends HTMLElement {
+    selectedValue = '';
+    menuVisible = false;
+    connectedCallback() {
+      const select = this.querySelector('#select');
+      const optionsMenu = this.querySelector('.options');
+      const inputHidden = this.querySelector('input[type="hidden"]');
+      const arrow = this.querySelector('svg');
+      const optionDivs = optionsMenu?.querySelectorAll('[data-value]');
+
+      // Inicializa el valor si existe
+      if (inputHidden && inputHidden.value) {
+        this.selectedValue = inputHidden.value;
+      }
+
+      // Mostrar/ocultar menú y animar flecha
+      select?.addEventListener('click', () => {
+        this.menuVisible = !this.menuVisible;
+        optionsMenu?.classList.toggle('show', this.menuVisible);
+        arrow?.classList.toggle('rotate', this.menuVisible);
+      });
+
+      // Selección de opción
+      optionsMenu?.addEventListener('click', (e) => {
+        const target = e.target.closest('[data-value]');
+        if (target && !target.hasAttribute('data-disabled')) {
+          const value = target.getAttribute('data-value');
+          this.selectedValue = value;
+          if (inputHidden) inputHidden.value = value;
+          // Resalta opción seleccionada
+          optionDivs?.forEach(opt => opt.classList.remove('selected'));
+          target.classList.add('selected');
+          // Oculta menú y rota flecha
+          this.menuVisible = false;
+          optionsMenu.classList.remove('show');
+          arrow?.classList.remove('rotate');
+        }
+      });
+    }
+  }
+  customElements.define('select-field', SelectField);
+</script>
