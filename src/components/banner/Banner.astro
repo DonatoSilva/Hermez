@@ -6,12 +6,7 @@ interface Props {
   height?: string;
 }
 
-const {
-  title,
-  color = "bg-H-blue-700",
-  className = "",
-  height = "max-h-min",
-} = Astro.props;
+const { title, color = "bg-H-blue-700", className = "", height = "max-h-min" } = Astro.props;
 ---
 
 <div
@@ -19,7 +14,7 @@ const {
 >
   <!-- Título -->
   <div
-    class="relative w-full font-semibold text-H-blue-100 text-2xl leading-tight tracking-tight"
+    class="relative w-full font-semibold text-H-blue-100 text-2xl leading-tight tracking-tight z-20"
   >
     {title}
   </div>

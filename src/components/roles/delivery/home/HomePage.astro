@@ -1,7 +1,84 @@
+---
+import Banner from "@components/banner/Banner.astro";
+import Button from "@components/forms/elements/buttons/Button.astro";
+
+import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+import personaAburrida from "public/images/persona-aburrida.png";
+import sillaCasco from "public/images/silla-y-casco.png";
+
+const frasesVacios = [
+  "Rayos, ¡tenemos una mala racha! De seguro en unos minutos explota el chat.",
+  "Nada como un café mientras el celular se cobija… ¡y el primer pedido llega!",
+  "¿Escuchaste eso? Es el sonido de la calma antes de la vorágine de pedidos.",
+  "Relax, hasta los superhéroes necesitan pausa; tu mochila ya huele a gloria.",
+  "Consejo ninja: aprovecha para estirar piernas; luego correrás como Flash.",
+  "¿Sabías que respirar hondo 3 veces aumenta el 73 % la probabilidad de propina? (dato no científico).",
+  "Tu moto te mira y dice: ‘¿Nos tomamos una selfie de descanso?’",
+  "Recuerda: cada minuto sin pedido es un minuto sin tráfico. ¡Silver linings!",
+  "Chiste rápido: — ¿Cuál es el colmo de un domiciliario? — Quedarse ‘sin entrega’ de batería.",
+  "Consejo de oro: revisa llantas, cierra casco y pide tu propio café; el siguiente aviso será para ti.",
+  "Si los pedidos fueran Pokémon, ya habrías atrapado… ¡el silencio! Pero viene un Legendario.",
+  "¿Escuchas campanas? No, no es Navidad; es tu celular sonando en 3, 2, 1…",
+  "Frase motivacional: ‘No hay día malo, solo día sin propina… aún.’",
+  "Mini-trivia: El domicilio más rápido del mundo tardó 3 minutos. Tu récord está por romperse.",
+  "Consejo foodie: mientras esperas, piensa en la hamburguesa que te comprarás con la próxima propina.",
+  "¿El cielo está nublado? Perfecto: menos sol, más pedidos cuando la gente no quiere salir.",
+  "Tu mochila ahora pesa -5 kg de esperanza; en 5 minutos llevará 5 kg de comida.",
+  "Chiste de moto: —¿Cuál es tu película favorita? —‘En busca del pedido perdido’.",
+  "Dato curioso: cada segundo que pasa alguien más cerca pide comida. Spoiler: eres tú quien la lleva.",
+  "Recordatorio: sonríele al GPS; así cuando suene lo encuentras más rápido.",
+];
+
+const imgs = [personaAburrida, sillaCasco];
+
+const fraseVacio = frasesVacios[Math.floor(Math.random() * frasesVacios.length)];
+const img = imgs[Math.floor(Math.random() * imgs.length)];
+---
+
 <section>
-  <div
-    class="container relative h-full min-h-full flex flex-col justify-center text-center mx-auto"
-  >
-    <h1 class="text-3xl font-bold text-H-blue-900 text-center">Bienvenido, domiciliario</h1>
+  <div class="container relative h-full min-h-full flex flex-col justify-center mx-auto gap-4">
+    <div
+      class="flex flex-col md:flex-row md:justify-between gap-4 md:gap-8 p-2 bg-H-blue-300 rounded-md"
+    >
+      <div class="flex flex-row justify-between p-4 w-full md:max-w-md">
+        <div class="flex flex-col justify-start items-start w-full">
+          <span class="text-H-blue-900 font-bold">Estado:</span>
+          <span class="text-H-blue-700">Disponible</span>
+        </div>
+        <Button variant={"default"}
+          >Cambiar<Icon name="solar:alt-arrow-right-bold-duotone" width={24} height={24} /></Button
+        >
+      </div>
+      <div
+        class="flex flex-row justify-between gap-4 rounded-md border bg-H-blue-100 border-H-blue-300 p-4 w-full md:max-w-md"
+      >
+        <div class="flex flex-col justify-start items-start w-full">
+          <span class="text-H-blue-900 font-bold">Dinero ganada:</span>
+          <span class="text-H-blue-700">$100.000</span>
+        </div>
+        <div class="min-h-max w-[0.5px] bg-H-blue-300"></div>
+        <div class="flex flex-col justify-start items-start w-full">
+          <span class="text-H-blue-900 font-bold">N° Domicilios:</span>
+          <span class="text-H-blue-700">10</span>
+        </div>
+      </div>
+    </div>
+    <Banner title="No hay pedidos disponibles" className="min-w-full gap-4">
+      <p
+        slot="optional-content"
+        class="text-H-blue-100 text-balance text-base font-normal max-w-prose z-10"
+      >
+        {fraseVacio}
+      </p>
+      <Image
+        src={img}
+        slot="image"
+        class="min-w-26 w-full max-w-48 h-full object-cover z-0 transition-all md:max-w-62 blur-xs md:blur-none"
+        alt="Imagen decorativa para cuando no hay pedidos"
+        sizes="250px"
+        format="webp"
+      />
+    </Banner>
   </div>
 </section>
