@@ -26,6 +26,7 @@ interface SelectFieldProps {
   options?: OptionItem[];
   groups?: OptionGroup[];
   variant?: "default" | "error" | "success";
+  idContainer?: string;
 }
 
 const {
@@ -41,10 +42,11 @@ const {
   className = "",
   helperText = "",
   options = [],
+  idContainer,
 } = Astro.props as SelectFieldProps;
 ---
 
-<select-field class={`relative flex flex-col gap-1 ${classLabel}`}>
+<select-field class={`relative flex flex-col gap-1 ${classLabel}`} data-id-container={idContainer}>
   {textLabel && <span class="text-sm">{textLabel}</span>}
   <input type="hidden" name="" value="{value}" />
 
@@ -52,7 +54,7 @@ const {
     id="select"
     class="relative border border-gray-300 rounded-md px-3 py-2 ${className} disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
   >
-    <span id={`${id || name}-placeholder`}>{placeholder}</span>
+    <span data-placeholder>{placeholder}</span>
     <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
       <svg
         width="16"
@@ -69,29 +71,21 @@ const {
           stroke-linejoin="round"></path>
       </svg>
     </span>
-  </div>
-
-  <div
-    class="absolute top-full left-0 bg-white border border-gray-300 rounded-md shadow-lg z-10 options w-full overflow-hidden"
-  >
-    {
-      options.map((option, index) => (
-        <div
-          id={`${id || name}-option-${index}`}
-          class="px-3 py-2 cursor-pointer hover:bg-gray-100"
-        >
-          {option.disabled ? (
-            <span class="text-gray-400" data-disabled>
-              {option.label}
-            </span>
-          ) : (
-            <span class="text-black" data-value={option.value}>
-              {option.label}
-            </span>
-          )}
-        </div>
-      ))
-    }
+    <div
+      class="absolute open-down left-0 bg-white border border-gray-300 rounded-md shadow-lg z-10 options w-full overflow-hidden"
+    >
+      {
+        options.map((option, index) => (
+          <div
+            id={`${id || name}-option-${index}`}
+            class={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${option.disabled ? "text-gray-400" : "text-black"}`}
+            data-disabled={option.disabled}
+          >
+            <span data-value={option.value}>{option.label}</span>
+          </div>
+        ))
+      }
+    </div>
   </div>
 
   {helperText != null && <span class="text-sm text-gray-500">{helperText}</span>}
@@ -106,7 +100,24 @@ const {
     opacity: 0;
     transform: translateY(-10px);
     pointer-events: none;
-    transition: opacity 0.3s, transform 0.3s;
+    transition:
+      opacity 0.3s,
+      transform 0.3s;
+
+    &.open-down {
+      top: 100%;
+      margin-top: 0.5rem;
+      bottom: auto;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    &.open-up {
+      top: auto;
+      margin-bottom: 0.5rem;
+      bottom: 100%;
+      transform: translateY(-10px);
+      pointer-events: none;
+    }
   }
   .options.show {
     opacity: 1;
@@ -127,14 +138,17 @@ const {
 
 <script>
   class SelectField extends HTMLElement {
-    selectedValue = '';
+    idContainer = this.dataset.idContainer || "";
+    selectedValue = "";
     menuVisible = false;
+
     connectedCallback() {
-      const select = this.querySelector('#select');
-      const optionsMenu = this.querySelector('.options');
-      const inputHidden = this.querySelector('input[type="hidden"]');
-      const arrow = this.querySelector('svg');
-      const optionDivs = optionsMenu?.querySelectorAll('[data-value]');
+      const select = this.querySelector("#select");
+      const optionsMenu = this.querySelector(".options") as HTMLElement;
+      const inputHidden = this.querySelector('input[type="hidden"]') as HTMLInputElement;
+      const placeholderSpan = this.querySelector("[data-placeholder]");
+      const arrow = this.querySelector("svg");
+      const optionDivs = optionsMenu?.querySelectorAll("[data-value]");
 
       // Inicializa el valor si existe
       if (inputHidden && inputHidden.value) {
@@ -142,29 +156,65 @@ const {
       }
 
       // Mostrar/ocultar menú y animar flecha
-      select?.addEventListener('click', () => {
+      select?.addEventListener("click", () => {
+        // 1. Calcular dimensiones
+        const selectRect = select.getBoundingClientRect(); // Posición y tamaño del campo de selección
+        const viewportHeight =
+          document.getElementById(`view-${this.idContainer}`)?.clientHeight || window.innerHeight; // Altura de la ventana
+
+        if (!optionsMenu) return;
+        const optionsMenuHeight = optionsMenu.scrollHeight; // Altura real del menú si se mostrara completo
+
+        const spaceBelow = viewportHeight - selectRect.bottom;
+        const spaceAbove = selectRect.top;
+
+        // 2. Determinar si hay desbordamiento y cómo ajustarlo
+        if (spaceBelow < optionsMenuHeight && spaceAbove > optionsMenuHeight) {
+          // Abrir hacia arriba
+          optionsMenu.classList.add("open-up"); // Añadir una clase para posicionar hacia arriba
+          optionsMenu.classList.remove("open-down"); // Asegurarse de que no tenga la clase de abrir hacia abajo
+        } else if (spaceBelow < optionsMenuHeight && spaceAbove < optionsMenuHeight) {
+          // No hay espacio suficiente ni arriba ni abajo, hacerlo scrollable
+          optionsMenu.style.maxHeight = Math.max(spaceBelow, spaceAbove) + "px"; // Usar el mayor espacio disponible
+          optionsMenu.style.overflowY = "auto";
+          optionsMenu.classList.remove("open-up");
+          optionsMenu.classList.add("open-down"); // Por defecto, abrir hacia abajo si no hay espacio arriba
+        } else {
+          // Suficiente espacio abajo, abrir normalmente
+          optionsMenu.classList.remove("open-up");
+          optionsMenu.classList.add("open-down");
+          optionsMenu.style.maxHeight = ""; // Limpiar max-height si se había establecido
+          optionsMenu.style.overflowY = ""; // Limpiar overflow-y
+        }
+
         this.menuVisible = !this.menuVisible;
-        optionsMenu?.classList.toggle('show', this.menuVisible);
-        arrow?.classList.toggle('rotate', this.menuVisible);
+        optionsMenu?.classList.toggle("show", this.menuVisible);
+        arrow?.classList.toggle("rotate", this.menuVisible);
       });
 
       // Selección de opción
-      optionsMenu?.addEventListener('click', (e) => {
-        const target = e.target.closest('[data-value]');
-        if (target && !target.hasAttribute('data-disabled')) {
-          const value = target.getAttribute('data-value');
+      optionsMenu?.addEventListener("click", (e) => {
+        let target = e.target as HTMLElement;
+        if (target.tagName === "SPAN") {
+          target = target.closest("div") as HTMLElement;
+        }
+
+        if (target && !target.hasAttribute("data-disabled")) {
+          const value = target.getElementsByTagName("span")[0]?.getAttribute("data-value") ?? "";
+          const text = target.getElementsByTagName("span")[0]?.textContent ?? "";
           this.selectedValue = value;
           if (inputHidden) inputHidden.value = value;
+          if (placeholderSpan) placeholderSpan.textContent = text;
           // Resalta opción seleccionada
-          optionDivs?.forEach(opt => opt.classList.remove('selected'));
-          target.classList.add('selected');
+          optionDivs?.forEach((opt) => opt.closest("div")?.classList.remove("selected"));
+          target.classList.add("selected");
           // Oculta menú y rota flecha
           this.menuVisible = false;
-          optionsMenu.classList.remove('show');
-          arrow?.classList.remove('rotate');
+          optionsMenu.classList.remove("show");
+          arrow?.classList.remove("rotate");
         }
       });
     }
   }
-  customElements.define('select-field', SelectField);
+  customElements.define("select-field", SelectField);
 </script>

@@ -54,7 +54,7 @@ const Modal: React.FC<{ title: string; keyModal: string; children: React.ReactNo
             ref={dialogRef}
             className={`fixed top-auto mx-auto w-full max-w-7xl h-[80vh] max-h-[850px] rounded-t-3xl bg-H-blue-100 dark:bg-H-black dark:text-H-blue-100 z-10 ${styles.dialog} cursor-pointer`}
         >
-            <div className={`p-6 cursor-default`}>
+            <div className={`p-6 cursor-default`} id={`view-${keyModal}`}>
                 <div className="mx-auto w-full max-w-[1224px] h-full flex flex-col gap-4">
                     <div className='w-full max-w-52 h-2 bg-gray-300 dark:bg-H-blue-900 rounded-full mx-auto transition-colors duration-200 cursor-pointer'></div>
                     <div className="flex items-center justify-between mb-6">
