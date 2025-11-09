@@ -21,11 +21,14 @@ export const Vehicle = {
       if (!token) throw new ActionError({ code: "UNAUTHORIZED", message: "No autenticado" });
 
       const res = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/vehicles/`, {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: "no-store",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
       });
       if (!res.ok) throw new ActionError({ code: "BAD_REQUEST", message: "No se pudieron cargar los vehículos" });
-      return (await res.json()) as unknown;
+      return await res.json();
     },
   }),
 

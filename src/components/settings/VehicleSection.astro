@@ -5,10 +5,20 @@ import SelectField from "@components/forms/elements/selects/SelectField.astro";
 import Modal from "@components/modals/Modal";
 import ContentVehicles from "@components/settings/vehicle/ContentVehicles";
 import { Icon } from "astro-icon/components";
+import EmptyAddress from "./address/favorite/EmptyAddress.astro";
+
+interface VehicleSectionProps {
+  isActive: boolean;
+}
+
+const { isActive } = Astro.props as VehicleSectionProps;
 ---
 
-<section id="section-vehicles" class="section">
-  <div class="flex justify-between items-center">
+<section
+  id="section-vehicles"
+  class:list={["min-w-full flex flex-col gap-4", { active: isActive }]}
+>
+  <header class="flex justify-between items-center">
     <h5 class="text-xl md:text-2xl font-semibold">Vehículos</h5>
     <Button
       id="open-modal-vehicle"
@@ -18,52 +28,153 @@ import { Icon } from "astro-icon/components";
       <Icon name="solar:add-square-bold-duotone" width={20} height={20} />
       Agregar vehículo
     </Button>
-  </div>
+  </header>
 
   <div class="mt-4">
-    <ContentVehicles client:load />
+    <ContentVehicles client:visible>
+      <EmptyAddress
+        slot="emptyVehicle"
+        title="Sin vehículos registrados aún."
+        className="opacity-40"
+        emoji="🚗"
+        helperText="Agrega tu primer vehículo para comenzar."
+      />
+    </ContentVehicles>
   </div>
-
-  <Modal title="Registrar Vehículo" keyModal="form-vehicle">
-    <form id="form-vehicle" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl mx-auto">
-      <input type="hidden" name="vehicleId" value="" disabled={true} />
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <InputField label="Marca" name="brand" type="text" required />
-        <InputField label="Modelo" name="model" type="text" required />
-        <InputField label="Año" name="year" type="number" name="year" required />
-        <InputField label="Placa" name="licensePlate" type="text" required />
-        <InputField label="VIN" name="vin" type="text" required />
-        <InputField label="Color (hex)" name="color" type="text" />
-        <SelectField
-          label="Tipo de vehículo"
-          name="type"
-          options={[
-            { value: "", label: "Tipo de vehículo" },
-            { value: "car", label: "Carro" },
-            { value: "motorcycle", label: "Motocicleta" },
-            { value: "bicycle", label: "Bicicleta" },
-            { value: "truck", label: "Camión" },
-            { value: "van", label: "Furgoneta" },
-          ]}
-          required
-        />
-      </div>
-
-      <div class="col-span-full flex flex-col sm:flex-row justify-between gap-2">
-        <Button id="btn-cancel-vehicle" type="button" variant="text">Cancelar </Button>
-        <div class="flex flex-col sm:flex-row justify-end gap-2">
-          <Button id="btn-clear-vehicle" type="button" variant={"bordered"}>Limpiar </Button>
-          <Button
-            id="btn-action-vehicle"
-            type="submit"
-            variant="default"
-            disabled={true}
-            className="disabled:opacity-50 disabled:bg-gray-500"
-            ><Icon name="solar:diskette-bold-duotone" width={20} height={20} />
-            <span id="text-action-address">Guardar vehículo</span>
-          </Button>
-        </div>
-      </div>
-    </form>
-  </Modal>
 </section>
+
+<Modal title="Registrar Vehículo" keyModal="form-vehicle" client:load>
+  <form id="form-vehicle" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl mx-auto">
+    <input type="hidden" name="vehicleId" value="" disabled={true} />
+    <div class="md:col-span-1">
+      <InputField
+        textLabel="Marca"
+        name="brand"
+        type="text"
+        placeholder="Marca del vehículo: AKT"
+        required
+      /></div
+    >
+    <div class="md:col-span-1">
+      <InputField
+        textLabel="Modelo"
+        name="model"
+        type="text"
+        placeholder="Modelo del vehiculo: CR4"
+        required
+      /></div
+    >
+    <div class="md:col-span-1">
+      <InputField
+        textLabel="Año"
+        name="year"
+        type="number"
+        placeholder="Año del vehículo: 2020"
+        required
+      /></div
+    >
+    <div class="md:col-span-1">
+      <InputField
+        textLabel="Placa"
+        name="licensePlate"
+        type="text"
+        placeholder="Placa del vehiculo: ABC123"
+        required
+      /></div
+    >
+    <div class="md:col-span-1">
+      <InputField
+        textLabel="VIN"
+        name="vin"
+        type="text"
+        placeholder="VIN del vehiculo: 12345678901234567"
+        required
+      /></div
+    >
+    <div class="md:col-span-1">
+      <InputField
+        textLabel="Color (hex)"
+        name="color"
+        type="text"
+        placeholder="Color del vehiculo: #000000"
+      /></div
+    >
+    <div class="md:col-span-1">
+      <SelectField
+        textLabel="Tipo de vehículo"
+        name="type"
+        placeholder="Tipo de vehiculo"
+        options={[
+          { value: "", label: "Tipo de vehículo" },
+          { value: "car", label: "Carro" },
+          { value: "motorcycle", label: "Motocicleta" },
+          { value: "tuctuc", label: "MotoTaxi" },
+        ]}
+        required
+      />
+    </div>
+
+    <div class="col-span-full flex flex-col sm:flex-row justify-between gap-2">
+      <Button id="btn-cancel-vehicle" type="button" variant="text">Cancelar </Button>
+      <div class="flex flex-col sm:flex-row justify-end gap-2">
+        <Button id="btn-clear-vehicle" type="button" variant={"bordered"}>Limpiar </Button>
+        <Button
+          id="btn-action-vehicle"
+          type="submit"
+          variant="default"
+          disabled={true}
+          className="disabled:opacity-50 disabled:bg-gray-500"
+          ><Icon name="solar:diskette-bold-duotone" width={20} height={20} />
+          <span id="text-action-address">Guardar vehículo</span>
+        </Button>
+      </div>
+    </div>
+  </form>
+</Modal>
+
+<script>
+  import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
+  import { vehicleToEdit } from "src/stores/VehicleStore";
+
+  document.addEventListener("astro:page-load", () => {
+    const formVehicle = document.getElementById("form-vehicle") as HTMLFormElement | null;
+    const btnClearVehicle = document.getElementById(
+      "btn-clear-vehicle"
+    ) as HTMLButtonElement | null;
+    const btnActionVehicle = document.getElementById(
+      "btn-action-vehicle"
+    ) as HTMLButtonElement | null;
+    const btnNewVehicle = document.getElementById("open-modal-vehicle") as HTMLButtonElement | null;
+    const btnCancelVehicle = document.getElementById(
+      "btn-cancel-vehicle"
+    ) as HTMLButtonElement | null;
+
+    btnClearVehicle?.addEventListener("click", () => {
+      formVehicle?.reset();
+    });
+
+    btnNewVehicle?.addEventListener("click", () => {
+      vehicleToEdit.set(undefined);
+      formVehicle?.reset();
+      changeStatusModal(
+        "form-vehicle" as never,
+        {
+          ...getStatusModal("form-vehicle" as never),
+          isOpen: true,
+        } as never
+      );
+    });
+
+    btnCancelVehicle?.addEventListener("click", () => {
+      vehicleToEdit.set(undefined);
+      formVehicle?.reset();
+      changeStatusModal(
+        "form-vehicle" as never,
+        {
+          ...getStatusModal("form-vehicle" as never),
+          isOpen: false,
+        } as never
+      );
+    });
+  });
+</script>

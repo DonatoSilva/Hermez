@@ -3,20 +3,32 @@ import VehicleItem from "@components/settings/vehicle/VehicleItem";
 import { useStore } from "@nanostores/react";
 import { allVehicles as $allVehicles, vehicleToEdit } from "@stores/VehicleStore";
 import { actions } from "astro:actions";
-import { useActionState, useEffect } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import type { VehicleItemProps } from "../../../types/Vehicle/VehicleProps";
 
-export default function ContentVehicles() {
-  const allAddresses = useStore($allVehicles);
+export default function ContentVehicles({ emptyVehicle }: { emptyVehicle?: React.JSX.Element }) {
+  const [initLoad, setInitLoad] = useState(true);
+
+  const allVehicles = useStore($allVehicles);
   const [vehiclesResp, loadVehicles, isLoading] = useActionState(withState(actions.User.Vehicle.get), {
     data: [], error: undefined
   });
 
   useEffect(() => {
-    if (!allAddresses?.length && !isLoading) {
-      loadVehicles({} as FormData);
+    startTransition(() => {
+      loadVehicles(new FormData());
+    })
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading && initLoad) {
+      setInitLoad(false);
     }
-  }, [allAddresses, isLoading, loadVehicles]);
+
+    if (vehiclesResp?.data) {
+      $allVehicles.set(vehiclesResp.data);
+    }
+  }, [isLoading])
 
   const handleEdit = (v: VehicleItemProps) => {
     vehicleToEdit.set(v);
@@ -29,19 +41,23 @@ export default function ContentVehicles() {
     fd.append("vehicleId", vehicleId);
     const res = await actions.User.Vehicle.delete(fd);
     if ((res as any)?.ok) {
-      const nextVehicles = allAddresses.filter(v => v.vehicleId !== vehicleId);
+      const nextVehicles = allVehicles.filter(v => v.vehicleId !== vehicleId);
       $allVehicles.set(nextVehicles);
     }
   };
 
+  if (!allVehicles?.length) {
+    return (
+      emptyVehicle
+    );
+  }
+
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {allAddresses?.map(v => (
+      {allVehicles?.map(v => (
         <VehicleItem key={v.vehicleId} vehicle={v} onEdit={handleEdit} onDelete={() => handleDelete(v.vehicleId)} />
       ))}
-      {!allAddresses?.length && !isLoading && (
-        <div className="text-gray-600">Sin vehículos registrados aún.</div>
-      )}
     </div>
   );
 }

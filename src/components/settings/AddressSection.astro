@@ -7,11 +7,11 @@ import ContentAddresses from "./address/ContentAddresses";
 import EmptyAddress from "./address/favorite/EmptyAddress.astro";
 import { Icon } from "astro-icon/components";
 
-interface Props {
+interface AddressSectionProps {
   isActive: boolean;
 }
 
-const { isActive } = Astro.props;
+const { isActive } = Astro.props as AddressSectionProps;
 ---
 
 <section
