@@ -1,0 +1,69 @@
+---
+import Button from "@components/forms/elements/buttons/Button.astro";
+import InputField from "@components/forms/elements/inputs/InputField.astro";
+import SelectField from "@components/forms/elements/selects/SelectField.astro";
+import Modal from "@components/modals/Modal";
+import ContentVehicles from "@components/settings/vehicle/ContentVehicles";
+import { Icon } from "astro-icon/components";
+---
+
+<section id="section-vehicles" class="section">
+  <div class="flex justify-between items-center">
+    <h5 class="text-xl md:text-2xl font-semibold">Vehículos</h5>
+    <Button
+      id="open-modal-vehicle"
+      class="px-3 py-2 rounded-md bg-H-blue-900 text-white font-semibold text-sm md:text-base cursor-pointer transition-colors duration-300"
+      data-key-modal="form-vehicle"
+    >
+      <Icon name="solar:add-square-bold-duotone" width={20} height={20} />
+      Agregar vehículo
+    </Button>
+  </div>
+
+  <div class="mt-4">
+    <ContentVehicles client:load />
+  </div>
+
+  <Modal title="Registrar Vehículo" keyModal="form-vehicle">
+    <form id="form-vehicle" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl mx-auto">
+      <input type="hidden" name="vehicleId" value="" disabled={true} />
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <InputField label="Marca" name="brand" type="text" required />
+        <InputField label="Modelo" name="model" type="text" required />
+        <InputField label="Año" name="year" type="number" name="year" required />
+        <InputField label="Placa" name="licensePlate" type="text" required />
+        <InputField label="VIN" name="vin" type="text" required />
+        <InputField label="Color (hex)" name="color" type="text" />
+        <SelectField
+          label="Tipo de vehículo"
+          name="type"
+          options={[
+            { value: "", label: "Tipo de vehículo" },
+            { value: "car", label: "Carro" },
+            { value: "motorcycle", label: "Motocicleta" },
+            { value: "bicycle", label: "Bicicleta" },
+            { value: "truck", label: "Camión" },
+            { value: "van", label: "Furgoneta" },
+          ]}
+          required
+        />
+      </div>
+
+      <div class="col-span-full flex flex-col sm:flex-row justify-between gap-2">
+        <Button id="btn-cancel-vehicle" type="button" variant="text">Cancelar </Button>
+        <div class="flex flex-col sm:flex-row justify-end gap-2">
+          <Button id="btn-clear-vehicle" type="button" variant={"bordered"}>Limpiar </Button>
+          <Button
+            id="btn-action-vehicle"
+            type="submit"
+            variant="default"
+            disabled={true}
+            className="disabled:opacity-50 disabled:bg-gray-500"
+            ><Icon name="solar:diskette-bold-duotone" width={20} height={20} />
+            <span id="text-action-address">Guardar vehículo</span>
+          </Button>
+        </div>
+      </div>
+    </form>
+  </Modal>
+</section>

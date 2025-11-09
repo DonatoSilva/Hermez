@@ -1,9 +1,10 @@
 ---
-interface Props {
+interface SettingsMenuProps {
   sectionActivite: string;
+  userRole?: "User" | "Domiciliary" | null;
 }
 
-const { sectionActivite } = Astro.props;
+const { sectionActivite, userRole } = Astro.props as SettingsMenuProps;
 ---
 
 <div class="w-full flex flex-col gap-2">
@@ -24,20 +25,43 @@ const { sectionActivite } = Astro.props;
       Perfil
     </label>
 
-    <input
-      type="radio"
-      id="locations"
-      name="settings"
-      value="locations"
-      class="hidden peer/locations"
-      checked={sectionActivite === "locations"}
-    />
-    <label
-      for="locations"
-      class="px-3 py-2 rounded-md bg-gray-200 text-H-blue-900 font-semibold text-base cursor-pointer peer-checked/locations:bg-H-blue-900 peer-checked/locations:text-white transition-colors duration-300"
-    >
-      Ubicaciones
-    </label>
+    {
+      userRole === "Domiciliary" ? (
+        <>
+          <input
+            type="radio"
+            id="vehicles"
+            name="settings"
+            value="vehicles"
+            class="hidden peer/vehicles"
+            checked={sectionActivite === "vehicles"}
+          />
+          <label
+            for="vehicles"
+            class="px-3 py-2 rounded-md bg-gray-200 text-H-blue-900 font-semibold text-base cursor-pointer peer-checked/vehicles:bg-H-blue-900 peer-checked/vehicles:text-white transition-colors duration-300"
+          >
+            Vehículos
+          </label>
+        </>
+      ) : (
+        <>
+          <input
+            type="radio"
+            id="locations"
+            name="settings"
+            value="locations"
+            class="hidden peer/locations"
+            checked={sectionActivite === "locations"}
+          />
+          <label
+            for="locations"
+            class="px-3 py-2 rounded-md bg-gray-200 text-H-blue-900 font-semibold text-base cursor-pointer peer-checked/locations:bg-H-blue-900 peer-checked/locations:text-white transition-colors duration-300"
+          >
+            Ubicaciones
+          </label>
+        </>
+      )
+    }
 
     <input
       type="radio"

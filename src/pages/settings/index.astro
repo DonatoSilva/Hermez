@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import ProfileForm from "@components/settings/ProfileForm.astro";
 import AddressSection from "@components/settings/AddressSection.astro";
+import VehicleSection from "@components/settings/VehicleSection.astro";
 import SettingsMenu from "@components/settings/SettingsMenu.astro";
 import PlusSettings from "@components/settings/PlusSettings.astro";
 
@@ -11,21 +12,29 @@ if (!userId) {
   Astro.redirect("/sign-in");
 }
 
+const userRole = Astro.locals.userRole as "User" | "Domiciliary" | null;
+
+const tapsUser: readonly string[] = ["profile", "locations", "more"];
+const tapsDomiciliary: readonly string[] = ["profile", "vehicles", "more"];
+const taps = userRole === "Domiciliary" ? tapsDomiciliary : tapsUser;
+
 const url = Astro.url;
 const searchParams = url.searchParams;
 let sectionActivite = searchParams.get("section");
 
-if (!sectionActivite) {
+if (!sectionActivite || !taps.includes(sectionActivite)) {
   sectionActivite = "profile";
 }
 ---
 
 <Layout sizeLogo="md" title="Configuración - Hermez" class="flex flex-col gap-4 overflow-x-hidden">
-  <SettingsMenu sectionActivite={sectionActivite ?? "profile"} />
+  <SettingsMenu sectionActivite={sectionActivite} userRole={userRole} />
+
   <main id="containerSectionsSetting" class="w-full min-h-fit flex flex-row scrollbar-hide">
-    <ProfileForm isActive={sectionActivite == "profile" ? true : false} />
-    <AddressSection isActive={sectionActivite == "locations" ? true : false} />
-    <PlusSettings isActive={sectionActivite == "more" ? true : false} />
+    <ProfileForm isActive={sectionActivite === "profile"} />
+    {userRole === "Domiciliary" && <VehicleSection isActive={sectionActivite === "vehicles"} />}
+    {userRole === "User" && <AddressSection isActive={sectionActivite === "locations"} />}
+    <PlusSettings />
   </main>
 </Layout>
 

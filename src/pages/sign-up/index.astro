@@ -36,8 +36,8 @@ export const prerender = false;
       />
       <NavigationHint urlTo="/sign-in" typeForm="signUp" />
     </main>
-  </body>
-</html>
+  </body></html
+>
 
 <script>
   import { navigate } from "astro:transitions/client";
@@ -62,9 +62,7 @@ export const prerender = false;
       });
 
       let startY = 0;
-      const domiciliaryLink = document.querySelector(
-        'a[href="/sign-up/domiciliary"]',
-      );
+      const domiciliaryLink = document.querySelector('a[href="/sign-up/domiciliary"]');
       const clientLink = document.querySelector('a[href="/sign-up/client"]');
 
       window.addEventListener("touchstart", (event) => {
@@ -105,14 +103,14 @@ export const prerender = false;
   @reference "../../styles/global.css";
 
   .domiciliaryTouch {
-    @apply flex-[2] z-10 shadow-lg shadow-H-blue-900/50;
+    @apply flex-2 z-10 shadow-lg shadow-H-blue-900/50;
 
     img {
       @apply scale-125 md:scale-150 translate-x-0 translate-y-4;
     }
   }
   .clientTouch {
-    @apply flex-[2] z-10 shadow-lg shadow-H-blue-500/50;
+    @apply flex-2 z-10 shadow-lg shadow-H-blue-500/50;
 
     img {
       @apply scale-125 md:scale-150 translate-x-0 -translate-y-4;

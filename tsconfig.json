@@ -28,6 +28,9 @@
       "@scripts/*": [
         "./src/scripts/*"
       ],
+      "@stores/*": [
+        "./src/stores/*"
+      ],
       "@actions/*": [
         "./src/actions/*"
       ],

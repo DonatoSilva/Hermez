@@ -8,13 +8,12 @@ const { amount, description } = Astro.props;
 ---
 
 <div
-  class="bg-[#2b4055] dark:bg-gray-700 box-border content-stretch flex flex-col items-center justify-center leading-[0] left-6 not-italic overflow-clip mx-auto max-w-2xl w-full py-5 rounded-lg text-center"
+  class="bg-H-blue-700 dark:bg-gray-700 box-border content-stretch flex flex-col items-center justify-center leading-0 left-6 not-italic overflow-clip mx-auto max-w-2xl w-full py-5 rounded-lg text-center"
 >
   <h4 class="font-bold text-white text-6xl tracking-tight leading-[1.2]">
     {amount}
   </h4>
-  <span
-    class="font-normal text-neutral-100 text-sm leading-[1.4] whitespace-pre-wrap"
+  <span class="font-normal text-neutral-100 text-sm leading-[1.4] whitespace-pre-wrap"
     >{description}
   </span>
 </div>

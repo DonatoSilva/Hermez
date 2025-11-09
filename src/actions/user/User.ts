@@ -4,6 +4,7 @@ import { defineAction } from "astro:actions";
 import { API_USERS, URL_LOCAL_BACKEND } from 'astro:env/client';
 import { z } from "astro:schema";
 import { Address } from "./address/Address";
+import { Vehicle } from "./vehicle/Vehicle";
 
 export const User = {
     get: defineAction({
@@ -235,5 +236,6 @@ export const User = {
             }
         }
     }),
-    Address
+    Address,
+    Vehicle,
 }
