@@ -104,17 +104,17 @@ const { isActive } = Astro.props as VehicleSectionProps;
         textLabel="Tipo de vehículo"
         name="type"
         placeholder="Tipo de vehiculo"
-        options={[
-          { value: "", label: "Tipo de vehículo" },
-          { value: "car", label: "Carro" },
-          { value: "motorcycle", label: "Motocicleta" },
-          { value: "tuctuc", label: "MotoTaxi" },
-          { value: "tuctuc", label: "MotoTaxi" },
-          { value: "tuctuc", label: "MotoTaxi" },
-        ]}
+        data={{
+          options: [],
+        }}
         idContainer="form-vehicle"
         required
-      />
+      >
+        <div slot="no-options" class="flex items-center gap-2 px-3">
+          <Icon name="solar:sad-square-bold" width={20} height={20} class={"text-H-black"} />
+          <div class="py-2 text-gray-500"> No hay tipos de vehículos</div>
+        </div>
+      </SelectField>
     </div>
 
     <div class="col-span-full flex flex-col sm:flex-row justify-between gap-2">

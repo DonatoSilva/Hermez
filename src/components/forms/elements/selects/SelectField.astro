@@ -1,8 +1,99 @@
 ---
+/**
+ * @component SelectField
+ * @description Un componente de campo de selección personalizable y avanzado para Astro.
+ *
+ * @prop {string} [id] - El ID del campo de selección.
+ * @prop {string} [textLabel] - El texto de la etiqueta para el campo de selección.
+ * @prop {string} [name] - El nombre del campo de selección, usado para formularios.
+ * @prop {string} [value] - El valor inicial del campo de selección.
+ * @prop {string} [placeholder] - El texto del placeholder para el campo de selección.
+ * @prop {boolean} [required=false] - Si el campo es obligatorio.
+ * @prop {boolean} [disabled=false] - Si el campo está deshabilitado.
+ * @prop {boolean} [readonly=false] - Si el campo es de solo lectura.
+ * @prop {string} [helperText] - Texto de ayuda que se muestra debajo del campo.
+ * @prop {string} [idContainer] - El ID del contenedor para el cálculo del desbordamiento.
+ * @prop {StylingProps} [styling] - Un objeto para personalizar las clases de los elementos del componente.
+ * @prop {DataProps} [data] - Un objeto para proporcionar las opciones y grupos de opciones.
+ *
+ * @prop {object} [styling] - Objeto para personalizar las clases CSS de cada parte del componente.
+ * @prop {string} [styling.container] - Clases para el contenedor principal.
+ * @prop {string} [styling.label] - Clases para la etiqueta de texto.
+ * @prop {string} [styling.select] - Clases para el campo de selección visible.
+ * @prop {string} [styling.arrow] - Clases para el icono de la flecha.
+ * @prop {string} [styling.optionsContainer] - Clases para el contenedor de opciones.
+ * @prop {string} [styling.option] - Clases para cada opción individual.
+ * @prop {string} [styling.groupLabel] - Clases para la etiqueta de un grupo de opciones.
+ * @prop {string} [styling.helperText] - Clases para el texto de ayuda.
+ *
+ * @prop {object} [data] - Objeto para los datos del campo de selección.
+ * @prop {OptionItem[]} [data.options] - Un array de opciones.
+ * @prop {OptionGroup[]} [data.groups] - Un array de grupos de opciones.
+ *
+ * @slot no-options - Contenido que se muestra cuando no hay opciones disponibles.
+ *
+ * @example
+ * <!-- Uso Básico -->
+ * <SelectField
+ *   name="fruta"
+ *   textLabel="Selecciona una fruta"
+ *   placeholder="Elige una opción"
+ *   data={{
+ *     options: [
+ *       { value: 'manzana', label: 'Manzana' },
+ *       { value: 'banana', label: 'Banana' }
+ *     ]
+ *   }}
+ * />
+ *
+ * @example
+ * <!-- Con Grupos y Personalización de Estilos -->
+ * <SelectField
+ *   name="vehiculo"
+ *   textLabel="Selecciona un vehículo"
+ *   placeholder="Elige un vehículo"
+ *   styling={{
+ *     container: 'w-full',
+ *     select: 'bg-gray-100',
+ *     option: 'hover:bg-blue-100'
+ *   }}
+ *   data={{
+ *     groups: [
+ *       {
+ *         label: 'Coches',
+ *         options: [
+ *           { value: 'sedan', label: 'Sedán' },
+ *           { value: 'suv', label: 'SUV' }
+ *         ]
+ *       },
+ *       {
+ *         label: 'Motos',
+ *         options: [
+ *           { value: 'deportiva', label: 'Deportiva' },
+ *           { value: 'crucero', label: 'Crucero' }
+ *         ]
+ *       }
+ *     ]
+ *   }}
+ * />
+ *
+ * @example
+ * <!-- Con Slot para Mensaje sin Opciones -->
+ * <SelectField name="vacio" textLabel="Campo sin opciones">
+ *   <div slot="no-options" class="text-center p-4">
+ *     No hay nada que seleccionar aquí.
+ *   </div>
+ * </SelectField>
+ */
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+
+type Icon = AstroComponentFactory;
+
 type OptionItem = {
   value: string | number;
   label: string;
   disabled?: boolean;
+  icon?: Icon;
 };
 
 type OptionGroup = {
@@ -10,52 +101,88 @@ type OptionGroup = {
   options: OptionItem[];
 };
 
+interface StylingProps {
+  container?: string;
+  label?: string;
+  select?: string;
+  placeholder?: string;
+  arrow?: string;
+  optionsContainer?: string;
+  option?: string;
+  groupLabel?: string;
+  helperText?: string;
+}
+
+interface DataProps {
+  options?: OptionItem[];
+  groups?: OptionGroup[];
+}
+
 interface SelectFieldProps {
   id?: string;
   textLabel?: string;
-  classLabel?: string;
   name?: string;
-  value?: string | number | Array<string | number>;
+  value?: string;
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
   readonly?: boolean;
-  className?: string;
   helperText?: string;
   multiple?: boolean;
-  options?: OptionItem[];
-  groups?: OptionGroup[];
-  variant?: "default" | "error" | "success";
   idContainer?: string;
+  styling?: StylingProps;
+  data?: DataProps;
 }
 
 const {
   id = "",
   textLabel = "",
-  classLabel = "",
   name = "",
   value = "",
   placeholder = "",
   required = false,
   disabled = false,
   readonly = false,
-  className = "",
   helperText = "",
-  options = [],
   idContainer,
+  styling = {},
+  data = {},
 } = Astro.props as SelectFieldProps;
+
+const {
+  container: className = "",
+  label: classLabel = "",
+  select: classSelect = "",
+  arrow: classArrow = "",
+  optionsContainer: classOptionsContainer = "",
+  option: classOption = "",
+  groupLabel: classGroupLabel = "",
+  helperText: classHelperText = "",
+} = styling;
+
+const { options = [], groups = [] } = data;
 ---
 
-<select-field class={`relative flex flex-col gap-1 ${classLabel}`} data-id-container={idContainer}>
-  {textLabel && <span class="text-sm">{textLabel}</span>}
-  <input type="hidden" name="" value="{value}" />
+<select-field class={`relative flex flex-col gap-1 ${className}`} data-id-container={idContainer}>
+  {
+    textLabel && (
+      <span class={`text-sm ${classLabel}`}>
+        {textLabel}
+        {required && <span class="text-red-500 ml-1">*</span>}
+      </span>
+    )
+  }
+  <input type="hidden" name={name} value={value} required={required} />
 
   <div
     id="select"
-    class="relative border border-gray-300 rounded-md px-3 py-2 ${className} disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
+    class={`relative border border-gray-300 rounded-md px-3 py-2 ${classSelect} disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400`}
+    aria-disabled={disabled}
+    aria-readonly={readonly}
+    tabindex={disabled || readonly ? "-1" : "0"}
   >
     <span data-placeholder>{placeholder}</span>
-    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+    <span class={`absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 ${classArrow}`}>
       <svg
         width="16"
         height="16"
@@ -72,23 +199,55 @@ const {
       </svg>
     </span>
     <div
-      class="absolute open-down left-0 bg-white border border-gray-300 rounded-md shadow-lg z-10 options w-full overflow-hidden"
+      class={`absolute open-down left-0 bg-white border border-gray-300 rounded-md shadow-lg z-10 options w-full overflow-hidden ${classOptionsContainer}`}
+      role="listbox"
     >
       {
-        options.map((option, index) => (
-          <div
-            id={`${id || name}-option-${index}`}
-            class={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${option.disabled ? "text-gray-400" : "text-black"}`}
-            data-disabled={option.disabled}
-          >
-            <span data-value={option.value}>{option.label}</span>
-          </div>
-        ))
+        groups.length > 0 ? (
+          groups.map((group) => (
+            <div>
+              <div class={`px-3 py-2 text-sm font-bold ${classGroupLabel}`}>{group.label}</div>
+              {group.options.map((option, index) => (
+                <div
+                  id={`${id || name}-option-${index}`}
+                  class={`px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center gap-2 ${
+                    option.disabled ? "text-gray-400" : "text-black"
+                  } ${classOption}`}
+                  data-disabled={option.disabled}
+                >
+                  {option.icon && <option.icon />}
+                  <span data-value={option.value}>{option.label}</span>
+                </div>
+              ))}
+            </div>
+          ))
+        ) : options.length > 0 ? (
+          options.map((option, index) => (
+            <div
+              id={`${id || name}-option-${index}`}
+              class={`px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center gap-2 ${
+                option.disabled ? "text-gray-400" : "text-black"
+              } ${classOption}`}
+              data-disabled={option.disabled}
+            >
+              {option.icon && <option.icon />}
+              <span data-value={option.value}>{option.label}</span>
+            </div>
+          ))
+        ) : (
+          <slot name="no-options">
+            <div class="px-3 py-2 text-gray-500">no hay opciones</div>
+          </slot>
+        )
       }
     </div>
   </div>
 
-  {helperText != null && <span class="text-sm text-gray-500">{helperText}</span>}
+  {
+    helperText != null && (
+      <span class={`text-sm text-gray-500 ${classHelperText}`}>{helperText}</span>
+    )
+  }
 </select-field>
 
 <style>
