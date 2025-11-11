@@ -6,9 +6,20 @@ import Modal from "@components/modals/Modal";
 import ContentVehicles from "@components/settings/vehicle/ContentVehicles";
 import { Icon } from "astro-icon/components";
 import EmptyAddress from "./address/favorite/EmptyAddress.astro";
+import { actions } from "astro:actions";
+import type { VehicleType } from "src/types/Vehicle/VehicleProps";
 
 interface VehicleSectionProps {
   isActive: boolean;
+}
+
+const { data: vehicleTypes, error } = await Astro.callAction(
+  actions.User.Vehicle.getVehicleTypes,
+  new FormData()
+);
+
+if (error) {
+  console.log(error);
 }
 
 const { isActive } = Astro.props as VehicleSectionProps;
@@ -104,19 +115,14 @@ const { isActive } = Astro.props as VehicleSectionProps;
     <div class="md:col-span-1">
       <SelectField
         textLabel="Tipo de vehículo"
-        name="type"
+        name="type_id"
         placeholder="Tipo de vehiculo"
         data={{
-          options: [
-            {
-              value: "car",
-              label: "Carro",
-            },
-            {
-              value: "truck",
-              label: "Camión",
-            },
-          ],
+          options:
+            vehicleTypes?.map((type: VehicleType) => ({
+              value: type.id,
+              label: type.name,
+            })) || [],
         }}
         styling={{
           select: "text-gray-500",
@@ -150,10 +156,18 @@ const { isActive } = Astro.props as VehicleSectionProps;
 </Modal>
 
 <script>
-  import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
+  import type { Actions } from "astro:actions";
+  import { actions } from "astro:actions";
+  import { listenKeys } from "nanostores";
+  import { changeStatusModal, getStatusModal, statusModal } from "src/stores/ModalStore";
+  import { toastStore } from "src/stores/StoreToast";
   import { vehicleToEdit } from "src/stores/VehicleStore";
 
   document.addEventListener("astro:page-load", () => {
+    let fnAction:
+      | Actions["User"]["Vehicle"]["create"]
+      | Actions["User"]["Vehicle"]["update"]
+      | null = null;
     const formVehicle = document.getElementById("form-vehicle") as HTMLFormElement | null;
     const btnClearVehicle = document.getElementById(
       "btn-clear-vehicle"
@@ -177,6 +191,11 @@ const { isActive } = Astro.props as VehicleSectionProps;
         "form-vehicle" as never,
         {
           ...getStatusModal("form-vehicle" as never),
+          metaData: {
+            ...getStatusModal("form-vehicle" as never).metaData,
+            title: "Nuevo vehículo",
+          },
+          action: "create",
           isOpen: true,
         } as never
       );
@@ -192,6 +211,81 @@ const { isActive } = Astro.props as VehicleSectionProps;
           isOpen: false,
         } as never
       );
+    });
+
+    listenKeys(statusModal, ["form-vehicle"], (newValues) => {
+      const { action } = newValues["form-vehicle"];
+
+      const span = btnActionVehicle?.getElementsByTagName("span")[0];
+      if (span) span.textContent = action == "create" ? "Guardar vehículo" : "Actualizar vehículo";
+
+      const vehicleId = document?.querySelector("[name='vehicleId']") as HTMLInputElement | null;
+      if (vehicleId) vehicleId.disabled = action == "edit" ? false : true;
+
+      fnAction = action == "create" ? actions.User.Vehicle.create : actions.User.Vehicle.update;
+
+      const data = vehicleToEdit.get();
+
+      data &&
+        Object.keys(data).forEach((key) => {
+          const element = formVehicle?.querySelector(`[name="${key}"]`) as
+            | HTMLInputElement
+            | HTMLTextAreaElement
+            | HTMLSelectElement
+            | null;
+
+          if (element) element.value = (data as any)[key] || "";
+        });
+    });
+
+    formVehicle?.addEventListener("change", () => {
+      if (formVehicle?.checkValidity()) {
+        btnActionVehicle?.removeAttribute("disabled");
+      } else {
+        btnActionVehicle?.setAttribute("disabled", "");
+      }
+    });
+
+    formVehicle?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(formVehicle);
+
+      try {
+        if (typeof fnAction !== "function") {
+          throw { message: "No se ha seleccionado una acción válida" };
+        }
+
+        const { data, error } = await (fnAction as Function)(formData);
+
+        if (error) {
+          throw error;
+        }
+
+        toastStore.set({
+          visible: true,
+          message: data?.message || "Vehículo creado con éxito",
+          type: "success",
+          autoClose: true,
+          autoCloseDelay: 3000,
+        });
+      } catch (err) {
+        toastStore.set({
+          visible: true,
+          message:
+            (err as { message?: string })?.message || "Error inesperado al crear el vehículo",
+          type: "error",
+          autoClose: true,
+          autoCloseDelay: 3000,
+        });
+      } finally {
+        changeStatusModal(
+          "form-vehicle" as never,
+          {
+            ...getStatusModal("form-vehicle" as never),
+            isOpen: false,
+          } as never
+        );
+      }
     });
   });
 </script>

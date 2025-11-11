@@ -16,9 +16,8 @@ export const Vehicle = {
   get: defineAction({
     accept: "form",
     handler: async (_, context) => {
-      const { getToken } = await context.locals.auth?.();
-      const token = await getToken?.({ template: "vercel" });
-      if (!token) throw new ActionError({ code: "UNAUTHORIZED", message: "No autenticado" });
+      const token = await context.locals.auth().getToken({ template: "jwt-back-hermez" });
+      if (!token) throw new ActionError({ code: "UNAUTHORIZED", message: "No autenticado, por favor inicie sesión" });
 
       const res = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/vehicles/`, {
         method: "GET",
@@ -32,6 +31,24 @@ export const Vehicle = {
     },
   }),
 
+  getVehicleTypes: defineAction({
+    accept: "form",
+    handler: async (_, context) => {
+      const token = await context.locals.auth().getToken({ template: "jwt-back-hermez" });
+      if (!token) throw new ActionError({ code: "UNAUTHORIZED", message: "No autenticado" });
+
+      const res = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/vehicle-types/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
+      });
+      if (!res.ok) throw new ActionError({ code: "BAD_REQUEST", message: "No se pudieron cargar los tipos de vehículos" });
+      return await res.json();
+    },
+  }),
+
   detail: defineAction({
     accept: "form",
     handler: async (fd, context) => {
@@ -39,7 +56,7 @@ export const Vehicle = {
       if (!vehicleId) throw new ActionError({ code: "BAD_REQUEST", message: "vehicleId requerido" });
 
       const { getToken } = await context.locals.auth?.();
-      const token = await getToken?.({ template: "vercel" });
+      const token = await getToken?.({ template: "jwt-back-hermez" });
       if (!token) throw new ActionError({ code: "UNAUTHORIZED", message: "No autenticado" });
 
       const res = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/vehicles/${vehicleId}/`, {
@@ -54,14 +71,16 @@ export const Vehicle = {
   create: defineAction({
     accept: "form",
     handler: async (fd, context) => {
+      const { locals } = context;
       const body = toJSON(fd) as CreateVehicleBody;
       if (!body?.brand || !body?.model || !body?.year || !body?.licensePlate || !body?.vin) {
         throw new ActionError({ code: "BAD_REQUEST", message: "Campos requeridos faltantes" });
       }
 
-      const { getToken } = await context.locals.auth?.();
-      const token = await getToken?.({ template: "vercel" });
+      const token = await locals.auth().getToken({ template: "jwt-back-hermez" });
       if (!token) throw new ActionError({ code: "UNAUTHORIZED", message: "No autenticado" });
+
+      const payload = JSON.stringify(body);
 
       const res = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/vehicles/`, {
         method: "POST",
@@ -69,13 +88,17 @@ export const Vehicle = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(body),
+        body: payload,
       });
+
+      const data = await res.json()
+
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new ActionError({ code: "BAD_REQUEST", message: err?.detail || "No se pudo crear el vehículo" });
+        const message = Object.keys(data).map(key => `${key}: ${data[key]}`).join(', ');
+        throw new ActionError({ code: "BAD_REQUEST", message: message || "No se pudo crear el vehículo" });
       }
-      return (await res.json()) as unknown;
+
+      return data;
     },
   }),
 
@@ -87,7 +110,7 @@ export const Vehicle = {
 
       const body = toJSON(fd) as Partial<CreateVehicleBody>;
       const { getToken } = await context.locals.auth?.();
-      const token = await getToken?.({ template: "vercel" });
+      const token = await getToken?.({ template: "jwt-back-hermez" });
       if (!token) throw new ActionError({ code: "UNAUTHORIZED", message: "No autenticado" });
 
       const res = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/vehicles/${vehicleId}/`, {
@@ -113,7 +136,7 @@ export const Vehicle = {
       if (!vehicleId) throw new ActionError({ code: "BAD_REQUEST", message: "vehicleId requerido" });
 
       const { getToken } = await context.locals.auth?.();
-      const token = await getToken?.({ template: "vercel" });
+      const token = await getToken?.({ template: "jwt-back-hermez" });
       if (!token) throw new ActionError({ code: "UNAUTHORIZED", message: "No autenticado" });
 
       const res = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/vehicles/${vehicleId}/`, {

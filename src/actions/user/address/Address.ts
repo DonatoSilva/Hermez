@@ -33,6 +33,8 @@ export const Address = {
             const { locals } = ctx;
             try {
                 const token = await locals.auth().getToken({ template: "jwt-back-hermez" });
+                if (!token) throw new ActionError({ code: "UNAUTHORIZED", message: "No autenticado, por favor inicie sesión" });
+
                 const payload = toJSON(formData);
                 const response = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/addresses/`, {
                     method: 'POST',

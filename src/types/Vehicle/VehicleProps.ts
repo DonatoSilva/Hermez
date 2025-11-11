@@ -1,11 +1,18 @@
-export type VehicleType =
-  | "car"
-  | "motorcycle"
-  | "bicycle"
-  | "truck"
-  | "van";
+export interface VehicleType {
+  id: string;
+  name: string;
+  description: string;
+  max_weight_capacity_kg: string;
+  max_volume_capacity_liters: string;
+  passenger_capacity: number;
+  image: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  delivery_categories: string[];
+}
 
-export const typeVehicle: Record<VehicleType, { label: string; image: string }> = {
+export const typeVehicle: Record<VehicleType["id"], { label: string; image: string }> = {
   car: { label: "Carro", image: "/images/tiposDeVehiculos/carro.png" },
   motorcycle: { label: "Motocicleta", image: "/images/tiposDeVehiculos/moto.png" },
   bicycle: { label: "Bicicleta", image: "/images/tiposDeVehiculos/bici.png" },
