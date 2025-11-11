@@ -95,7 +95,9 @@ const { isActive } = Astro.props as VehicleSectionProps;
       <InputField
         textLabel="Color (hex)"
         name="color"
-        type="text"
+        value="#000000"
+        className="h-10 w-full rounded-full-[!important]"
+        type="color"
         placeholder="Color del vehiculo: #000000"
       /></div
     >
@@ -105,7 +107,19 @@ const { isActive } = Astro.props as VehicleSectionProps;
         name="type"
         placeholder="Tipo de vehiculo"
         data={{
-          options: [],
+          options: [
+            {
+              value: "car",
+              label: "Carro",
+            },
+            {
+              value: "truck",
+              label: "Camión",
+            },
+          ],
+        }}
+        styling={{
+          select: "text-gray-500",
         }}
         idContainer="form-vehicle"
         required

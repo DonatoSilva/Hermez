@@ -95,13 +95,13 @@ const { gender, phone, age } = userData;
         name="gender"
         textLabel="Género"
         required
-        className="mt-1 block w-full sm:text-sm"
-        custom={true}
         placeholder="Selecciona un género"
-        options={[
-          { value: "male", label: "Masculino" },
-          { value: "female", label: "Femenino" },
-        ]}
+        data={{
+          options: [
+            { value: "male", label: "Masculino" },
+            { value: "female", label: "Femenino" },
+          ],
+        }}
       />
 
       <div class="flex flex-col md:flex-row gap-3 mt-2">

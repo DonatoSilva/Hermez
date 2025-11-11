@@ -10,7 +10,8 @@ type InputType =
   | "file"
   | "submit"
   | "reset"
-  | "button";
+  | "button"
+  | "color";
 
 interface InputFieldProps {
   id?: string;
@@ -47,40 +48,93 @@ const {
 } = Astro.props as InputFieldProps;
 ---
 
-<label class={`flex flex-col gap-2 ${classLabel}`}>
-  {textLabel && <span class="text-sm">{textLabel}</span>}
-  {
-    as === "textarea" ? (
-      <textarea
-        id={id || name}
-        name={name}
-        rows={rows}
-        class={`border border-gray-300 rounded-md px-3 py-2 ${className}`}
-        placeholder={placeholder}
-        required={required}
-        disabled={disabled}
-        readonly={readonly}
-        value={value}
-      />
-    ) : (
-      <input
-        id={id || name}
-        name={name}
-        type={type}
-        class={`border border-gray-300 rounded-md px-3 py-2 ${className} disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400`}
-        value={value}
-        placeholder={placeholder}
-        required={required}
-        disabled={disabled}
-        readonly={readonly}
-      />
-    )
+<input-field>
+  <label class={`flex flex-col gap-2 ${classLabel}`}>
+    {textLabel && <span class="text-sm">{textLabel}</span>}
+    {
+      as === "textarea" ? (
+        <textarea
+          id={id || name}
+          name={name}
+          rows={rows}
+          class={`border border-gray-300 rounded-md px-3 py-2 ${className}`}
+          placeholder={placeholder}
+          required={required}
+          disabled={disabled}
+          readonly={readonly}
+          value={value}
+        />
+      ) : (
+        <input
+          id={id || name}
+          name={name}
+          type={type}
+          class={`border border-gray-300 rounded-md px-3 py-2 ${className} disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400`}
+          value={value}
+          placeholder={placeholder}
+          required={required}
+          disabled={disabled}
+          readonly={readonly}
+        />
+      )
+    }
+    {
+      helperText != null && (
+        <span id={`${id || name}-helper`} class="text-xs text-gray-500">
+          {helperText}
+        </span>
+      )
+    }
+  </label>
+</input-field>
+
+{type === "color" && <style>
+  input[type="color"] {
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+
+    transition: background 0.2s cubic-bezier(0.39, 0.575, 0.565, 1);
   }
-  {
-    helperText != null && (
-      <span id={`${id || name}-helper`} class="text-xs text-gray-500">
-        {helperText}
-      </span>
-    )
+  
+  input[type="color"] {
+    cursor: pointer;
   }
-</label>
+
+  input[type="color"]::-webkit-color-swatch-wrapper {
+    background-color: transparent;
+    border-radius: 8px;
+  }
+
+  input[type="color"]::-webkit-color-swatch {
+    border: none;
+    background-color: transparent;
+  }
+</style>}
+
+<script>
+  class InputField extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      const typeInput = this.querySelector("input")?.type || "text";
+
+      if (typeInput === "color") {
+        const inputColor = this.querySelector('input[type="color"]') as HTMLInputElement | null;
+        if (inputColor) {
+          const valueColor = inputColor.value || "#000000";
+          inputColor.style.backgroundColor = valueColor;
+
+          inputColor.addEventListener("change", (e) => {
+            const selectedColor = (e.target as HTMLInputElement).value;
+            inputColor.style.backgroundColor = selectedColor;
+          });
+        }
+      }
+    }
+  }
+
+  customElements.define("input-field", InputField);
+</script>

@@ -161,9 +161,16 @@ const {
 } = styling;
 
 const { options = [], groups = [] } = data;
+
+if (options.length !== 0) {
+  options.unshift({
+    value: "",
+    label: placeholder,
+  });
+}
 ---
 
-<select-field class={`relative flex flex-col gap-1 ${className}`} data-id-container={idContainer}>
+<select-field class={`relative flex flex-col gap-2 ${className}`} data-id-container={idContainer}>
   {
     textLabel && (
       <span class={`text-sm ${classLabel}`}>
@@ -198,51 +205,51 @@ const { options = [], groups = [] } = data;
           stroke-linejoin="round"></path>
       </svg>
     </span>
-    <div
-      class={`absolute open-down left-0 bg-white border border-gray-300 rounded-md shadow-lg z-10 options w-full overflow-hidden ${classOptionsContainer}`}
-      role="listbox"
-    >
-      {
-        groups.length > 0 ? (
-          groups.map((group) => (
-            <div>
-              <div class={`px-3 py-2 text-sm font-bold ${classGroupLabel}`}>{group.label}</div>
-              {group.options.map((option, index) => (
-                <div
-                  id={`${id || name}-option-${index}`}
-                  class={`px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center gap-2 ${
-                    option.disabled ? "text-gray-400" : "text-black"
-                  } ${classOption}`}
-                  data-disabled={option.disabled}
-                >
-                  {option.icon && <option.icon />}
-                  <span data-value={option.value}>{option.label}</span>
-                </div>
-              ))}
-            </div>
-          ))
-        ) : options.length > 0 ? (
-          options.map((option, index) => (
-            <div
-              id={`${id || name}-option-${index}`}
-              class={`px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center gap-2 ${
-                option.disabled ? "text-gray-400" : "text-black"
-              } ${classOption}`}
-              data-disabled={option.disabled}
-            >
-              {option.icon && <option.icon />}
-              <span data-value={option.value}>{option.label}</span>
-            </div>
-          ))
-        ) : (
-          <slot name="no-options">
-            <div class="px-3 py-2 text-gray-500">no hay opciones</div>
-          </slot>
-        )
-      }
-    </div>
   </div>
-
+  <div
+    id="options"
+    class={`absolute open-down left-0 bg-white border border-gray-300 rounded-md shadow-lg z-10 w-full overflow-hidden ${classOptionsContainer}`}
+    role="listbox"
+  >
+    {
+      groups.length > 0 ? (
+        groups.map((group) => (
+          <div>
+            <div class={`px-3 py-2 text-sm font-bold ${classGroupLabel}`}>{group.label}</div>
+            {group.options.map((option, index) => (
+              <div
+                id={`${id || name}-option-${index}`}
+                class={`px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center gap-2 ${
+                  option.disabled ? "text-gray-400" : "text-black"
+                } ${!option.value ? "selected" : ""} ${classOption}`}
+                data-disabled={option.disabled}
+              >
+                {option.icon && <option.icon />}
+                <span data-value={option.value}>{option.label}</span>
+              </div>
+            ))}
+          </div>
+        ))
+      ) : options.length > 0 ? (
+        options.map((option, index) => (
+          <div
+            id={`${id || name}-option-${index}`}
+            class={`px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center gap-2  ${
+              option.disabled ? "text-gray-400" : "text-black"
+            } ${!option.value ? "selected" : ""} ${classOption}`}
+            data-disabled={option.disabled}
+          >
+            {option.icon && <option.icon />}
+            <span data-value={option.value}>{option.label}</span>
+          </div>
+        ))
+      ) : (
+        <slot name="no-options">
+          <div class="px-3 py-2 text-gray-500">no hay opciones</div>
+        </slot>
+      )
+    }
+  </div>
   {
     helperText != null && (
       <span class={`text-sm text-gray-500 ${classHelperText}`}>{helperText}</span>
@@ -254,9 +261,10 @@ const { options = [], groups = [] } = data;
   [data-disabled] {
     cursor: not-allowed;
   }
-  .options {
+  #options {
     max-width: inherit;
     opacity: 0;
+    visibility: hidden;
     transform: translateY(-10px);
     pointer-events: none;
     transition:
@@ -265,23 +273,23 @@ const { options = [], groups = [] } = data;
 
     &.open-down {
       top: 100%;
-      margin-top: 0.5rem;
       bottom: auto;
-      transform: translateY(0);
+      transform: translateY(-10);
       pointer-events: auto;
     }
     &.open-up {
       top: auto;
-      margin-bottom: 0.5rem;
       bottom: 100%;
+      margin-bottom: -1rem;
       transform: translateY(-10px);
       pointer-events: none;
     }
-  }
-  .options.show {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
+    &.show {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
   }
   .selected {
     background: #e0e7ff;
@@ -298,24 +306,44 @@ const { options = [], groups = [] } = data;
 <script>
   class SelectField extends HTMLElement {
     idContainer = this.dataset.idContainer || "";
-    selectedValue = "";
     menuVisible = false;
 
     connectedCallback() {
       const select = this.querySelector("#select");
-      const optionsMenu = this.querySelector(".options") as HTMLElement;
+      const optionsMenu = this.querySelector("#options") as HTMLElement;
       const inputHidden = this.querySelector('input[type="hidden"]') as HTMLInputElement;
       const placeholderSpan = this.querySelector("[data-placeholder]");
       const arrow = this.querySelector("svg");
-      const optionDivs = optionsMenu?.querySelectorAll("[data-value]");
 
-      // Inicializa el valor si existe
-      if (inputHidden && inputHidden.value) {
-        this.selectedValue = inputHidden.value;
-      }
+      const selectOption = (value: string = "") => {
+        const optSelected = optionsMenu.querySelector(".selected");
+        optSelected?.classList.remove("selected");
+
+        const spanValue = this.querySelector(`[data-value="${value}"]`);
+
+        if (placeholderSpan) placeholderSpan.textContent = spanValue?.textContent || "";
+
+        const divValue = spanValue?.closest("div");
+        divValue?.classList.add("selected");
+      };
+
+      // Manejar reset del formulario para actualizar la parte visual
+      const form = document
+        .getElementById(`view-${this.idContainer}`)
+        ?.getElementsByTagName("form")[0];
+      form?.addEventListener("reset", () => {
+        if (placeholderSpan)
+          placeholderSpan.textContent = this.querySelector(`[data-value=""]`)?.textContent || "";
+
+        selectOption("");
+      });
 
       // Mostrar/ocultar menú y animar flecha
-      select?.addEventListener("click", () => {
+      select?.addEventListener("click", (e) => {
+        const targetID = ((e.target as HTMLElement)?.id as string) ?? "";
+
+        if (targetID === "options") return;
+
         // 1. Calcular dimensiones
         const selectRect = select.getBoundingClientRect(); // Posición y tamaño del campo de selección
         const viewportHeight =
@@ -354,23 +382,21 @@ const { options = [], groups = [] } = data;
       // Selección de opción
       optionsMenu?.addEventListener("click", (e) => {
         let target = e.target as HTMLElement;
+
+        if (!this.menuVisible) return;
+
         if (target.tagName === "SPAN") {
           target = target.closest("div") as HTMLElement;
         }
 
+        this.menuVisible = false;
+        optionsMenu?.classList.toggle("show");
+        arrow?.classList.toggle("rotate");
+
         if (target && !target.hasAttribute("data-disabled")) {
           const value = target.getElementsByTagName("span")[0]?.getAttribute("data-value") ?? "";
-          const text = target.getElementsByTagName("span")[0]?.textContent ?? "";
-          this.selectedValue = value;
-          if (inputHidden) inputHidden.value = value;
-          if (placeholderSpan) placeholderSpan.textContent = text;
-          // Resalta opción seleccionada
-          optionDivs?.forEach((opt) => opt.closest("div")?.classList.remove("selected"));
-          target.classList.add("selected");
-          // Oculta menú y rota flecha
-          this.menuVisible = false;
-          optionsMenu.classList.remove("show");
-          arrow?.classList.remove("rotate");
+          inputHidden.value = value;
+          selectOption(value);
         }
       });
     }
