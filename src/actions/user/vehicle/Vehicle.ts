@@ -125,7 +125,7 @@ export const Vehicle = {
         const err = await res.json().catch(() => ({}));
         throw new ActionError({ code: "BAD_REQUEST", message: err?.detail || "No se pudo actualizar el vehículo" });
       }
-      return (await res.json()) as unknown;
+      return { message: "Vehículo actualizado con éxito" };
     },
   }),
 
