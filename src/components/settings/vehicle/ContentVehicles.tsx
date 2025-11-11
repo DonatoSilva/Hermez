@@ -1,10 +1,19 @@
 import { withState } from "@astrojs/react/actions";
 import VehicleItem from "@components/settings/vehicle/VehicleItem";
+import VehicleItemSkeleton from "@components/settings/vehicle/VehicleItemSkeleton";
 import { useStore } from "@nanostores/react";
 import { allVehicles as $allVehicles, vehicleToEdit } from "@stores/VehicleStore";
 import { actions } from "astro:actions";
 import { startTransition, useActionState, useEffect, useState } from "react";
 import type { VehicleItemProps } from "../../../types/Vehicle/VehicleProps";
+
+const SkeletonVehicles = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {Array.from({ length: 3 }).map((_, i) => (
+      <VehicleItemSkeleton key={i} />
+    ))}
+  </div>
+);
 
 export default function ContentVehicles({ emptyVehicle }: { emptyVehicle?: React.JSX.Element }) {
   const [initLoad, setInitLoad] = useState(true);
@@ -46,6 +55,10 @@ export default function ContentVehicles({ emptyVehicle }: { emptyVehicle?: React
     }
   };
 
+  if (isLoading || initLoad) {
+    return <SkeletonVehicles />
+  }
+
   if (!allVehicles?.length) {
     return (
       emptyVehicle
@@ -54,7 +67,7 @@ export default function ContentVehicles({ emptyVehicle }: { emptyVehicle?: React
 
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {allVehicles?.map(v => (
         <VehicleItem key={v.vehicleId} vehicle={v} onEdit={handleEdit} onDelete={() => handleDelete(v.vehicleId)} />
       ))}

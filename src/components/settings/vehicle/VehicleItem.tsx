@@ -1,15 +1,14 @@
 import { Icon } from "@iconify-icon/react";
-import type { VehicleItemProps, VehicleType } from "@types/Vehicle/VehicleProps";
-import { typeVehicle } from "@types/Vehicle/VehicleProps";
+import { typeVehicle, type VehicleItemProps } from "../../../types/Vehicle/VehicleProps";
 
 function getContrastText(hex?: string | null) {
   if (!hex) return "#ffffff";
-  const h = hex.replace('#','');
+  const h = hex.replace('#', '');
   const bigint = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
   const r = (bigint >> 16) & 255;
   const g = (bigint >> 8) & 255;
   const b = bigint & 255;
-  const lum = (0.299*r + 0.587*g + 0.114*b) / 255;
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return lum > 0.6 ? "#111827" : "#ffffff"; // dark text for light bg, white for dark bg
 }
 
@@ -20,7 +19,7 @@ export default function VehicleItem({ vehicle, onEdit, onDelete }: {
 }) {
   const color = vehicle.color || "#1d4ed8"; // fallback a azul de la empresa
   const textColor = getContrastText(color);
-  const type = vehicle.type || ("car" as VehicleType);
+  const type = vehicle.type || "car";
   const typeInfo = typeVehicle[type];
 
   return (

@@ -28,6 +28,6 @@ export interface VehicleItemProps {
   licensePlate: string;
   vin: string;
   color?: string | null;
-  type?: VehicleType | null;
+  type?: VehicleType["id"] | null;
   isVerified?: boolean;
 }

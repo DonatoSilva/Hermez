@@ -2,21 +2,17 @@ import { withState } from '@astrojs/react/actions';
 import { useStore } from '@nanostores/react';
 import { actions } from 'astro:actions';
 import { startTransition, useActionState, useCallback, useEffect, useState } from "react";
-import { SolarPointOnMapBoldDuotone } from 'src/icons/SolarPointOnMapBoldDuotone';
 import { allAddresses as $allAddresses, favorites as $favorites, addressToEdit } from 'src/stores/AddressStore';
 import { changeStatusModal, getStatusModal } from 'src/stores/ModalStore';
 import { toastStore } from 'src/stores/StoreToast';
 import AddressItem from "./AddressItem";
+import AddressItemSkeleton from "./AddressItemSkeleton";
 
 const SkeletonAddresses = () => (
-    <div className="flex flex-col w-full gap-10">
-        <div className="flex flex-row mx-auto items-center gap-2 py-12">
-            <SolarPointOnMapBoldDuotone className="animate-pulse" width="80" height="80" />
-            <div className="flex flex-col gap-2">
-                <h5 className="text-xl font-semibold text-neutral-700 dark:text-neutral-200">Cargando direcciones</h5>
-                <p className="text-base text-neutral-500 dark:text-neutral-400">Buscando en nuestro servidor...</p>
-            </div>
-        </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full grid-flow-row">
+        {Array.from({ length: 3 }).map((_, index) => (
+            <AddressItemSkeleton key={index} />
+        ))}
     </div>
 );
 

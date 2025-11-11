@@ -42,7 +42,7 @@ const { isActive } = Astro.props as VehicleSectionProps;
   </header>
 
   <div class="mt-4">
-    <ContentVehicles client:visible>
+    <ContentVehicles client:only>
       <EmptyAddress
         slot="emptyVehicle"
         title="Sin vehículos registrados aún."
