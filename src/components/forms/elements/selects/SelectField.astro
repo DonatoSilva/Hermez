@@ -170,7 +170,11 @@ if (options.length !== 0) {
 }
 ---
 
-<select-field class={`relative flex flex-col gap-2 ${className}`} data-id-container={idContainer}>
+<select-field
+  class={`relative flex flex-col gap-2 ${className}`}
+  data-id-container={idContainer}
+  data-value={value}
+>
   {
     textLabel && (
       <span class={`text-sm ${classLabel}`}>
@@ -308,79 +312,90 @@ if (options.length !== 0) {
     idContainer = this.dataset.idContainer || "";
     menuVisible = false;
 
+    select = this.querySelector("#select");
+    optionsMenu = this.querySelector("#options") as HTMLElement;
+    inputHidden = this.querySelector('input[type="hidden"]') as HTMLInputElement;
+    placeholderSpan = this.querySelector("[data-placeholder]");
+    arrow = this.querySelector("svg");
+    value = this.dataset.value;
+
+    constructor() {
+      super();
+      this.selectOption(this.value);
+    }
+
+    selectOption = (value: string = "") => {
+      const optSelected = this.optionsMenu.querySelector(".selected");
+      optSelected?.classList.remove("selected");
+
+      const spanValue = this.querySelector(`[data-value="${value}"]`);
+
+      if (this.placeholderSpan) this.placeholderSpan.textContent = spanValue?.textContent || "";
+
+      const divValue = spanValue?.closest("div");
+      divValue?.classList.add("selected");
+    };
+
     connectedCallback() {
-      const select = this.querySelector("#select");
-      const optionsMenu = this.querySelector("#options") as HTMLElement;
-      const inputHidden = this.querySelector('input[type="hidden"]') as HTMLInputElement;
-      const placeholderSpan = this.querySelector("[data-placeholder]");
-      const arrow = this.querySelector("svg");
-
-      const selectOption = (value: string = "") => {
-        const optSelected = optionsMenu.querySelector(".selected");
-        optSelected?.classList.remove("selected");
-
-        const spanValue = this.querySelector(`[data-value="${value}"]`);
-
-        if (placeholderSpan) placeholderSpan.textContent = spanValue?.textContent || "";
-
-        const divValue = spanValue?.closest("div");
-        divValue?.classList.add("selected");
-      };
+      this.inputHidden.addEventListener("input", (e) => {
+        this.selectOption((e.target as HTMLInputElement).value);
+      });
 
       // Manejar reset del formulario para actualizar la parte visual
       const form = document
         .getElementById(`view-${this.idContainer}`)
         ?.getElementsByTagName("form")[0];
       form?.addEventListener("reset", () => {
-        if (placeholderSpan)
-          placeholderSpan.textContent = this.querySelector(`[data-value=""]`)?.textContent || "";
+        if (this.placeholderSpan)
+          this.placeholderSpan.textContent =
+            this.querySelector(`[data-value=""]`)?.textContent || "";
 
-        selectOption("");
+        this.selectOption("");
       });
 
       // Mostrar/ocultar menú y animar flecha
-      select?.addEventListener("click", (e) => {
+      this.select?.addEventListener("click", (e) => {
         const targetID = ((e.target as HTMLElement)?.id as string) ?? "";
 
         if (targetID === "options") return;
 
         // 1. Calcular dimensiones
-        const selectRect = select.getBoundingClientRect(); // Posición y tamaño del campo de selección
+        const selectRect = this.select?.getBoundingClientRect(); // Posición y tamaño del campo de selección
         const viewportHeight =
           document.getElementById(`view-${this.idContainer}`)?.clientHeight || window.innerHeight; // Altura de la ventana
 
-        if (!optionsMenu) return;
-        const optionsMenuHeight = optionsMenu.scrollHeight; // Altura real del menú si se mostrara completo
+        if (!this.optionsMenu) return;
+        const optionsMenuHeight = this.optionsMenu.scrollHeight; // Altura real del menú si se mostrara completo
 
-        const spaceBelow = viewportHeight - selectRect.bottom;
-        const spaceAbove = selectRect.top;
+        const spaceBelow = viewportHeight - (selectRect?.bottom || 0);
+        const spaceAbove = selectRect?.top || 0;
 
         // 2. Determinar si hay desbordamiento y cómo ajustarlo
         if (spaceBelow < optionsMenuHeight && spaceAbove > optionsMenuHeight) {
           // Abrir hacia arriba
-          optionsMenu.classList.add("open-up"); // Añadir una clase para posicionar hacia arriba
-          optionsMenu.classList.remove("open-down"); // Asegurarse de que no tenga la clase de abrir hacia abajo
+          this.optionsMenu.classList.add("open-up"); // Añadir una clase para posicionar hacia arriba
+          this.optionsMenu.classList.remove("open-down"); // Asegurarse de que no tenga la clase de abrir hacia abajo
         } else if (spaceBelow < optionsMenuHeight && spaceAbove < optionsMenuHeight) {
           // No hay espacio suficiente ni arriba ni abajo, hacerlo scrollable
-          optionsMenu.style.maxHeight = Math.max(spaceBelow, spaceAbove) + "px"; // Usar el mayor espacio disponible
-          optionsMenu.style.overflowY = "auto";
-          optionsMenu.classList.remove("open-up");
-          optionsMenu.classList.add("open-down"); // Por defecto, abrir hacia abajo si no hay espacio arriba
+          this.optionsMenu.style.maxHeight = Math.max(spaceBelow, spaceAbove) + "px"; // Usar el mayor espacio disponible
+          this.optionsMenu.style.overflowY = "auto";
+          this.optionsMenu.classList.remove("open-up");
+          this.optionsMenu.classList.add("open-down"); // Por defecto, abrir hacia abajo si no hay espacio arriba
         } else {
           // Suficiente espacio abajo, abrir normalmente
-          optionsMenu.classList.remove("open-up");
-          optionsMenu.classList.add("open-down");
-          optionsMenu.style.maxHeight = ""; // Limpiar max-height si se había establecido
-          optionsMenu.style.overflowY = ""; // Limpiar overflow-y
+          this.optionsMenu.classList.remove("open-up");
+          this.optionsMenu.classList.add("open-down");
+          this.optionsMenu.style.maxHeight = ""; // Limpiar max-height si se había establecido
+          this.optionsMenu.style.overflowY = ""; // Limpiar overflow-y
         }
 
         this.menuVisible = !this.menuVisible;
-        optionsMenu?.classList.toggle("show", this.menuVisible);
-        arrow?.classList.toggle("rotate", this.menuVisible);
+        this.optionsMenu?.classList.toggle("show", this.menuVisible);
+        this.arrow?.classList.toggle("rotate", this.menuVisible);
       });
 
       // Selección de opción
-      optionsMenu?.addEventListener("click", (e) => {
+      this.optionsMenu?.addEventListener("click", (e) => {
         let target = e.target as HTMLElement;
 
         if (!this.menuVisible) return;
@@ -390,13 +405,13 @@ if (options.length !== 0) {
         }
 
         this.menuVisible = false;
-        optionsMenu?.classList.toggle("show");
-        arrow?.classList.toggle("rotate");
+        this.optionsMenu?.classList.toggle("show");
+        this.arrow?.classList.toggle("rotate");
 
         if (target && !target.hasAttribute("data-disabled")) {
           const value = target.getElementsByTagName("span")[0]?.getAttribute("data-value") ?? "";
-          inputHidden.value = value;
-          selectOption(value);
+          this.inputHidden.value = value;
+          this.selectOption(value);
         }
       });
     }

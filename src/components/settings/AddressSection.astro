@@ -66,11 +66,15 @@ const { isActive } = Astro.props as AddressSectionProps;
         textLabel="Tipo de dirección"
         required
         placeholder="Selecciona un tipo"
-        options={[
-          { value: "casa", label: "Casa" },
-          { value: "trabajo", label: "Trabajo" },
-          { value: "edificio", label: "Edificio" },
-        ]}
+        idContainer="form-address"
+        required
+        data={{
+          options: [
+            { value: "casa", label: "Casa" },
+            { value: "trabajo", label: "Trabajo" },
+            { value: "edificio", label: "Edificio" },
+          ],
+        }}
       />
     </div>
 
@@ -198,13 +202,17 @@ const { isActive } = Astro.props as AddressSectionProps;
 
       data &&
         Object.keys(data).forEach((key) => {
+          console.log(key, (data as any)[key]);
           const element = formNewAddress?.querySelector(`[name="${key}"]`) as
             | HTMLInputElement
             | HTMLTextAreaElement
             | HTMLSelectElement
             | null;
 
-          if (element) element.value = (data as any)[key] || "";
+          if (element) {
+            element.value = (data as any)[key] || "";
+            element.dispatchEvent(new Event("input"));
+          }
         });
     });
 
