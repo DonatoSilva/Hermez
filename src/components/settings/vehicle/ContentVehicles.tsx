@@ -39,10 +39,9 @@ export default function ContentVehicles({ emptyVehicle }: { emptyVehicle?: React
     }
   }, [isLoading])
 
-  const handleEdit = (v: VehicleItemProps) => {
-    vehicleToEdit.set(v);
-    const btn = document.getElementById("open-modal-vehicle");
-    btn?.dispatchEvent(new Event("click"));
+  const handleEdit = (vehicleId: VehicleItemProps["vehicleId"]) => {
+    const vehicle = allVehicles.find(v => v.vehicleId === vehicleId);
+    vehicleToEdit.set(vehicle);
   };
 
   const handleDelete = async (vehicleId: string) => {
@@ -69,7 +68,7 @@ export default function ContentVehicles({ emptyVehicle }: { emptyVehicle?: React
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {allVehicles?.map(v => (
-        <VehicleItem key={v.vehicleId} vehicle={v} onEdit={handleEdit} onDelete={() => handleDelete(v.vehicleId)} />
+        <VehicleItem key={v.vehicleId} vehicle={v} onEdit={handleEdit} onDelete={handleDelete} />
       ))}
     </div>
   );

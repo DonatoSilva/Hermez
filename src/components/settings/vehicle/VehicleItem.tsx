@@ -1,4 +1,5 @@
 import { Icon } from "@iconify-icon/react";
+import { useCallback } from "react";
 import { typeVehicle, type VehicleItemProps } from "../../../types/Vehicle/VehicleProps";
 
 function getContrastText(hex?: string | null) {
@@ -14,36 +15,45 @@ function getContrastText(hex?: string | null) {
 
 export default function VehicleItem({ vehicle, onEdit, onDelete }: {
   vehicle: VehicleItemProps;
-  onEdit: (v: VehicleItemProps) => void;
-  onDelete: () => void;
+  onEdit: (vehicleID: VehicleItemProps["vehicleId"]) => void;
+  onDelete: (vehicleID: VehicleItemProps["vehicleId"]) => void;
 }) {
+
+  console.log(vehicle);
+
   const color = vehicle.color || "#1d4ed8"; // fallback a azul de la empresa
   const textColor = getContrastText(color);
-  const type = vehicle.type || "car";
+  const type = vehicle.type?.id || "180647da-e54e-441c-ae7b-8e5d078f31b5";
   const typeInfo = typeVehicle[type];
+
+  // Función para editar la dirección
+  const handleEdit = useCallback(() => {
+    onEdit?.(vehicle.vehicleId);
+  }, [onEdit]);
+
+  // Función para eliminar la dirección
+  const handleDelete = useCallback(() => {
+    onDelete?.(vehicle.vehicleId);
+  }, [onDelete]);
 
   return (
     <div className="w-full rounded-md overflow-hidden border border-gray-200">
-      <div className="w-full h-20 flex items-center justify-between px-3" style={{ backgroundColor: color, color: textColor }}>
-        <div className="flex items-center gap-2">
-          <img src={typeInfo.image} alt={typeInfo.label} className="w-10 h-10 object-contain" loading="lazy" />
-          <span className="font-semibold">{typeInfo.label}</span>
-        </div>
-        <span className="text-lg font-bold tracking-wider">{vehicle.licensePlate}</span>
+      <div className="relative w-full h-20 flex items-center justify-between px-3" style={{ backgroundColor: color, color: textColor }}>
+        <span className="text-xl font-bold tracking-wider">{vehicle.licensePlate}</span>
+        <img src={typeInfo.image} alt={typeInfo.label} className="absolute top-1/2 right-0 translate-x-1/3 -translate-y-1/2 size-48 object-contain" loading="lazy" />
       </div>
 
-      <div className="p-3 flex items-center justify-between">
+      <div className={`p-3 flex items-center justify-between backdrop-blur-lg bg-[${color}]/10`}>
         <div className="text-sm text-gray-700">
-          <div>{vehicle.brand} {vehicle.model}</div>
-          <div>Año: {vehicle.year}</div>
-          {vehicle.isVerified && <div className="text-green-600">Verificado</div>}
+          <span className="font-semibold">{vehicle.brand} {vehicle.model}</span>
+          <div className="text-gray-500 ">Año: {vehicle.year}</div>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => onEdit(vehicle)} className="p-2 rounded-md bg-gray-100 hover:bg-gray-200">
-            <Icon icon="mdi:pencil" className="text-H-blue-900" />
+        <div className="flex items-center gap-2 ${color}">
+          <button onClick={handleEdit} className="p-2 rounded-md bg-gray-100 hover:bg-gray-200 cursor-pointer">
+            <Icon icon="iconamoon:edit-fill" width="20" height="20" />
           </button>
-          <button onClick={onDelete} className="p-2 rounded-md bg-red-100 hover:bg-red-200">
-            <Icon icon="mdi:trash" className="text-red-600" />
+          <button onClick={handleDelete} className="p-2 rounded-md bg-red-100 group-hover:bg-red-200 transition cursor-pointer">
+            <Icon icon="iconamoon:trash-simple-fill" width="20" height="20" className="group-hover:text-red-600 transition m-auto" />
           </button>
         </div>
       </div>

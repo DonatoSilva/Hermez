@@ -13,11 +13,9 @@ export interface VehicleType {
 }
 
 export const typeVehicle: Record<VehicleType["id"], { label: string; image: string }> = {
-  car: { label: "Carro", image: "/images/tiposDeVehiculos/carro.png" },
-  motorcycle: { label: "Motocicleta", image: "/images/tiposDeVehiculos/moto.png" },
-  bicycle: { label: "Bicicleta", image: "/images/tiposDeVehiculos/bici.png" },
-  truck: { label: "Camión", image: "/images/tiposDeVehiculos/camion.png" },
-  van: { label: "Furgoneta", image: "/images/tiposDeVehiculos/furgoneta.png" },
+  "2223f9c0-d6a2-4937-abe5-e196b500400f": { label: "Moto", image: "/images/tiposDeVehiculos/moto-min.png" },
+  "c6f98b68-3886-4a97-8edf-88caf0b8b488": { label: "Moto CArro", image: "/images/tiposDeVehiculos/mototaxi-min.png" },
+  "180647da-e54e-441c-ae7b-8e5d078f31b5": { label: "Carro", image: "/images/tiposDeVehiculos/carro-azul-min.png" },
 };
 
 export interface VehicleItemProps {
@@ -28,6 +26,8 @@ export interface VehicleItemProps {
   licensePlate: string;
   vin: string;
   color?: string | null;
-  type?: VehicleType["id"] | null;
+  type?: {
+    id: VehicleType["id"];
+  };
   isVerified?: boolean;
 }
