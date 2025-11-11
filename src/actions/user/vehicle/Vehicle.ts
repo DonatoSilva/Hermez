@@ -147,7 +147,7 @@ export const Vehicle = {
         const err = await res.json().catch(() => ({}));
         throw new ActionError({ code: "BAD_REQUEST", message: err?.detail || "No se pudo eliminar el vehículo" });
       }
-      return { ok: true } as const;
+      return { message: "Vehículo eliminado con éxito" };
     },
   }),
 };

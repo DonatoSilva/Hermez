@@ -4,8 +4,10 @@ import VehicleItemSkeleton from "@components/settings/vehicle/VehicleItemSkeleto
 import { useStore } from "@nanostores/react";
 import { allVehicles as $allVehicles, vehicleToEdit } from "@stores/VehicleStore";
 import { actions } from "astro:actions";
-import { startTransition, useActionState, useEffect, useState } from "react";
+import { startTransition, useActionState, useCallback, useEffect, useState } from "react";
 import type { VehicleItemProps } from "../../../types/Vehicle/VehicleProps";
+import { toastStore } from "@stores/StoreToast";
+import { changeStatusModal, getStatusModal } from "@stores/ModalStore";
 
 const SkeletonVehicles = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -39,20 +41,67 @@ export default function ContentVehicles({ emptyVehicle }: { emptyVehicle?: React
     }
   }, [isLoading])
 
-  const handleEdit = (vehicleId: VehicleItemProps["vehicleId"]) => {
+  const handleEdit = useCallback((vehicleId: VehicleItemProps["vehicleId"]) => {
     const vehicle = allVehicles.find(v => v.vehicleId === vehicleId);
-    vehicleToEdit.set(vehicle);
-  };
-
-  const handleDelete = async (vehicleId: string) => {
-    const fd = new FormData();
-    fd.append("vehicleId", vehicleId);
-    const res = await actions.User.Vehicle.delete(fd);
-    if ((res as any)?.ok) {
-      const nextVehicles = allVehicles.filter(v => v.vehicleId !== vehicleId);
-      $allVehicles.set(nextVehicles);
+    if (vehicle) {
+      vehicleToEdit.set(undefined);
+      vehicleToEdit.set(vehicle);
+      changeStatusModal(
+        "form-vehicle" as never,
+        {
+          ...getStatusModal("form-vehicle" as never),
+          metaData: {
+            ...getStatusModal("form-vehicle" as never).metaData,
+            title: "Editar vehículo",
+          },
+          action: "edit",
+          isOpen: true,
+        } as never
+      );
     }
-  };
+  }, [allVehicles]);
+
+
+  const handleDelete = useCallback(async (vehicleId: string) => {
+    const confirmed = window.confirm('¿Deseas eliminar este vehículo?');
+    if (!confirmed) return;
+
+    try {
+      const form = new FormData();
+      form.set('vehicleId', vehicleId);
+      const { data, error } = await actions.User.Vehicle.delete(form);
+
+      if (error) {
+        toastStore.set({
+          visible: true,
+          message: error.message,
+          type: 'error',
+          autoClose: true,
+          autoCloseDelay: 3000,
+        });
+        return;
+      }
+
+      $allVehicles.set(allVehicles.filter(v => v.vehicleId !== vehicleId));
+
+      toastStore.set({
+        visible: true,
+        message: (data as any)?.message || 'Vehículo eliminado con éxito',
+        type: 'success',
+        autoClose: true,
+        autoCloseDelay: 3000,
+      });
+    } catch (err) {
+      toastStore.set({
+        visible: true,
+        message: 'Error inesperado al eliminar el vehículo',
+        type: 'error',
+        autoClose: true,
+        autoCloseDelay: 3000,
+      });
+    }
+  }, [allVehicles]);
+
 
   if (isLoading || initLoad) {
     return <SkeletonVehicles />
