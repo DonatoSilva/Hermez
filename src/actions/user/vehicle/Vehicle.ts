@@ -121,11 +121,13 @@ export const Vehicle = {
         },
         body: JSON.stringify(body),
       });
+
+      const data = await res.json()
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new ActionError({ code: "BAD_REQUEST", message: err?.detail || "No se pudo actualizar el vehículo" });
+        const message = Object.keys(data).map(key => `${key}: ${data[key]}`).join(', ');
+        throw new ActionError({ code: "BAD_REQUEST", message: message || "No se pudo actualizar el vehículo" });
       }
-      return { message: "Vehículo actualizado con éxito" };
+      return data;
     },
   }),
 

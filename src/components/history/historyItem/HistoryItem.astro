@@ -1,9 +1,9 @@
 ---
+import { addressesType, statusColors } from "@components/history/historyItem/HistoryItem";
 import type { HistoryItemProps } from "src/types/history/HistoryItemProps";
-import { statusColors, imageForType } from "@components/history/historyItem/HistoryItem";
 
 const { price, address, status, type, id } = Astro.props as HistoryItemProps;
-const { url, alt } = imageForType[type] || {};
+const { url, alt } = addressesType[type] || {};
 ---
 
 <div

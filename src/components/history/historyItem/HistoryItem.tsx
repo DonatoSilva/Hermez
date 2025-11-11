@@ -11,27 +11,19 @@ export const statusColors = {
   cancelado: "bg-red-500 text-white dark:text-red-900",
 };
 
-export const imageForType: Record<string, { url: string; alt: string }> = {
-  moto: {
-    url: "images/tiposEnvio/moto-min.png",
-    alt: "imagen de moto en 3d animada",
-  },
-  carro: {
-    url: "images/tiposEnvio/carro-azul-min.png",
-    alt: "imagen de carro en 3d animada",
-  },
-  mototaxi: {
-    url: "images/tiposEnvio/mototaxi-min.png",
-    alt: "imagen de mototaxi en 3d animada",
-  },
+export const addressesType: Record<string, { url: string; alt: string }> = {
   paquete: {
     url: "images/tiposEnvio/paquete-min.png",
-    alt: "imagen de paquete en 3d animada",
+    alt: "imagen ilustrativa de paquete en 3d animada",
+  },
+  sobre: {
+    url: "images/tiposEnvio/sobre-min.png",
+    alt: "imagen ilustrativa de sobre en 3d animada",
   },
 };
 
 function HistoryItem({ price, address, status, type, id }: HistoryItemProps) {
-  const { url, alt } = imageForType[type] || {};
+  const { url, alt } = addressesType[type] || {};
 
   return (
     <>
