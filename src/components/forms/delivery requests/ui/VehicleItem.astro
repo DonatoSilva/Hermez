@@ -1,0 +1,76 @@
+---
+type eventType = {
+  name: string;
+  bubble: boolean;
+};
+
+interface Props {
+  imagen: string;
+  alt: string;
+  label: string;
+  name: string;
+  onEvent?: eventType;
+}
+
+const { imagen, alt, label, name, onEvent } = Astro.props as Props;
+---
+
+<vehicle-item
+  data-onEvent={JSON.stringify(onEvent)}
+  data-alt={alt}
+  class="inline-block cursor-pointer group"
+>
+  <input type="radio" name={name} value={alt} class="peer hidden" />
+  <div
+    class="size-20 rounded-md bg-gray-200 overflow-hidden hover:overflow-visible peer-checked:overflow-visible p-2 box-border peer-checked:bg-H-blue-700 transition-all duration-300 hover:bg-H-blue-300"
+  >
+    <img
+      src={imagen}
+      class="translate-x-1/3 bg-transparent object-cover w-full h-full scale-125 peer-checked:translate-x-0 group-hover:scale-150 transition-transform duration-300"
+      alt={alt}
+    />
+  </div>
+  <p
+    class="text-sm font-medium dark:text-white text-H-black text-center transform translate-y-0 w-full peer-checked:translate-y-1/3 transition-transform duration-300"
+    >{label}</p
+  >
+</vehicle-item>
+
+<script>
+  class VehicleItem extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      const input = this.querySelector('input[type="radio"]');
+      const onEvent = JSON.parse(this.dataset.onEvent || "{}");
+
+      const dispatchSelect = () => {
+        if (onEvent && onEvent.name) {
+          this.dispatchEvent(
+            new CustomEvent(onEvent.name, {
+              bubbles: onEvent.bubble,
+              detail: { label: this.dataset.label || "" },
+            })
+          );
+        }
+      };
+
+      this.addEventListener("click", () => {
+        if (input) {
+          (input as HTMLInputElement).checked = true;
+          dispatchSelect();
+        }
+      });
+
+      input?.addEventListener("change", () => {
+        if ((input as HTMLInputElement).checked) {
+          dispatchSelect();
+        }
+      });
+    }
+  }
+
+  customElements.define("vehicle-item", VehicleItem);
+</script>

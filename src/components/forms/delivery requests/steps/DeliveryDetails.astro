@@ -1,5 +1,7 @@
 ---
+import { typeVehicle } from "src/types/Vehicle/VehicleProps";
 import Button from "../../elements/buttons/Button.astro";
+import VehicleItem from "../ui/VehicleItem.astro";
 ---
 
 <div class="space-y-6">
@@ -8,9 +10,16 @@ import Button from "../../elements/buttons/Button.astro";
   <div class="space-y-4">
     <p class="text-base">Seleccione el tipo de vehículo</p>
     <div class="flex items-center gap-3">
-      <Button id="veh-moto" variant="bordered" className="px-4">MOTO</Button>
-      <Button id="veh-carro" variant="bordered" className="px-4">CARRO</Button>
-      <Button id="veh-mototaxi" variant="bordered" className="px-4">MOTOTAXI</Button>
+      {
+        Object.entries(typeVehicle).map(([key, value]) => (
+          <VehicleItem
+            name="vehicleType"
+            imagen={value.image}
+            alt={`Imagen ilustrativa del ${value.label}`}
+            label={value.label}
+          />
+        ))
+      }
     </div>
   </div>
 

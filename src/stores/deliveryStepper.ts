@@ -1,8 +1,9 @@
 import { atom, computed, map } from "nanostores"
+import type { DeliveryProps } from "src/types/Delivery/DeliveryProps"
 
 
 export const totalSteps = 3
-export const currentStep = atom<number>(1)
+export const currentStep = atom<number>(2)
 
 
 export const titleStep = computed(currentStep, (s) => {
@@ -16,15 +17,7 @@ export const titleStep = computed(currentStep, (s) => {
   }
 })
 
-export const deliveryData = map<{
-  origin: string
-  destination: string
-  vehicleType: "moto" | "carro" | "mototaxi"
-  deliveryType: "alimento" | "persona" | "documentos" | "paquete"
-  notes: string
-  paymentMethod: "efectivo" | "tarjeta"
-  price: number
-}>({
+export const deliveryData = map<DeliveryProps>({
   origin: "",
   destination: "",
   vehicleType: "moto",

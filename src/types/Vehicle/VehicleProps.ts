@@ -13,9 +13,9 @@ export interface VehicleType {
 }
 
 export const typeVehicle: Record<VehicleType["id"], { label: string; image: string }> = {
-  "2223f9c0-d6a2-4937-abe5-e196b500400f": { label: "Moto", image: "/images/tiposDeVehiculos/moto-min.png" },
-  "c6f98b68-3886-4a97-8edf-88caf0b8b488": { label: "Moto CArro", image: "/images/tiposDeVehiculos/mototaxi-min.png" },
-  "180647da-e54e-441c-ae7b-8e5d078f31b5": { label: "Carro", image: "/images/tiposDeVehiculos/carro-azul-min.png" },
+  "moto": { label: "Moto", image: "/images/tiposDeVehiculos/moto-min.png" },
+  "mototaxi": { label: "Moto Carro", image: "/images/tiposDeVehiculos/mototaxi-min.png" },
+  "carro": { label: "Carro", image: "/images/tiposDeVehiculos/carro-azul-min.png" },
 };
 
 export interface VehicleItemProps {

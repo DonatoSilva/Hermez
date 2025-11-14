@@ -8,7 +8,7 @@ import Summary from "./steps/SummaryDelivery.astro";
 ---
 
 <div id="container-title" class="min-w-full flex flex-row gap-4">
-  <span class="px-4 py-2 flex-1 bg-H-blue-700 text-H-blue-100 rounded-md">
+  <span id="titleStep" class="px-4 py-2 flex-1 bg-H-blue-700 text-H-blue-100 rounded-md">
     Introduce la ruta:
   </span>
   <span
@@ -31,11 +31,18 @@ import Summary from "./steps/SummaryDelivery.astro";
 </div>
 
 <script>
-  import { currentStep, nextStep, prevStep, progressLabel } from "../../../stores/deliveryStepper";
+  import {
+    currentStep,
+    nextStep,
+    prevStep,
+    progressLabel,
+    titleStep,
+  } from "../../../stores/deliveryStepper";
 
   document.addEventListener("astro:page-load", () => {
     const steps = Array.from(document.querySelectorAll("[data-step]"));
     const progress = document.getElementById("progress");
+    const title = document.getElementById("titleStep");
     const show = (i: number) => {
       steps.forEach(
         (s: Element) => ((s as HTMLElement).hidden = (s as HTMLElement).dataset.step !== String(i))
@@ -55,6 +62,9 @@ import Summary from "./steps/SummaryDelivery.astro";
 
     const unsubStep = currentStep.subscribe((i: number) => {
       show(i);
+    });
+    const unsubTitle = titleStep.subscribe((t) => {
+      if (title) title.textContent = t ?? "Detalles de la entrega:";
     });
     const unsubLabel = progressLabel.subscribe((t) => {
       if (progress) progress.textContent = t;
