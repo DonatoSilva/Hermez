@@ -1,11 +1,12 @@
 ---
 import Button from "../../elements/buttons/Button.astro";
 import InputField from "../../elements/inputs/InputField.astro";
+import LocationItem from "../ui/LocationItem.astro";
 ---
 
 <div class="flex flex-col gap-8">
-  <div class="w-full flex flex-col gap-4">
-    <div class="flex">
+  <div class="min-w-full flex flex-col md:flex-row gap-4">
+    <div class="flex w-full">
       <InputField
         type="text"
         placeholder="Desde..."
@@ -41,7 +42,7 @@ import InputField from "../../elements/inputs/InputField.astro";
         </svg>
       </Button>
     </div>
-    <div class="flex gap-0">
+    <div class="flex w-full">
       <InputField
         type="text"
         placeholder="Hacia..."
@@ -82,149 +83,36 @@ import InputField from "../../elements/inputs/InputField.astro";
   <div class="flex flex-col gap-4">
     <div class="space-y-3">
       <h4 class="text-lg font-semibold text-H-blue-900 dark:text-white">Tus ubicaciones </h4>
-      <div class="space-y-2">
+      <div class="space-y-2 grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Ubicación 1 -->
-        <span
-          class="w-full flex items-center gap-3 p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-H-blue-300 dark:hover:border-H-blue-500 transition-colors group cursor-pointer"
-        >
-          <div
-            class="shrink-0 w-10 h-10 bg-H-blue-100 dark:bg-H-blue-900 rounded-full flex items-center justify-center"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 text-H-blue-600 dark:text-H-blue-400"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
-              ></path>
-            </svg>
-          </div>
-          <div class="flex-1 text-left">
-            <p
-              class="font-medium text-gray-900 dark:text-white group-hover:text-H-blue-600 dark:group-hover:text-H-blue-400"
-            >
-              Casa
-            </p>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-              Calle 123 #45-67, Barrio Centro
-            </p>
-          </div>
-          <div class="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-            </svg>
-            <span>2.1 km</span>
-          </div>
-        </span>
+        <LocationItem
+          id="location1"
+          name="Casa"
+          address="Calle 123 #45-67, Barrio Centro"
+          distance="2.1 km"
+          type="casa"
+          onEvent={{ name: "selectLocation", bubble: true }}
+        />
 
         <!-- Ubicación 2 -->
-        <span
-          class="w-full flex items-center gap-3 p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-H-blue-300 dark:hover:border-H-blue-500 transition-colors group cursor-pointer"
-        >
-          <div
-            class="shrink-0 w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 text-orange-600 dark:text-orange-400"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-              ></path>
-            </svg>
-          </div>
-          <div class="flex-1 text-left">
-            <p
-              class="font-medium text-gray-900 dark:text-white group-hover:text-H-blue-600 dark:group-hover:text-H-blue-400"
-            >
-              Oficina
-            </p>
-            <p class="text-sm text-gray-500 dark:text-gray-400"> Carrera 89 #12-34, Zona Rosa </p>
-          </div>
-          <div class="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-            </svg>
-            <span>5.7 km</span>
-          </div>
-        </span>
+        <LocationItem
+          id="location2"
+          name="Oficina"
+          address="Carrera 89 #12-34, Zona Rosa"
+          distance="5.7 km"
+          type="trabajo"
+          onEvent={{ name: "selectLocation", bubble: true }}
+        />
 
         <!-- Ubicación 3 -->
-        <span
-          class="w-full flex items-center gap-3 p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-H-blue-300 dark:hover:border-H-blue-500 transition-colors group cursor-pointer"
-        >
-          <div
-            class="shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 text-green-600 dark:text-green-400"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
-              <path
-                d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-              ></path>
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-              ></path>
-            </svg>
-          </div>
-          <div class="flex-1 text-left">
-            <p
-              class="font-medium text-gray-900 dark:text-white group-hover:text-H-blue-600 dark:group-hover:text-H-blue-400"
-            >
-              Universidad
-            </p>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-              Avenida 45 #78-90, Campus Norte
-            </p>
-          </div>
-          <div class="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-            </svg>
-            <span>3.2 km</span>
-          </div>
-        </span>
+        <LocationItem
+          id="location3"
+          name="Universidad"
+          address="Avenida 45 #78-90, Campus Norte"
+          distance="3.2 km"
+          type="edificio"
+          onEvent={{ name: "selectLocation", bubble: true }}
+        />
       </div>
 
       <!-- Opción para agregar nueva ubicación -->
@@ -262,16 +150,96 @@ import InputField from "../../elements/inputs/InputField.astro";
   document.addEventListener("astro:page-load", () => {
     const origin = document.getElementById("origin");
     const destination = document.getElementById("destination");
-    origin?.addEventListener("input", (e) => {
-      if (e.target) {
-        const value = (e.target as HTMLInputElement).value;
-        deliveryData.setKey("origin", value);
+
+    let originItem: HTMLElement | undefined;
+    let destinationItem: HTMLElement | undefined;
+    const selectedItems = new Set<HTMLElement>();
+
+    document.addEventListener("selectLocation", (e) => {
+      const target = e.target as HTMLElement | null;
+      const ce = e as CustomEvent;
+
+      const addressId = ce.detail?.addressId;
+      if (!target || !addressId) return;
+
+      const isSelected =
+        target.classList.contains("bg-gray-800") || target.classList.contains("dark:bg-gray-900");
+
+      if (isSelected) {
+        target.classList.remove("bg-gray-800", "dark:bg-gray-900", "text-white");
+        selectedItems.delete(target);
+
+        if (originItem === target) {
+          originItem = undefined;
+          if (origin) {
+            (origin as HTMLInputElement).value = "";
+            deliveryData.setKey("origin", "");
+          }
+
+          return;
+        }
+
+        if (destinationItem === target) {
+          destinationItem = undefined;
+          if (destination) {
+            (destination as HTMLInputElement).value = "";
+            deliveryData.setKey("destination", "");
+          }
+
+          return;
+        }
+
+        return;
+      }
+
+      if (selectedItems.size >= 2) return;
+
+      selectedItems.add(target);
+      target.classList.add("bg-gray-800", "dark:bg-gray-900", "text-white");
+
+      if (origin && (origin as HTMLInputElement).value === "") {
+        const address = target.querySelector(".address")?.textContent.trim() || "";
+        (origin as HTMLInputElement).value = address;
+        originItem = target;
+        deliveryData.setKey("origin", address);
+
+        return;
+      }
+
+      if (destination && (destination as HTMLInputElement).value === "") {
+        const address = target.querySelector(".address")?.textContent.trim() || "";
+        (destination as HTMLInputElement).value = address;
+        destinationItem = target;
+        deliveryData.setKey("destination", address);
+
+        return;
       }
     });
+
+    const removeSelectedItem = (item: HTMLElement) => {
+      item.classList.remove("bg-gray-800", "dark:bg-gray-900", "text-white");
+      selectedItems.delete(item);
+    };
+
+    origin?.addEventListener("input", (e) => {
+      const value = (e.target as HTMLInputElement).value.trim();
+      deliveryData.setKey("origin", value);
+
+      const originAddress = originItem?.textContent?.trim() || "";
+      if ((value === "" || value !== originAddress) && originItem) {
+        removeSelectedItem(originItem);
+        originItem = undefined;
+      }
+    });
+
     destination?.addEventListener("input", (e) => {
-      if (e.target) {
-        const value = (e.target as HTMLInputElement).value;
-        deliveryData.setKey("destination", value);
+      const value = (e.target as HTMLInputElement).value.trim();
+      deliveryData.setKey("destination", value);
+
+      const destinationAddress = destinationItem?.textContent.trim() || "";
+      if ((value === "" || value !== destinationAddress) && destinationItem) {
+        removeSelectedItem(destinationItem);
+        destinationItem = undefined;
       }
     });
   });

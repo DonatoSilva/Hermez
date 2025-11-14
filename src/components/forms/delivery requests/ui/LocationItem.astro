@@ -1,0 +1,90 @@
+---
+import { typeAddress } from "../../../../types/Address/AddressProps";
+
+type eventType = {
+  name: string;
+  bubble: boolean;
+};
+
+interface Props {
+  id: string;
+  name: string;
+  address: string;
+  distance?: string;
+  onEvent?: eventType;
+  type?: keyof typeof typeAddress;
+}
+
+const { id, name, address, distance = "", type = "casa", onEvent } = Astro.props;
+---
+
+<location-item
+  id={id}
+  data-onEvent={JSON.stringify(onEvent)}
+  class={`w-full flex items-center gap-3 p-3 rounded-lg border border-transparent hover:border-H-blue-300 dark:hover:border-H-blue-500 transition-colors group cursor-pointer`}
+>
+  <div
+    class={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${typeAddress[type].bgColor}`}
+  >
+    <img
+      src={typeAddress[type].url}
+      alt={typeAddress[type].alt}
+      class={`w-8 h-8 ${typeAddress[type].iconColor}`}
+    />
+  </div>
+  <div class="flex-1 text-left">
+    <p
+      class={`font-medium dark:text-white group-hover:text-H-blue-600 dark:group-hover:text-H-blue-400 name`}
+    >
+      {name}
+    </p>
+    <p class="text-sm text-gray-500 dark:text-gray-400 address">
+      {address}
+    </p>
+  </div>
+  <div class="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+    </svg>
+    <span>{distance}</span>
+  </div>
+</location-item>
+
+<script>
+  class LocationItem extends HTMLElement {
+    static observedAttributes = ["data-OnEvent"];
+
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      const OnEvent = JSON.parse(this.getAttribute("data-OnEvent") || "{}");
+
+      this.addEventListener("click", () => {
+        if (OnEvent && OnEvent.name) {
+          this.dispatchEvent(
+            new CustomEvent(OnEvent.name, {
+              bubbles: OnEvent.bubble,
+              detail: {
+                addressId: this.id,
+              },
+            })
+          );
+        }
+      });
+    }
+  }
+
+  customElements.define("location-item", LocationItem);
+</script>
