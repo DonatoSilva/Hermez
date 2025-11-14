@@ -67,6 +67,7 @@ import Summary from "./steps/SummaryDelivery.astro";
     document.getElementById("btn-prev")?.addEventListener("click", () => {
       prevStep();
     });
+
     show(currentStep.get());
 
     if (progress) progress.textContent = progressLabel.get();
