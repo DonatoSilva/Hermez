@@ -66,7 +66,7 @@ const userId = Astro.locals.auth()?.userId;
     >
     <nav class="flex flex-col flex-1 gap-8 text-white">
         <header class="flex flex-row justify-between items-center">
-          <Logo size={size} color="text-H-blue-100" />
+          <Logo size={size} color="text-H-blue-100" applyTransition={false} />
           <form method="dialog">
             <button
               class="border border-H-blue-100 rounded-full py-2 px-2 cursor-pointer md:hidden"

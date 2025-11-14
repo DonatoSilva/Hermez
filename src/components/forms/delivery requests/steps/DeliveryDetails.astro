@@ -1,35 +1,41 @@
 ---
 import { typeVehicle } from "src/types/Vehicle/VehicleProps";
-import Button from "../../elements/buttons/Button.astro";
 import VehicleItem from "../ui/VehicleItem.astro";
+import InputField from "@components/forms/elements/inputs/InputField.astro";
 ---
 
 <div class="space-y-6">
   <h4 class="text-lg font-semibold text-H-blue-900 dark:text-white">Tipo de domicilio</h4>
 
-  <div class="space-y-4">
-    <p class="text-base">Seleccione el tipo de vehículo</p>
-    <div class="flex items-center gap-3">
-      {
-        Object.entries(typeVehicle).map(([key, value]) => (
-          <VehicleItem
-            name="vehicleType"
-            imagen={value.image}
-            alt={`Imagen ilustrativa del ${value.label}`}
-            label={value.label}
-          />
-        ))
-      }
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="col-span-auto md:col-span-1">
+      <p class="text-base">Seleccione el tipo de vehículo</p>
+      <div class="flex items-center gap-3">
+        {
+          Object.entries(typeVehicle).map(([key, value]) => (
+            <VehicleItem
+              name="vehicleType"
+              imagen={value.image}
+              alt={`Imagen ilustrativa del ${value.label}`}
+              label={value.label}
+            />
+          ))
+        }
+      </div>
     </div>
-  </div>
 
-  <div class="space-y-4">
-    <p class="text-base">Seleccione el tipo de domicilio</p>
-    <div class="flex items-center gap-3">
-      <Button id="type-alimento" variant="bordered" className="px-4">Alimento</Button>
-      <Button id="type-persona" variant="bordered" className="px-4">Persona</Button>
-      <Button id="type-documentos" className="px-4">Documentos</Button>
-      <Button id="type-paquete" variant="bordered" className="px-4">Paquete</Button>
+    <div class="col-span-auto md:col-span-1">
+      <p class="text-base">Seleccione el tipo de domicilio</p>
+      <div class="flex flex-wrap items-center gap-3">
+        <InputField
+          name="deliveryType"
+          type="radio"
+          id="type-alimento"
+          label="Alimento"
+          value="alimento"
+          className="w-4 h-4 text-H-blue-600 bg-gray-100 border-gray-300 focus:ring-H-blue-500 dark:focus:ring-H-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+        />
+      </div>
     </div>
   </div>
 </div>

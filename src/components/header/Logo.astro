@@ -2,13 +2,19 @@
 interface Props {
   size?: "sm" | "md" | "lg";
   color?: string;
+  applyTransition?: boolean;
   className?: string;
 }
 
-const { size = "lg", color = "text-H-blue-900", className = "" } = Astro.props;
+const {
+  size = "lg",
+  color = "text-H-blue-900",
+  applyTransition = true,
+  className = "",
+} = Astro.props;
 ---
 
-<a href="/" transition:name="title" class={`max-h-min ${className}`}>
+<a href="/" transition:name={applyTransition ? "title" : ""} class={`max-h-min ${className}`}>
   <div class="max-h-min">
     <p
       class={`${color} font-normal leading-none ${
