@@ -9,6 +9,7 @@ import InputField from "../../elements/inputs/InputField.astro";
     placeholder="Desde..."
     name="origin"
     id="origin"
+    required
     className="rounded-e-none"
     classLabel="flex-1"
   />
@@ -44,6 +45,7 @@ import InputField from "../../elements/inputs/InputField.astro";
     placeholder="Hacia..."
     name="destination"
     id="destination"
+    required
     classLabel="flex-1"
     className="rounded-e-none"
   />
@@ -73,6 +75,14 @@ import InputField from "../../elements/inputs/InputField.astro";
     </svg>
   </Button>
 </div>
+
+<script>
+  import { deliveryData } from "../../../../stores/deliveryStepper"
+  const origin = document.getElementById('origin')
+  const destination = document.getElementById('destination')
+  origin?.addEventListener('input', (e) => { deliveryData.setKey('origin', e.target.value) })
+  destination?.addEventListener('input', (e) => { deliveryData.setKey('destination', e.target.value) })
+</script>
 
 <div class="space-y-4">
   <!-- Selector de ubicaciones recientes -->
