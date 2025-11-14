@@ -1,0 +1,46 @@
+---
+import Button from "../../elements/buttons/Button.astro";
+---
+
+<div class="space-y-6">
+  <h4 class="text-lg font-semibold text-H-blue-900 dark:text-white">Tipo de domicilio</h4>
+
+  <div class="space-y-4">
+    <p class="text-base">Seleccione el tipo de vehículo</p>
+    <div class="flex items-center gap-3">
+      <Button id="veh-moto" variant="bordered" className="px-4">MOTO</Button>
+      <Button id="veh-carro" variant="bordered" className="px-4">CARRO</Button>
+      <Button id="veh-mototaxi" variant="bordered" className="px-4">MOTOTAXI</Button>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    <p class="text-base">Seleccione el tipo de domicilio</p>
+    <div class="flex items-center gap-3">
+      <Button id="type-alimento" variant="bordered" className="px-4">Alimento</Button>
+      <Button id="type-persona" variant="bordered" className="px-4">Persona</Button>
+      <Button id="type-documentos" className="px-4">Documentos</Button>
+      <Button id="type-paquete" variant="bordered" className="px-4">Paquete</Button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { deliveryData } from "../../../../stores/deliveryStepper";
+
+  document.addEventListener("astro:page-load", () => {
+    const setVeh = (v: "moto" | "carro" | "mototaxi") => deliveryData.setKey("vehicleType", v);
+    const setType = (t: "alimento" | "persona" | "documentos" | "paquete") =>
+      deliveryData.setKey("deliveryType", t);
+
+    document.getElementById("veh-moto")?.addEventListener("click", () => setVeh("moto"));
+    document.getElementById("veh-carro")?.addEventListener("click", () => setVeh("carro"));
+    document.getElementById("veh-mototaxi")?.addEventListener("click", () => setVeh("mototaxi"));
+    document.getElementById("type-alimento")?.addEventListener("click", () => setType("alimento"));
+    document.getElementById("type-persona")?.addEventListener("click", () => setType("persona"));
+    document
+      .getElementById("type-documentos")
+      ?.addEventListener("click", () => setType("documentos"));
+    document.getElementById("type-paquete")?.addEventListener("click", () => setType("paquete"));
+  });
+</script>

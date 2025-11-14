@@ -76,14 +76,6 @@ import InputField from "../../elements/inputs/InputField.astro";
   </Button>
 </div>
 
-<script>
-  import { deliveryData } from "../../../../stores/deliveryStepper"
-  const origin = document.getElementById('origin')
-  const destination = document.getElementById('destination')
-  origin?.addEventListener('input', (e) => { deliveryData.setKey('origin', e.target.value) })
-  destination?.addEventListener('input', (e) => { deliveryData.setKey('destination', e.target.value) })
-</script>
-
 <div class="space-y-4">
   <!-- Selector de ubicaciones recientes -->
   <div class="space-y-3">
@@ -258,3 +250,24 @@ import InputField from "../../elements/inputs/InputField.astro";
     </Button>
   </div>
 </div>
+
+<script>
+  import { deliveryData } from "../../../../stores/deliveryStepper";
+
+  document.addEventListener("astro:page-load", () => {
+    const origin = document.getElementById("origin");
+    const destination = document.getElementById("destination");
+    origin?.addEventListener("input", (e) => {
+      if (e.target) {
+        const value = (e.target as HTMLInputElement).value;
+        deliveryData.setKey("origin", value);
+      }
+    });
+    destination?.addEventListener("input", (e) => {
+      if (e.target) {
+        const value = (e.target as HTMLInputElement).value;
+        deliveryData.setKey("destination", value);
+      }
+    });
+  });
+</script>

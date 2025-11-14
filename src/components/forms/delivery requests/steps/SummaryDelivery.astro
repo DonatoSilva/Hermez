@@ -1,0 +1,99 @@
+---
+import Button from "../../elements/buttons/Button.astro";
+---
+
+<div class="space-y-6">
+  <h4 class="text-lg font-semibold text-H-blue-900 dark:text-white">Resumen</h4>
+
+  <div class="flex items-start justify-between">
+    <div class="space-y-2">
+      <div>
+        <p class="text-sm text-gray-600">De</p>
+        <p id="sum-origin" class="text-base">-</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">A</p>
+        <p id="sum-destination" class="text-base">-</p>
+      </div>
+    </div>
+    <div class="space-y-2 text-right">
+      <p class="text-sm">Tipo de domicilio</p>
+      <p id="sum-type" class="text-base">-</p>
+      <p class="text-sm">Vehículo</p>
+      <p id="sum-veh" class="text-base">-</p>
+    </div>
+  </div>
+
+  <div class="space-y-2">
+    <p class="text-sm">Observaciones:</p>
+    <textarea
+      id="sum-notes"
+      class="w-full rounded-md border px-3 py-2"
+      rows="2"
+      placeholder="No se tiene observaciones"></textarea>
+  </div>
+
+  <div class="space-y-2">
+    <label class="text-sm">Forma de pago</label>
+    <select id="sum-payment" class="w-full rounded-md border px-3 py-2">
+      <option value="efectivo">Efectivo</option>
+      <option value="tarjeta">Tarjeta</option>
+    </select>
+  </div>
+
+  <div class="flex items-center justify-between bg-H-blue-700 text-white rounded-md px-4 py-3">
+    <div>
+      <p class="text-sm">Valor sugerido</p>
+      <p id="sum-price" class="text-2xl font-bold">$ 4.000</p>
+    </div>
+    <Button id="btn-change-price" className="bg-H-blue-900">Cambiar</Button>
+  </div>
+
+  <div class="pt-2">
+    <Button id="btn-submit" className="w-full">Solicitar Servicio</Button>
+  </div>
+</div>
+
+<script>
+  import { deliveryData } from "../../../../stores/deliveryStepper";
+
+  document.addEventListener("astro:page-load", () => {
+    const originEl = document.getElementById("sum-origin");
+    const destEl = document.getElementById("sum-destination");
+    const typeEl = document.getElementById("sum-type");
+    const vehEl = document.getElementById("sum-veh");
+    const notesEl = document.getElementById("sum-notes");
+    const payEl = document.getElementById("sum-payment");
+    const priceEl = document.getElementById("sum-price");
+    const render = () => {
+      const d = deliveryData.get();
+      if (originEl) originEl.textContent = d.origin || "-";
+      if (destEl) destEl.textContent = d.destination || "-";
+      if (typeEl) typeEl.textContent = d.deliveryType;
+      if (vehEl) vehEl.textContent = d.vehicleType;
+      if (payEl) (payEl as HTMLSelectElement).value = d.paymentMethod || "efectivo";
+      if (priceEl)
+        (priceEl as HTMLParagraphElement).textContent = `$ ${d.price.toLocaleString("es-CO")}`;
+      if (notesEl) (notesEl as HTMLTextAreaElement).value = d.notes || "";
+    };
+    const unsub = deliveryData.subscribe(render);
+    notesEl?.addEventListener("input", (e) => {
+      deliveryData.setKey("notes", (e.target as HTMLTextAreaElement).value);
+    });
+    payEl?.addEventListener("change", (e) => {
+      const paymentMethod = (e.target as HTMLSelectElement).value as "efectivo" | "tarjeta";
+      deliveryData.setKey("paymentMethod", paymentMethod);
+    });
+    document.getElementById("btn-change-price")?.addEventListener("click", () => {
+      const v = prompt("Nuevo valor", String(deliveryData.get().price));
+      const n = Number(v);
+      if (!Number.isNaN(n) && n > 0) deliveryData.setKey("price", n);
+    });
+    document.getElementById("btn-submit")?.addEventListener("click", () => {
+      const d = deliveryData.get();
+      console.log("Solicitud de servicio", d);
+      alert("Servicio solicitado");
+    });
+    render();
+  });
+</script>
