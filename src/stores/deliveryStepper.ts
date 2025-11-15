@@ -3,7 +3,7 @@ import type { DeliveryProps } from "src/types/Delivery/DeliveryProps"
 
 
 export const totalSteps = 3
-export const currentStep = atom<number>(2)
+export const currentStep = atom<number>(1)
 
 
 export const titleStep = computed(currentStep, (s) => {
@@ -24,7 +24,8 @@ export const deliveryData = map<DeliveryProps>({
   deliveryType: "documentos",
   notes: "",
   paymentMethod: "efectivo",
-  price: 4000
+  price: 4000,
+  observations: []
 })
 
 export const progressLabel = computed(currentStep, (s) => `${s}/${totalSteps}`)

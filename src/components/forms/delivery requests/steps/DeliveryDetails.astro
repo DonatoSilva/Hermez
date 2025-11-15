@@ -1,56 +1,78 @@
 ---
 import { typeVehicle } from "src/types/Vehicle/VehicleProps";
 import VehicleItem from "../ui/VehicleItem.astro";
-import InputField from "@components/forms/elements/inputs/InputField.astro";
+import { typeDelivery } from "src/types/Delivery/DeliveryProps";
+import ObservationsList from "../ui/ObservationsList";
 ---
 
 <div class="space-y-6">
   <h4 class="text-lg font-semibold text-H-blue-900 dark:text-white">Tipo de domicilio</h4>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div class="col-span-auto md:col-span-1">
+    <div class="col-span-auto md:col-span-1 flex flex-col gap-3">
       <p class="text-base">Seleccione el tipo de vehículo</p>
       <div class="flex items-center gap-3">
         {
           Object.entries(typeVehicle).map(([key, value]) => (
             <VehicleItem
+              value={key}
               name="vehicleType"
               imagen={value.image}
               alt={`Imagen ilustrativa del ${value.label}`}
               label={value.label}
+              onEvent={{ name: "vehicleType", bubble: true }}
             />
           ))
         }
       </div>
     </div>
 
-    <div class="col-span-auto md:col-span-1">
+    <div class="col-span-auto md:col-span-1 flex flex-col gap-4">
       <p class="text-base">Seleccione el tipo de domicilio</p>
       <div class="flex flex-wrap items-center gap-3">
-        <InputField
-          name="deliveryType"
-          type="radio"
-          id="type-alimento"
-          label="Alimento"
-          value="alimento"
-          className="w-4 h-4 text-H-blue-600 bg-gray-100 border-gray-300 focus:ring-H-blue-500 dark:focus:ring-H-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-        />
+        {
+          Object.entries(typeDelivery).map(([key, value]) => (
+            <span class="mb-3">
+              <input
+                type="radio"
+                id={`type-${key}`}
+                name="deliveryType"
+                value={key}
+                class="peer hidden"
+              />
+              <label
+                for={`type-${key}`}
+                class="font-medium text-gray-900 dark:text-gray-300 px-4 py-2 rounded-md peer-checked:bg-H-blue-700 peer-checked:text-white cursor-pointer bg-gray-200 hover:bg-H-blue-300 transition-colors hover:text-H-blue-900"
+              >
+                {value.label}
+              </label>
+            </span>
+          ))
+        }
       </div>
     </div>
   </div>
+
+  <ObservationsList client:visible />
 </div>
 
 <script>
+  import type { typeDelivery } from "src/types/Delivery/DeliveryProps";
+  import type { typeVehicle } from "src/types/Vehicle/VehicleProps";
   import { deliveryData } from "../../../../stores/deliveryStepper";
 
   document.addEventListener("astro:page-load", () => {
-    const setVeh = (v: "moto" | "carro" | "mototaxi") => deliveryData.setKey("vehicleType", v);
-    const setType = (t: "alimento" | "persona" | "documentos" | "paquete") =>
-      deliveryData.setKey("deliveryType", t);
+    const setVeh = (key: keyof typeof typeVehicle) => deliveryData.setKey("vehicleType", key);
+    const setType = (t: keyof typeof typeDelivery) => deliveryData.setKey("deliveryType", t);
 
-    document.getElementById("veh-moto")?.addEventListener("click", () => setVeh("moto"));
-    document.getElementById("veh-carro")?.addEventListener("click", () => setVeh("carro"));
-    document.getElementById("veh-mototaxi")?.addEventListener("click", () => setVeh("mototaxi"));
+    document.addEventListener("vehicleType", (e) => {
+      const input = (e.target as HTMLInputElement).querySelector("input");
+
+      if (input) {
+        setVeh(input.value as keyof typeof typeVehicle);
+      }
+    });
+
     document.getElementById("type-alimento")?.addEventListener("click", () => setType("alimento"));
     document.getElementById("type-persona")?.addEventListener("click", () => setType("persona"));
     document

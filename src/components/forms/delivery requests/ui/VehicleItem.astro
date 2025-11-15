@@ -10,9 +10,10 @@ interface Props {
   label: string;
   name: string;
   onEvent?: eventType;
+  value: string;
 }
 
-const { imagen, alt, label, name, onEvent } = Astro.props as Props;
+const { imagen, alt, label, name, onEvent, value } = Astro.props as Props;
 ---
 
 <vehicle-item
@@ -20,7 +21,7 @@ const { imagen, alt, label, name, onEvent } = Astro.props as Props;
   data-alt={alt}
   class="inline-block cursor-pointer group"
 >
-  <input type="radio" name={name} value={alt} class="peer hidden" />
+  <input type="radio" name={name} value={value} class="peer hidden" />
   <div
     class="size-20 rounded-md bg-gray-200 overflow-hidden hover:overflow-visible peer-checked:overflow-visible p-2 box-border peer-checked:bg-H-blue-700 transition-all duration-300 hover:bg-H-blue-300"
   >
@@ -44,7 +45,7 @@ const { imagen, alt, label, name, onEvent } = Astro.props as Props;
 
     connectedCallback() {
       const input = this.querySelector('input[type="radio"]');
-      const onEvent = JSON.parse(this.dataset.onEvent || "{}");
+      const onEvent = JSON.parse(this.getAttribute("data-onEvent") || "{}");
 
       const dispatchSelect = () => {
         if (onEvent && onEvent.name) {
@@ -58,14 +59,8 @@ const { imagen, alt, label, name, onEvent } = Astro.props as Props;
       };
 
       this.addEventListener("click", () => {
-        if (input) {
+        if (input && !(input as HTMLInputElement).checked) {
           (input as HTMLInputElement).checked = true;
-          dispatchSelect();
-        }
-      });
-
-      input?.addEventListener("change", () => {
-        if ((input as HTMLInputElement).checked) {
           dispatchSelect();
         }
       });

@@ -1,6 +1,6 @@
 import type { typeVehicle } from "../Vehicle/VehicleProps"
 
-const typeDelivery = {
+export const typeDelivery = {
     alimento: {
         label: "Alimento",
         image: "/images/tiposDeEntregas/alimento.png",
@@ -25,6 +25,7 @@ export interface DeliveryProps {
     vehicleType: keyof typeof typeVehicle
     deliveryType: keyof typeof typeDelivery
     notes: string
-    paymentMethod: "efectivo" | "tarjeta"
+    paymentMethod: "efectivo" | "nequi"
     price: number
+    observations?: string[]
 }

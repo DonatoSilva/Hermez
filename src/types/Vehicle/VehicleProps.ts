@@ -12,10 +12,10 @@ export interface VehicleType {
   delivery_categories: string[];
 }
 
-export const typeVehicle: Record<VehicleType["id"], { label: string; image: string }> = {
-  "moto": { label: "Moto", image: "/images/tiposDeVehiculos/moto-min.png" },
-  "mototaxi": { label: "Moto Carro", image: "/images/tiposDeVehiculos/mototaxi-min.png" },
-  "carro": { label: "Carro", image: "/images/tiposDeVehiculos/carro-azul-min.png" },
+export const typeVehicle = {
+  moto: { label: "Moto", image: "/images/tiposDeVehiculos/moto-min.png" },
+  mototaxi: { label: "Moto Carro", image: "/images/tiposDeVehiculos/mototaxi-min.png" },
+  carro: { label: "Carro", image: "/images/tiposDeVehiculos/carro-azul-min.png" },
 };
 
 export interface VehicleItemProps {

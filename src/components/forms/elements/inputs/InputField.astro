@@ -50,7 +50,7 @@ const {
 
 <input-field class="w-full">
   <label class={`flex flex-col gap-2 ${classLabel}`}>
-    {textLabel && <span class="text-sm">{textLabel}</span>}
+    {textLabel && <span class="text-sm">{textLabel} {required && <span class="text-red-500">*</span>}</span>}
     {
       as === "textarea" ? (
         <textarea

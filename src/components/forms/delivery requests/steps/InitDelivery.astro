@@ -6,77 +6,103 @@ import LocationItem from "../ui/LocationItem.astro";
 
 <div class="flex flex-col gap-8">
   <div class="min-w-full flex flex-col md:flex-row gap-4">
-    <div class="flex w-full">
-      <InputField
-        type="text"
-        placeholder="Desde..."
-        name="origin"
-        id="origin"
-        required
-        className="rounded-e-none"
-        classLabel="[&>span]:hidden"
-      />
-      <Button
-        type="button"
-        aria-label="Seleccionar origen en el mapa"
-        className="min-h-full rounded-s-none border border-inherit"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-5 h-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+    <div class="flex flex-col w-full gap-4">
+      <div class="flex w-full">
+        <InputField
+          type="text"
+          placeholder="Desde..."
+          name="origin"
+          id="origin"
+          required
+          className="rounded-e-none"
+          classLabel="[&>span]:hidden"
+          helperText=""
+        />
+        <Button
+          type="button"
+          aria-label="Seleccionar origen en el mapa"
+          className="min-h-full rounded-s-none border border-inherit"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-          ></path>
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-        </svg>
-      </Button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </Button>
+      </div>
+      <div class="flex w-full">
+        <InputField
+          as="textarea"
+          rows={2}
+          placeholder="Descripción del origen (opcional)"
+          name="originDescription"
+          id="originDescription"
+          classLabel="[&>span]:hidden"
+        />
+      </div>
     </div>
-    <div class="flex w-full">
-      <InputField
-        type="text"
-        placeholder="Hacia..."
-        name="destination"
-        id="destination"
-        required
-        className="rounded-e-none"
-        classLabel="[&>span]:hidden"
-      />
-      <Button
-        type="button"
-        aria-label="Seleccionar destino en el mapa"
-        className="min-h-full rounded-s-none border border-inherit"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-5 h-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+    <div class="flex flex-col w-full gap-4">
+      <div class="flex w-full">
+        <InputField
+          type="text"
+          placeholder="Hacia..."
+          name="destination"
+          id="destination"
+          required
+          className="rounded-e-none"
+          classLabel="[&>span]:hidden"
+          helperText=""
+        />
+        <Button
+          type="button"
+          aria-label="Seleccionar destino en el mapa"
+          className="min-h-full rounded-s-none border border-inherit"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-          ></path>
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-        </svg>
-      </Button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </Button>
+      </div>
+      <div class="flex w-full">
+        <InputField
+          as="textarea"
+          rows={2}
+          placeholder="Descripción del destino (opcional)"
+          name="destinationDescription"
+          id="destinationDescription"
+          classLabel="[&>span]:hidden"
+        />
+      </div>
     </div>
   </div>
 
@@ -150,6 +176,10 @@ import LocationItem from "../ui/LocationItem.astro";
   document.addEventListener("astro:page-load", () => {
     const origin = document.getElementById("origin");
     const destination = document.getElementById("destination");
+    const originHelper = document.getElementById("origin-helper") as HTMLSpanElement | null;
+    const destinationHelper = document.getElementById(
+      "destination-helper"
+    ) as HTMLSpanElement | null;
 
     let originItem: HTMLElement | undefined;
     let destinationItem: HTMLElement | undefined;
@@ -202,6 +232,7 @@ import LocationItem from "../ui/LocationItem.astro";
         (origin as HTMLInputElement).value = address;
         originItem = target;
         deliveryData.setKey("origin", address);
+        if (address) clearError(origin as HTMLInputElement, originHelper);
 
         return;
       }
@@ -211,6 +242,7 @@ import LocationItem from "../ui/LocationItem.astro";
         (destination as HTMLInputElement).value = address;
         destinationItem = target;
         deliveryData.setKey("destination", address);
+        if (address) clearError(destination as HTMLInputElement, destinationHelper);
 
         return;
       }
@@ -230,6 +262,10 @@ import LocationItem from "../ui/LocationItem.astro";
         removeSelectedItem(originItem);
         originItem = undefined;
       }
+
+      if (!value)
+        setError(origin as HTMLInputElement, originHelper, "Por favor completa este campo");
+      else clearError(origin as HTMLInputElement, originHelper);
     });
 
     destination?.addEventListener("input", (e) => {
@@ -241,6 +277,32 @@ import LocationItem from "../ui/LocationItem.astro";
         removeSelectedItem(destinationItem);
         destinationItem = undefined;
       }
+
+      if (!value)
+        setError(
+          destination as HTMLInputElement,
+          destinationHelper,
+          "Por favor completa este campo"
+        );
+      else clearError(destination as HTMLInputElement, destinationHelper);
     });
+
+    const setError = (input: HTMLInputElement, helper: HTMLSpanElement | null, message: string) => {
+      input.classList.add("border-red-500");
+      if (helper) {
+        helper.textContent = message;
+        helper.classList.remove("text-gray-500");
+        helper.classList.add("text-red-500");
+      }
+    };
+
+    const clearError = (input: HTMLInputElement, helper: HTMLSpanElement | null) => {
+      input.classList.remove("border-red-500");
+      if (helper) {
+        helper.textContent = "";
+        helper.classList.remove("text-red-500");
+        helper.classList.add("text-gray-500");
+      }
+    };
   });
 </script>
