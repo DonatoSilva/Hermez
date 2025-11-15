@@ -42,4 +42,14 @@ export const prevStep = () => {
 
 export const resetStepper = () => {
   currentStep.set(1)
+  deliveryData.set({
+    origin: "",
+    destination: "",
+    vehicleType: "moto",
+    deliveryType: "documentos",
+    notes: "",
+    paymentMethod: "efectivo",
+    price: 4000,
+    observations: []
+  })
 }

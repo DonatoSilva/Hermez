@@ -27,6 +27,11 @@ import Button from "../../elements/buttons/Button.astro";
   </div>
 
   <div class="space-y-2">
+    <p class="text-sm">Notas</p>
+    <ul id="sum-notes" class="list-disc list-inside text-base"></ul>
+  </div>
+
+  <div class="space-y-2">
     <SelectField
       id="sum-payment-field"
       name="paymentMethod"
@@ -94,6 +99,7 @@ import Button from "../../elements/buttons/Button.astro";
     const editInput = document.getElementById("edit-price-input") as HTMLInputElement | null;
     const editHelper = document.getElementById("edit-price-input-helper") as HTMLSpanElement | null;
     const errorsBox = document.getElementById("sum-errors");
+    const notesEl = document.getElementById("sum-notes");
 
     const render = () => {
       const d = deliveryData.get();
@@ -107,6 +113,18 @@ import Button from "../../elements/buttons/Button.astro";
       }
       if (priceEl)
         (priceEl as HTMLParagraphElement).textContent = `$ ${d.price.toLocaleString("es-CO")}`;
+      if (notesEl) {
+        notesEl.innerHTML = "";
+        if ((d.observations || []).length === 0) {
+          notesEl.innerHTML = `<li class="text-sm text-gray-500 italic">📝 Sin observaciones adicionales</li>`;
+        } else {
+          notesEl.innerHTML = (d.observations || [])
+            .map(
+              (obs) => `<li class="text-gray-700 bg-gray-200 rounded-md px-3 py-2 mb-1">${obs}</li>`
+            )
+            .join("");
+        }
+      }
     };
 
     const unsub = deliveryData.subscribe(render);

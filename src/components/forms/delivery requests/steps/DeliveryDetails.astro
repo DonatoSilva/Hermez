@@ -62,6 +62,24 @@ import ObservationsList from "../ui/ObservationsList";
   import { deliveryData } from "../../../../stores/deliveryStepper";
 
   document.addEventListener("astro:page-load", () => {
+    const defaultVehicleType = deliveryData.get().vehicleType;
+    const defaultDeliveryType = deliveryData.get().deliveryType;
+
+    // Selecciona el input radio de vehicleType con el valor por defecto
+    const defaultVehicleInput = document.querySelector<HTMLInputElement>(
+      `input[name="vehicleType"][value="${defaultVehicleType}"]`
+    );
+    if (defaultVehicleInput) {
+      defaultVehicleInput.checked = true;
+    }
+    // Selecciona el input radio de deliveryType con el valor por defecto
+    const defaultDeliveryInput = document.querySelector<HTMLInputElement>(
+      `input[name="deliveryType"][value="${defaultDeliveryType}"]`
+    );
+    if (defaultDeliveryInput) {
+      defaultDeliveryInput.checked = true;
+    }
+
     const setVeh = (key: keyof typeof typeVehicle) => deliveryData.setKey("vehicleType", key);
     const setType = (t: keyof typeof typeDelivery) => deliveryData.setKey("deliveryType", t);
 

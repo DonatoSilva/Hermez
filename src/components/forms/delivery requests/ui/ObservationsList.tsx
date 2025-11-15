@@ -22,7 +22,7 @@ export default function ObservationsList() {
 
   return (
     <div className="space-y-2">
-      <p className="text-base">Observaciones (opcional)</p>
+      <p className="text-base">Notas (opcional)</p>
       <div className="flex gap-2">
         <input
           type="text"
