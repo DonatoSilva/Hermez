@@ -53,15 +53,37 @@ import Summary from "./steps/SummaryDelivery.astro";
       const scope = steps[i - 1];
       const formEls = scope.querySelectorAll("input, select, textarea");
 
-      for (const el of formEls) {
+      let firstInvalidIndex = -1;
+      formEls.forEach((el, idx) => {
         const element = el as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-        if (element.required && !element.checkValidity()) return false;
-      }
-      return true;
+        if (element.required && !element.checkValidity()) {
+          element.classList.add("border-red-600");
+          element.setAttribute("placeholder", "Campo requerido");
+          if (firstInvalidIndex === -1) {
+            element.focus();
+            firstInvalidIndex = idx;
+          }
+        } else {
+          element.classList.remove("border-red-600");
+        }
+      });
+
+      return firstInvalidIndex === -1;
     };
 
     const unsubStep = currentStep.subscribe((i: number) => {
       show(i);
+
+      if (i === 1) {
+        document.getElementById("btn-prev")?.classList.add("hidden");
+      } else {
+        document.getElementById("btn-prev")?.classList.remove("hidden");
+      }
+      if (i === steps.length) {
+        document.getElementById("btn-next")?.classList.add("hidden");
+      } else {
+        document.getElementById("btn-next")?.classList.remove("hidden");
+      }
     });
     const unsubTitle = titleStep.subscribe((t) => {
       if (title) title.textContent = t ?? "Detalles de la entrega:";

@@ -39,6 +39,7 @@ export default function ObservationsList() {
         />
         <button
           type="button"
+          disabled={!text.trim()}
           className="bg-H-blue-700 text-white rounded-md px-4 py-2 cursor-pointer hover:bg-H-blue-900 transition-colors"
           onClick={addItem}
         >
