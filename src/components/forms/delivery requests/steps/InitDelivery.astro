@@ -11,8 +11,8 @@ import LocationItem from "../ui/LocationItem.astro";
         <InputField
           type="text"
           placeholder="Desde..."
-          name="origin"
-          id="origin"
+          name="pickup_address"
+          id="pickup_address"
           required
           className="rounded-e-none"
           classLabel="[&>span]:hidden"
@@ -60,8 +60,8 @@ import LocationItem from "../ui/LocationItem.astro";
         <InputField
           type="text"
           placeholder="Hacia..."
-          name="destination"
-          id="destination"
+          name="delivery_address"
+          id="delivery_address"
           required
           className="rounded-e-none"
           classLabel="[&>span]:hidden"
@@ -174,11 +174,11 @@ import LocationItem from "../ui/LocationItem.astro";
   import { deliveryData } from "../../../../stores/deliveryStepper";
 
   document.addEventListener("astro:page-load", () => {
-    const origin = document.getElementById("origin");
-    const destination = document.getElementById("destination");
-    const originHelper = document.getElementById("origin-helper") as HTMLSpanElement | null;
+    const pickup_address = document.getElementById("pickup_address");
+    const delivery_address = document.getElementById("delivery_address");
+    const originHelper = document.getElementById("pickup_address-helper") as HTMLSpanElement | null;
     const destinationHelper = document.getElementById(
-      "destination-helper"
+      "delivery_address-helper"
     ) as HTMLSpanElement | null;
 
     let originItem: HTMLElement | undefined;
@@ -201,9 +201,9 @@ import LocationItem from "../ui/LocationItem.astro";
 
         if (originItem === target) {
           originItem = undefined;
-          if (origin) {
-            (origin as HTMLInputElement).value = "";
-            deliveryData.setKey("origin", "");
+          if (pickup_address) {
+            (pickup_address as HTMLInputElement).value = "";
+            deliveryData.setKey("pickup_address", "");
           }
 
           return;
@@ -211,9 +211,9 @@ import LocationItem from "../ui/LocationItem.astro";
 
         if (destinationItem === target) {
           destinationItem = undefined;
-          if (destination) {
-            (destination as HTMLInputElement).value = "";
-            deliveryData.setKey("destination", "");
+          if (delivery_address) {
+            (delivery_address as HTMLInputElement).value = "";
+            deliveryData.setKey("delivery_address", "");
           }
 
           return;
@@ -227,22 +227,22 @@ import LocationItem from "../ui/LocationItem.astro";
       selectedItems.add(target);
       target.classList.add("bg-gray-800", "dark:bg-gray-900", "text-white");
 
-      if (origin && (origin as HTMLInputElement).value === "") {
+      if (pickup_address && (pickup_address as HTMLInputElement).value === "") {
         const address = target.querySelector(".address")?.textContent.trim() || "";
-        (origin as HTMLInputElement).value = address;
+        (pickup_address as HTMLInputElement).value = address;
         originItem = target;
-        deliveryData.setKey("origin", address);
-        if (address) clearError(origin as HTMLInputElement, originHelper);
+        deliveryData.setKey("pickup_address", address);
+        if (address) clearError(pickup_address as HTMLInputElement, originHelper);
 
         return;
       }
 
-      if (destination && (destination as HTMLInputElement).value === "") {
+      if (delivery_address && (delivery_address as HTMLInputElement).value === "") {
         const address = target.querySelector(".address")?.textContent.trim() || "";
-        (destination as HTMLInputElement).value = address;
+        (delivery_address as HTMLInputElement).value = address;
         destinationItem = target;
-        deliveryData.setKey("destination", address);
-        if (address) clearError(destination as HTMLInputElement, destinationHelper);
+        deliveryData.setKey("delivery_address", address);
+        if (address) clearError(delivery_address as HTMLInputElement, destinationHelper);
 
         return;
       }
@@ -253,9 +253,9 @@ import LocationItem from "../ui/LocationItem.astro";
       selectedItems.delete(item);
     };
 
-    origin?.addEventListener("input", (e) => {
+    pickup_address?.addEventListener("input", (e) => {
       const value = (e.target as HTMLInputElement).value.trim();
-      deliveryData.setKey("origin", value);
+      deliveryData.setKey("pickup_address", value);
 
       const originAddress = originItem?.textContent?.trim() || "";
       if ((value === "" || value !== originAddress) && originItem) {
@@ -264,13 +264,13 @@ import LocationItem from "../ui/LocationItem.astro";
       }
 
       if (!value)
-        setError(origin as HTMLInputElement, originHelper, "Por favor completa este campo");
-      else clearError(origin as HTMLInputElement, originHelper);
+        setError(pickup_address as HTMLInputElement, originHelper, "Por favor completa este campo");
+      else clearError(pickup_address as HTMLInputElement, originHelper);
     });
 
-    destination?.addEventListener("input", (e) => {
+    delivery_address?.addEventListener("input", (e) => {
       const value = (e.target as HTMLInputElement).value.trim();
-      deliveryData.setKey("destination", value);
+      deliveryData.setKey("delivery_address", value);
 
       const destinationAddress = destinationItem?.textContent.trim() || "";
       if ((value === "" || value !== destinationAddress) && destinationItem) {
@@ -280,11 +280,11 @@ import LocationItem from "../ui/LocationItem.astro";
 
       if (!value)
         setError(
-          destination as HTMLInputElement,
+          delivery_address as HTMLInputElement,
           destinationHelper,
           "Por favor completa este campo"
         );
-      else clearError(destination as HTMLInputElement, destinationHelper);
+      else clearError(delivery_address as HTMLInputElement, destinationHelper);
     });
 
     const setError = (input: HTMLInputElement, helper: HTMLSpanElement | null, message: string) => {

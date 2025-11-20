@@ -45,6 +45,10 @@ export default defineConfig({
         context: "client",
         access: "public",
       }),
+      API_DELIVERY_REQUESTS: envField.string({
+        context: "client",
+        access: "public",
+      }),
     }
   },
   integrations: [clerk({

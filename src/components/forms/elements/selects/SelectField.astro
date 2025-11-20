@@ -171,6 +171,7 @@ if (options.length !== 0) {
 ---
 
 <select-field
+  id={id}
   class={`relative flex flex-col gap-2 ${className}`}
   data-id-container={idContainer}
   data-value={value}
@@ -334,6 +335,8 @@ if (options.length !== 0) {
 
       const divValue = spanValue?.closest("div");
       divValue?.classList.add("selected");
+
+      this.dispatchEvent(new CustomEvent("change", { detail: value }));
     };
 
     connectedCallback() {

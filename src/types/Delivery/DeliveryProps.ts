@@ -1,4 +1,3 @@
-import type { typeVehicle } from "../Vehicle/VehicleProps"
 
 export const typeDelivery = {
     alimento: {
@@ -19,13 +18,32 @@ export const typeDelivery = {
     },
 }
 
+export interface QuoteProps {
+    category: string; // Asumiendo que esto es el ID de la categoría o un identificador
+    client_price: number; // Corresponde a 'client_price'
+    payment_method: "efectivo" | "nequi" | null;
+    pickup_address: string;
+    delivery_address: string;
+    description: string; // Corresponde a 'description'
+    observations: string[];
+    vehicle_type: {
+        id: string | null;
+        value: string;
+    };
+    estimated_weight: number | null; // Peso estimado
+    estimated_size: string | null; // Tamaño estimado
+}
+
 export interface DeliveryProps {
     origin: string
-    destination: string
-    vehicleType: keyof typeof typeVehicle
-    deliveryType: keyof typeof typeDelivery
+    pickup_address: string
+    delivery_address: string
+    vehicleType: string | null
+    category: string | null
     notes: string
-    paymentMethod: "efectivo" | "nequi"
+    payment_method: "efectivo" | "nequi"
     price: number
-    observations?: string[]
+    observations?: string[],
+    estimated_weight?: number | null, // Peso estimado
+    estimated_size?: string | null, // Tamaño estimado
 }

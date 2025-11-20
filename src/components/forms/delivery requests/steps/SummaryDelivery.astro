@@ -11,16 +11,33 @@ import FromToPoint from "../ui/FromToPoint.astro";
   <div class="flex gap-4 items-start justify-between">
     <FromToPoint />
     <div class="text-right flex flex-col gap-2">
-      <div>
+      <div class="flex flex-col items-end gap-2">
         <p class="text-sm">Tipo de domicilio</p>
-        <span id="sum-type" class="text-base font-bold rounded-full bg-H-blue-300 px-2 py-1"
+        <span
+          id="sum-category"
+          class="text-base max-w-fit font-bold rounded-full bg-H-blue-300 px-2 py-1"
           >Documentos</span
         >
       </div>
-      <div>
+      <div class="flex flex-col items-end gap-2">
         <p class="text-sm">Vehículo</p>
-        <span id="sum-veh" class="text-base font-bold rounded-full bg-H-blue-300 px-2 py-1"
-          >Moto</span
+        <span
+          id="sum-veh"
+          class="text-base max-w-fit font-bold rounded-full bg-H-blue-300 px-2 py-1">Moto</span
+        >
+      </div>
+      <div class="flex flex-col items-end gap-2">
+        <p class="text-sm">Peso estimado</p>
+        <span
+          id="sum-estimated-weight"
+          class="text-base max-w-fit font-bold rounded-full bg-H-blue-300 px-2 py-1">-</span
+        >
+      </div>
+      <div class="flex flex-col items-end gap-2">
+        <p class="text-sm">Tamaño estimado</p>
+        <span
+          id="sum-estimated-size"
+          class="text-base max-w-fit font-bold rounded-full bg-H-blue-300 px-2 py-1">-</span
         >
       </div>
     </div>
@@ -73,46 +90,69 @@ import FromToPoint from "../ui/FromToPoint.astro";
       </div>
     </div>
   </div>
-
-  <div class="pt-2">
-    <Button id="btn-submit" className="w-full">Solicitar Servicio</Button>
-  </div>
   <div
     id="sum-errors"
     class="mt-2 hidden text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2"
   ></div>
+  <div class="pt-2">
+    <Button id="btn-submit" className="w-full">Solicitar Servicio</Button>
+  </div>
 </div>
 
 <script>
-  import { deliveryData } from "../../../../stores/deliveryStepper";
+  import { statusModal } from "@stores/ModalStore";
+  import { toastStore } from "@stores/StoreToast";
+  import { actions } from "astro:actions";
+  import { deliveryData, resetStepper } from "../../../../stores/deliveryStepper";
 
   document.addEventListener("astro:page-load", () => {
+    /// elementos del resumen
     const originEl = document.getElementById("sum-origin");
     const destEl = document.getElementById("sum-destination");
-    const typeEl = document.getElementById("sum-type");
+    const categoryEl = document.getElementById("sum-category");
     const vehEl = document.getElementById("sum-veh");
     const payField = document.getElementById("sum-payment-field") as HTMLElement | null;
-    const payHidden = payField?.querySelector('input[type="hidden"]') as HTMLInputElement | null;
     const priceEl = document.getElementById("sum-price");
     const editContainer = document.getElementById("edit-price-container");
     const editInput = document.getElementById("edit-price-input") as HTMLInputElement | null;
     const editHelper = document.getElementById("edit-price-input-helper") as HTMLSpanElement | null;
     const errorsBox = document.getElementById("sum-errors");
     const notesEl = document.getElementById("sum-notes");
+    const estimatedWeightEl = document.getElementById("sum-estimated-weight");
+    const estimatedSizeEl = document.getElementById("sum-estimated-size");
+
+    /// botones de acción
+    const btnSubmit = document.getElementById("btn-submit");
+    const btnChangePrice = document.getElementById("btn-change-price");
+    const btnSavePrice = document.getElementById("btn-save-price");
+    const btnCancelPrice = document.getElementById("btn-cancel-price");
 
     const render = () => {
       const d = deliveryData.get();
-      if (originEl) originEl.textContent = d.origin || "-";
-      if (destEl) destEl.textContent = d.destination || "-";
-      if (typeEl) typeEl.textContent = d.deliveryType;
-      if (vehEl) vehEl.textContent = d.vehicleType;
-      if (payHidden) {
-        payHidden.value = d.paymentMethod || "efectivo";
-        payHidden.dispatchEvent(new Event("input"));
+      if (originEl) originEl.textContent = d.pickup_address || "-";
+      if (destEl) destEl.textContent = d.delivery_address || "-";
+      if (categoryEl) categoryEl.textContent = d.category || "-";
+      if (vehEl) vehEl.textContent = d.vehicle_type.value || "-";
+      if (estimatedWeightEl) estimatedWeightEl.textContent = `${d.estimated_weight} kg` || "-";
+      if (estimatedSizeEl) estimatedSizeEl.textContent = d.estimated_size || "-";
+
+      if (!d.estimated_weight) {
+        estimatedWeightEl?.closest("div")?.classList.add("hidden");
+      } else {
+        estimatedWeightEl?.closest("div")?.classList.remove("visible");
       }
 
-      if (priceEl)
-        (priceEl as HTMLParagraphElement).textContent = `$ ${d.price.toLocaleString("es-CO")}`;
+      if (!d.estimated_size) {
+        estimatedSizeEl?.closest("div")?.classList.add("hidden");
+      } else {
+        estimatedSizeEl?.closest("div")?.classList.remove("visible");
+      }
+
+      if (priceEl) {
+        (priceEl as HTMLParagraphElement).textContent =
+          `$ ${d.client_price.toLocaleString("es-CO")}`;
+      }
+
       if (notesEl) {
         notesEl.innerHTML = "";
         if ((d.observations || []).length === 0) {
@@ -129,18 +169,19 @@ import FromToPoint from "../ui/FromToPoint.astro";
 
     const unsub = deliveryData.subscribe(render);
 
-    payHidden?.addEventListener("input", (e) => {
-      const paymentMethod = (e.target as HTMLInputElement).value as "efectivo" | "nequi";
-      deliveryData.setKey("paymentMethod", paymentMethod);
+    payField?.addEventListener("change", (e) => {
+      const customEvent = e as CustomEvent;
+      const paymentMethod = customEvent.detail as "efectivo" | "nequi";
+      deliveryData.setKey("payment_method", paymentMethod);
     });
 
-    document.getElementById("btn-change-price")?.addEventListener("click", () => {
+    btnChangePrice?.addEventListener("click", () => {
       const priceContainer = document.getElementById("price-container");
       const d = deliveryData.get();
       if (editContainer && priceContainer) {
         editContainer.classList.remove("hidden");
         priceContainer.classList.add("hidden");
-        if (editInput) editInput.value = String(d.price);
+        if (editInput) editInput.value = String(d.client_price);
         if (editHelper) {
           editHelper.textContent = "";
           editHelper.classList.remove("text-red-600");
@@ -149,7 +190,7 @@ import FromToPoint from "../ui/FromToPoint.astro";
       }
     });
 
-    document.getElementById("btn-save-price")?.addEventListener("click", () => {
+    btnSavePrice?.addEventListener("click", () => {
       const v = editInput?.value || "";
       const priceContainer = document.getElementById("price-container");
       const n = Number(v);
@@ -161,28 +202,37 @@ import FromToPoint from "../ui/FromToPoint.astro";
         }
         return;
       }
-      deliveryData.setKey("price", n);
+      deliveryData.setKey("client_price", n);
 
       if (editContainer && priceContainer) {
         editContainer.classList.add("hidden");
         priceContainer.classList.remove("hidden");
       }
     });
-    document.getElementById("btn-cancel-price")?.addEventListener("click", () => {
+
+    btnCancelPrice?.addEventListener("click", () => {
       const priceContainer = document.getElementById("price-container");
       if (editContainer && priceContainer) {
         editContainer.classList.add("hidden");
         priceContainer.classList.remove("hidden");
       }
     });
-    document.getElementById("btn-submit")?.addEventListener("click", () => {
+
+    btnSubmit?.addEventListener("click", async () => {
       const d = deliveryData.get();
       const errors: string[] = [];
-      if (!d.origin) errors.push("Falta la dirección de origen");
-      if (!d.destination) errors.push("Falta la dirección de destino");
-      if (!d.price || d.price <= 0) errors.push("El precio debe ser un número positivo");
-      if (!["efectivo", "nequi"].includes(d.paymentMethod))
+
+      if (!d.pickup_address) errors.push("Falta la dirección de origen");
+      if (!d.delivery_address) errors.push("Falta la dirección de destino");
+      if (!d.client_price || d.client_price <= 0)
+        errors.push("El precio debe ser un número positivo");
+      if (!d.payment_method || !["efectivo", "nequi"].includes(d.payment_method)) {
         errors.push("Selecciona un método de pago válido");
+      }
+
+      if (!d.vehicle_type.id) {
+        errors.push("Selecciona un tipo de vehículo");
+      }
 
       if (errors.length > 0) {
         if (errorsBox) {
@@ -192,9 +242,29 @@ import FromToPoint from "../ui/FromToPoint.astro";
         return;
       }
 
+      const dataQuote = {
+        ...d,
+        payment_method: d.payment_method as "efectivo" | "nequi",
+        vehicle_type: d.vehicle_type.id,
+      };
+
       if (errorsBox) errorsBox.classList.add("hidden");
-      console.log("Solicitud de servicio", d);
-      alert("Servicio solicitado");
+
+      const { data, error } = await actions.Delivery.addQuote(dataQuote);
+
+      if (error) {
+        resetStepper();
+        statusModal.setKey("new-delivery", {
+          isOpen: false,
+        });
+        toastStore.set({
+          visible: true,
+          message: "Error al solicitar el servicio, por favor intenta de nuevo",
+          type: "error",
+          autoClose: true,
+          autoCloseDelay: 3000,
+        });
+      }
     });
     render();
   });

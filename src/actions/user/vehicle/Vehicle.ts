@@ -44,6 +44,7 @@ export const Vehicle = {
           'Authorization': `Bearer ${token}`
         },
       });
+
       if (!res.ok) throw new ActionError({ code: "BAD_REQUEST", message: "No se pudieron cargar los tipos de vehículos" });
       return await res.json();
     },

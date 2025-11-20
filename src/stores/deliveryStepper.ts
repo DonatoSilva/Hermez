@@ -1,5 +1,5 @@
 import { atom, computed, map } from "nanostores"
-import type { DeliveryProps } from "src/types/Delivery/DeliveryProps"
+import type { QuoteProps } from "src/types/Delivery/DeliveryProps"
 
 
 export const totalSteps = 3
@@ -17,15 +17,20 @@ export const titleStep = computed(currentStep, (s) => {
   }
 })
 
-export const deliveryData = map<DeliveryProps>({
-  origin: "",
-  destination: "",
-  vehicleType: "moto",
-  deliveryType: "documentos",
-  notes: "",
-  paymentMethod: "efectivo",
-  price: 4000,
-  observations: []
+export const deliveryData = map<QuoteProps>({
+  pickup_address: "",
+  delivery_address: "",
+  vehicle_type: {
+    id: null,
+    value: "",
+  },
+  category: "",
+  description: "",
+  payment_method: null,
+  client_price: 4000,
+  observations: [],
+  estimated_weight: null,
+  estimated_size: null
 })
 
 export const progressLabel = computed(currentStep, (s) => `${s}/${totalSteps}`)
@@ -43,13 +48,18 @@ export const prevStep = () => {
 export const resetStepper = () => {
   currentStep.set(1)
   deliveryData.set({
-    origin: "",
-    destination: "",
-    vehicleType: "moto",
-    deliveryType: "documentos",
-    notes: "",
-    paymentMethod: "efectivo",
-    price: 4000,
-    observations: []
+    pickup_address: "",
+    delivery_address: "",
+    vehicle_type: {
+      id: null,
+      value: "",
+    },
+    category: "",
+    description: "",
+    payment_method: null,
+    client_price: 4000,
+    observations: [],
+    estimated_weight: null,
+    estimated_size: null
   })
 }

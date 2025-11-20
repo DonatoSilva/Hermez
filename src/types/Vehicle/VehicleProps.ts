@@ -14,7 +14,7 @@ export interface VehicleType {
 
 export const typeVehicle = {
   moto: { label: "Moto", image: "/images/tiposDeVehiculos/moto-min.png" },
-  mototaxi: { label: "Moto Carro", image: "/images/tiposDeVehiculos/mototaxi-min.png" },
+  motocarro: { label: "Motocarro", image: "/images/tiposDeVehiculos/mototaxi-min.png" },
   carro: { label: "Carro", image: "/images/tiposDeVehiculos/carro-azul-min.png" },
 };
 

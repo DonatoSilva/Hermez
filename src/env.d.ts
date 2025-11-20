@@ -22,6 +22,8 @@ interface ImportMetaEnv {
     readonly ID_ORG_CLIENT: string;
     readonly URL_LOCAL_BACKEND: string;
     readonly API_USERS: string;
+    readonly API_ADDRESSES: string;
+    readonly API_DELIVERY_REQUESTS: string;
 }
 
 interface ImportMeta {
