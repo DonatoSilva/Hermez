@@ -1,11 +1,12 @@
 ---
-import Banner from "@components/banner/Banner.astro";
 import Button from "@components/forms/elements/buttons/Button.astro";
 
+import Banner from "@components/banner/Banner.astro";
 import { Icon } from "astro-icon/components";
-import { Image } from "astro:assets";
+import Image from "astro/components/Image.astro";
 import personaAburrida from "public/images/persona-aburrida.png";
 import sillaCasco from "public/images/silla-y-casco.png";
+import { QuoteContent } from "../deliveryQuote/QuoteContent";
 
 const frasesVacios = [
   "Rayos, ¡tenemos una mala racha! De seguro en unos minutos explota el chat.",
@@ -54,7 +55,7 @@ const img = imgs[Math.floor(Math.random() * imgs.length)];
         class="flex flex-row justify-between gap-4 rounded-md border bg-H-blue-100 border-H-blue-300 p-4 w-full md:max-w-md"
       >
         <div class="flex flex-col justify-start items-start w-full">
-          <span class="text-H-blue-900 font-bold">Dinero ganada:</span>
+          <span class="text-H-blue-900 font-bold">Dinero ganado:</span>
           <span class="text-H-blue-700">$100.000</span>
         </div>
         <div class="min-h-max w-[0.5px] bg-H-blue-300"></div>
@@ -64,21 +65,23 @@ const img = imgs[Math.floor(Math.random() * imgs.length)];
         </div>
       </div>
     </div>
-    <Banner title="No hay pedidos disponibles" className="min-w-full gap-4">
-      <p
-        slot="optional-content"
-        class="text-H-blue-100 text-balance text-base font-normal max-w-prose z-10"
-      >
-        {fraseVacio}
-      </p>
-      <Image
-        src={img}
-        slot="image"
-        class="min-w-26 w-full max-w-48 h-full object-cover z-0 transition-all md:max-w-62 blur-xs md:blur-none"
-        alt="Imagen decorativa para cuando no hay pedidos"
-        sizes="250px"
-        format="webp"
-      />
-    </Banner>
+    <QuoteContent client:visible>
+      <Banner title="No hay pedidos disponibles" className="min-w-full gap-4">
+        <p
+          slot="optional-content"
+          class="text-H-blue-100 text-balance text-base font-normal max-w-prose z-10"
+        >
+          {fraseVacio}
+        </p>
+        <Image
+          src={img}
+          slot="image"
+          class="min-w-26 w-full max-w-48 h-full object-cover z-0 transition-all md:max-w-62 blur-xs md:blur-none"
+          alt="Imagen decorativa para cuando no hay pedidos"
+          sizes="250px"
+          format="webp"
+        />
+      </Banner>
+    </QuoteContent>
   </div>
 </section>

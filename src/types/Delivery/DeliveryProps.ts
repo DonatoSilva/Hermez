@@ -3,19 +3,19 @@ import type { typeVehicle } from "../Vehicle/VehicleProps"
 export const typeDelivery = {
     alimento: {
         label: "Alimento",
-        image: "/images/tiposDeEntregas/alimento.png",
+        image: "/images/tiposEnvio/alimento.png",
     },
     persona: {
         label: "Persona",
-        image: "/images/tiposDeEntregas/persona.png",
+        image: "/images/tiposEnvio/persona.png",
     },
     documentos: {
         label: "Documentos",
-        image: "/images/tiposDeEntregas/documentos.png",
+        image: "/images/tiposEnvio/sobre-min.png",
     },
     paquete: {
         label: "Paquete",
-        image: "/images/tiposDeEntregas/paquete.png",
+        image: "/images/tiposEnvio/paquete-min.png",
     },
 }
 

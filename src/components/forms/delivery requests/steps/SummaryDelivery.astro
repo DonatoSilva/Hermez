@@ -10,11 +10,19 @@ import FromToPoint from "../ui/FromToPoint.astro";
 
   <div class="flex gap-4 items-start justify-between">
     <FromToPoint />
-    <div class="text-right">
-      <p class="text-sm">Tipo de domicilio</p>
-      <p id="sum-type" class="text-base">-</p>
-      <p class="text-sm">Vehículo</p>
-      <p id="sum-veh" class="text-base">-</p>
+    <div class="text-right flex flex-col gap-2">
+      <div>
+        <p class="text-sm">Tipo de domicilio</p>
+        <span id="sum-type" class="text-base font-bold rounded-full bg-H-blue-300 px-2 py-1"
+          >Documentos</span
+        >
+      </div>
+      <div>
+        <p class="text-sm">Vehículo</p>
+        <span id="sum-veh" class="text-base font-bold rounded-full bg-H-blue-300 px-2 py-1"
+          >Moto</span
+        >
+      </div>
     </div>
   </div>
 
@@ -39,16 +47,15 @@ import FromToPoint from "../ui/FromToPoint.astro";
     />
   </div>
 
-  <div class="flex items-center justify-between bg-H-blue-700 text-white rounded-md px-4 py-3">
-    <div>
-      <p class="text-sm">Valor sugerido</p>
-      <p id="sum-price" class="text-2xl font-bold">$ 4.000</p>
+  <div class="bg-H-blue-700 text-white rounded-md px-4 py-3">
+    <div id="price-container" class="flex items-center justify-between">
+      <div>
+        <p class="text-sm">Valor sugerido</p>
+        <p id="sum-price" class="text-2xl font-bold">$ 4.000</p>
+      </div>
+      <Button id="btn-change-price" className="bg-H-blue-900">Cambiar</Button>
     </div>
-    <Button id="btn-change-price" className="bg-H-blue-900">Cambiar</Button>
-  </div>
-
-  <div id="edit-price-container" class="hidden space-y-2">
-    <div class="flex items-center justify-between bg-H-blue-700 text-white rounded-md px-4 py-3">
+    <div id="edit-price-container" class="hidden visible:flex items-center justify-between">
       <div class="flex-1 pr-4">
         <InputField
           id="edit-price-input"
@@ -56,13 +63,13 @@ import FromToPoint from "../ui/FromToPoint.astro";
           type="number"
           textLabel="Nuevo valor"
           placeholder="Ingresa un valor positivo"
-          className="w-full"
+          className="w-full bg-H-blue-100 text-H-blue-900"
           helperText=""
         />
       </div>
       <div class="flex gap-2">
-        <Button id="btn-save-price" className="bg-green-600">Guardar</Button>
-        <Button id="btn-cancel-price" variant="bordered">Cancelar</Button>
+        <Button id="btn-save-price" className="bg-H-blue-900">Guardar</Button>
+        <Button id="btn-cancel-price" className="bg-gray-400 text-white">Cancelar</Button>
       </div>
     </div>
   </div>
@@ -103,6 +110,7 @@ import FromToPoint from "../ui/FromToPoint.astro";
         payHidden.value = d.paymentMethod || "efectivo";
         payHidden.dispatchEvent(new Event("input"));
       }
+
       if (priceEl)
         (priceEl as HTMLParagraphElement).textContent = `$ ${d.price.toLocaleString("es-CO")}`;
       if (notesEl) {
@@ -127,10 +135,11 @@ import FromToPoint from "../ui/FromToPoint.astro";
     });
 
     document.getElementById("btn-change-price")?.addEventListener("click", () => {
+      const priceContainer = document.getElementById("price-container");
       const d = deliveryData.get();
-      if (editContainer && priceEl) {
+      if (editContainer && priceContainer) {
         editContainer.classList.remove("hidden");
-        priceEl.closest("div")?.classList.add("hidden");
+        priceContainer.classList.add("hidden");
         if (editInput) editInput.value = String(d.price);
         if (editHelper) {
           editHelper.textContent = "";
@@ -142,6 +151,7 @@ import FromToPoint from "../ui/FromToPoint.astro";
 
     document.getElementById("btn-save-price")?.addEventListener("click", () => {
       const v = editInput?.value || "";
+      const priceContainer = document.getElementById("price-container");
       const n = Number(v);
       if (Number.isNaN(n) || n <= 0) {
         if (editHelper) {
@@ -152,15 +162,17 @@ import FromToPoint from "../ui/FromToPoint.astro";
         return;
       }
       deliveryData.setKey("price", n);
-      if (editContainer && priceEl) {
+
+      if (editContainer && priceContainer) {
         editContainer.classList.add("hidden");
-        priceEl.closest("div")?.classList.remove("hidden");
+        priceContainer.classList.remove("hidden");
       }
     });
     document.getElementById("btn-cancel-price")?.addEventListener("click", () => {
-      if (editContainer && priceEl) {
+      const priceContainer = document.getElementById("price-container");
+      if (editContainer && priceContainer) {
         editContainer.classList.add("hidden");
-        priceEl.closest("div")?.classList.remove("hidden");
+        priceContainer.classList.remove("hidden");
       }
     });
     document.getElementById("btn-submit")?.addEventListener("click", () => {

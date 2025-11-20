@@ -1,6 +1,7 @@
 import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
 import Modal from "@components/modals/Modal";
 import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
+import { typeDelivery } from "src/types/Delivery/DeliveryProps";
 import type { HistoryItemProps } from "src/types/history/HistoryItemProps";
 
 export const statusColors = {
@@ -11,19 +12,9 @@ export const statusColors = {
   cancelado: "bg-red-500 text-white dark:text-red-900",
 };
 
-export const addressesType: Record<string, { url: string; alt: string }> = {
-  paquete: {
-    url: "images/tiposEnvio/paquete-min.png",
-    alt: "imagen ilustrativa de paquete en 3d animada",
-  },
-  sobre: {
-    url: "images/tiposEnvio/sobre-min.png",
-    alt: "imagen ilustrativa de sobre en 3d animada",
-  },
-};
 
 function HistoryItem({ price, address, status, type, id }: HistoryItemProps) {
-  const { url, alt } = addressesType[type] || {};
+  const { image, label } = typeDelivery[type as keyof typeof typeDelivery] || {};
 
   return (
     <>
@@ -38,8 +29,8 @@ function HistoryItem({ price, address, status, type, id }: HistoryItemProps) {
         }}
       >
         <img
-          src={url}
-          alt={alt}
+          src={image}
+          alt={`Imagen de animada en 3D de ${label}`}
           className="w-16 h-16 rounded-md group-hover:drop-shadow-lg/50 dark:drop-shadow-H-blue-300 transition-all duration-150"
         />
         <div className="flex-1 ml-4 ">
