@@ -66,7 +66,7 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
           </button>
         </div>
       </div>
-      <img src={typeDelivery[deliveryType as keyof typeof typeDelivery].image} alt="Delivery" className="absolute top-2 right-2 w-12 h-12 rounded-full" />
+      <img src={typeDelivery[deliveryType as keyof typeof typeDelivery].image} alt="Delivery" className="absolute top-2 right-2 w-24 h-24 rounded-full" />
     </div>
   );
 };

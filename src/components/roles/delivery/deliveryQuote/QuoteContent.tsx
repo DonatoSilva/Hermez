@@ -36,7 +36,7 @@ export function QuoteContent({ children }: QuoteContentProps) {
     if (quotes.length === 0) return <>{children}</>;
 
     return (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {quotes.map((quote) => (
                 <QuoteItem key={quote.requesterName} {...quote} />
             ))}
