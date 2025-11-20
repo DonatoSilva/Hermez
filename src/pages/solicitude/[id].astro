@@ -1,0 +1,87 @@
+---
+import FromToPoint from "@components/forms/delivery requests/ui/FromToPoint.astro";
+import Button from "@components/forms/elements/buttons/Button.astro";
+import InputField from "@components/forms/elements/inputs/InputField.astro";
+import { BannerOffer } from "@components/solicitude/BannerOffer";
+import Layout from "@layouts/Layout.astro";
+
+const { userId } = Astro.locals.auth();
+const isClient = Astro.locals.userRole === "User"; /// para darle una personalizacion en caso de que exista el id y este en el rol de domiciliario mostrarle un mensaje de advertencia
+
+if (!userId) {
+  Astro.redirect("/sign-in");
+}
+
+const { id } = Astro.params;
+---
+
+<Layout sizeLogo="md" title={`Solicitud del domicilio: ${id}`} class="flex flex-col gap-12">
+  <span
+    class="flex flex-row gap-2 items-center justify-between rounded-md bg-H-blue-900 text-white p-4 max-w-3xl w-full mx-auto"
+  >
+    <div class="max-w-prose">
+      <b>4</b> conductores estan esperando tu solicitud
+    </div>
+
+    <div class="flex flex-row items-center">
+      {
+        [...Array(4)].map(() => (
+          <div class="h-8 w-8 rounded-full bg-H-blue-100 flex items-center justify-center -ml-4 border-2 border-H-blue-900" />
+        ))
+      }
+    </div>
+  </span>
+  <main class="grid grid-cols-1 md:grid-cols-2 gap-8 items-end justify-center">
+    <div class="flex flex-col items-center justify-center gap-2 min-h-full">
+      <h2 class="text-7xl md:text-8xl font-bold text-center text-H-black">00:00</h2>
+      <p class="text-center text-H-black">Tiempo estimado de espera</p>
+    </div>
+    <div>
+      <div class="flex flex-row items-center justify-between gap-2 w-full max-w-3xl mx-auto">
+        <span class="rounded-md text-sm bg-H-blue-700 text-white p-2"> Total ofertas </span>
+        <b class="rounded-md text-sm border border-H-blue-700 text-H-blue-700 px-4 py-2"> 0 </b>
+      </div>
+      <BannerOffer client:visible />
+    </div>
+    <div class="min-h-full flex flex-col justify-between">
+      <div>
+        <p class="text-center text-H-black">Por su tarifa, su solicitud tiene prioridad</p>
+        <div class="flex flex-row items-center justify-center gap-4">
+          <button
+            type="button"
+            class="rounded-md text-sm bg-H-blue-700 text-white opacity-70 hover:opacity-100 cursor-pointer px-2 py-1"
+          >
+            -500
+          </button>
+          <b class="rounded-md text-4xl text-H-black px-4 py-2 font-mono"> $4.000 </b>
+          <button
+            type="button"
+            class="rounded-md text-sm bg-H-blue-700 text-white opacity-70 hover:opacity-100 cursor-pointer px-2 py-1"
+          >
+            +500
+          </button>
+        </div>
+      </div>
+      <Button type="button" className="w-full max-w-3xl mx-auto"> Nueva tarifa </Button>
+    </div>
+    <div class="flex flex-col items-start justify-start gap-4 w-full max-w-3xl mx-auto">
+      <InputField
+        id="accept-lowest"
+        type="checkbox"
+        classLabel="flex flex-row-reverse items-center justify-end "
+        textLabel="Aceptar automaticamente la tarifa más baja"
+      />
+
+      <FromToPoint />
+      <Button
+        type="button"
+        variant="bordered"
+        className="w-full max-w-3xl mx-auto border-red-300 text-red-300 hover:bg-red-600 hover:text-white duration-300"
+      >
+        Cancelar solicitud
+      </Button>
+    </div>
+  </main>
+</Layout>
+
+<script></script>

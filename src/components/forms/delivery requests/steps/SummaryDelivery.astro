@@ -2,23 +2,15 @@
 import SelectField from "@components/forms/elements/selects/SelectField.astro";
 import InputField from "../../elements/inputs/InputField.astro";
 import Button from "../../elements/buttons/Button.astro";
+import FromToPoint from "../ui/FromToPoint.astro";
 ---
 
 <div class="space-y-6">
   <h4 class="text-lg font-semibold text-H-blue-900 dark:text-white">Resumen</h4>
 
-  <div class="flex items-start justify-between">
-    <div class="space-y-2">
-      <div>
-        <p class="text-sm text-gray-600">De</p>
-        <p id="sum-origin" class="text-base">-</p>
-      </div>
-      <div>
-        <p class="text-sm text-gray-600">A</p>
-        <p id="sum-destination" class="text-base">-</p>
-      </div>
-    </div>
-    <div class="space-y-2 text-right">
+  <div class="flex gap-4 items-start justify-between">
+    <FromToPoint />
+    <div class="text-right">
       <p class="text-sm">Tipo de domicilio</p>
       <p id="sum-type" class="text-base">-</p>
       <p class="text-sm">Vehículo</p>
@@ -26,12 +18,12 @@ import Button from "../../elements/buttons/Button.astro";
     </div>
   </div>
 
-  <div class="space-y-2">
+  <div class="">
     <p class="text-sm">Notas</p>
     <ul id="sum-notes" class="list-disc list-inside text-base"></ul>
   </div>
 
-  <div class="space-y-2">
+  <div class="">
     <SelectField
       id="sum-payment-field"
       name="paymentMethod"
