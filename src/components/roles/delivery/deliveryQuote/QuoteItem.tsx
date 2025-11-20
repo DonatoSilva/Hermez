@@ -28,45 +28,45 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
   onOffer
 }) => {
   return (
-    <div className="relative border border-gray-200 rounded-lg p-3 flex flex-col gap-2 bg-white hover:shadow-sm w-full transition-shadow duration-300">
+    <div className="relative border border-gray-200 rounded-lg p-3 flex flex-col gap-2 bg-white hover:shadow-sm w-full transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">
       <div>
-        <div className="text-2xl md:text-3xl font-bold">${price.toLocaleString('es-CO')}</div>
-        <div className="text-xs text-gray-500">{eta} · {distance}</div>
+        <div className="text-2xl md:text-3xl font-bold dark:text-gray-200">${price.toLocaleString('es-CO')}</div>
+        <div className="text-xs text-gray-500 dark:text-gray-400">{eta} · {distance}</div>
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <div className="text-sm text-gray-700 flex items-center gap-2">
+        <div className="text-sm text-gray-700 flex items-center gap-2 dark:text-gray-300">
           <strong><Icon icon="solar:map-point-wave-bold-duotone" width="24" height="24" /></strong> {pickupAddress}
         </div>
-        <div className="text-sm text-gray-700 flex items-center gap-2">
+        <div className="text-sm text-gray-700 flex items-center gap-2 dark:text-gray-300">
           <strong><Icon icon="solar:map-point-wave-bold" width="24" height="24" /></strong> {dropoffAddress}
         </div>
       </div>
 
-      <div className="flex justify-between items-center mt-1">
-        <div className="text-sm text-gray-700">{requesterName}</div>
-        <div className="flex gap-2">
+      <div className="flex flex-wrap justify-between items-center gap-2">
+        <div className="text-sm text-gray-700 flex items-center gap-2 dark:text-gray-300"><Icon icon="solar:user-bold" width="24" height="24" /> {requesterName}</div>
+        <div className="flex gap-2 ml-auto">
           <button
             onClick={onNotInterested}
-            className="bg-white border border-gray-200 py-2 px-3 rounded-md cursor-pointer text-gray-500 text-sm hover:bg-gray-50 transition-colors"
+            className="flex flex-row items-center justify-center gap-2.5 px-4 py-2 rounded-md transition-colors cursor-pointer bg-transparent text-H-blue-700 dark:text-H-blue-300 border border-H-blue-300 hover:border-H-blue-500 hover:text-H-blue-100 dark:border-H-blue-500 dark:hover:text-H-blue-100 dark:hover:border-H-blue-300"
           >
-            No interesa
+            <Icon icon="solar:close-square-bold" width="24" height="24" />
           </button>
           <button
             onClick={onInterested}
-            className="bg-emerald-500 text-white py-2 px-3 rounded-md cursor-pointer text-sm hover:bg-emerald-600 transition-colors"
+            className="flex flex-row items-center justify-center gap-2.5 px-4 py-2 rounded-md transition-colors cursor-pointer bg-emerald-500 text-white hover:bg-emerald-600"
           >
-            Interesado
+            <Icon icon="solar:check-circle-bold" width="24" height="24" />
           </button>
           <button
             onClick={onOffer}
-            className="bg-blue-600 text-white py-2 px-3 rounded-md cursor-pointer text-sm hover:bg-blue-700 transition-colors"
+            className="flex flex-row items-center justify-center gap-2.5 px-4 py-2 rounded-md transition-colors cursor-pointer bg-H-blue-500 text-white hover:bg-H-blue-700"
           >
             Ofertar
           </button>
         </div>
       </div>
-      <img src={typeDelivery[deliveryType as keyof typeof typeDelivery].image} alt="Delivery" className="absolute top-2 right-2 w-24 h-24 rounded-full" />
+      <img src={typeDelivery[deliveryType as keyof typeof typeDelivery].image} alt="Delivery" className="absolute top-2 right-2 w-32 h-32 rounded-full" />
     </div>
   );
 };
