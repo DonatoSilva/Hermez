@@ -4,6 +4,7 @@ import Button from "@components/forms/elements/buttons/Button.astro";
 import InputField from "@components/forms/elements/inputs/InputField.astro";
 import { BannerOffer } from "@components/solicitude/BannerOffer";
 import Layout from "@layouts/Layout.astro";
+import { actions } from "astro:actions";
 
 const { userId } = Astro.locals.auth();
 const isClient = Astro.locals.userRole === "User"; /// para darle una personalizacion en caso de que exista el id y este en el rol de domiciliario mostrarle un mensaje de advertencia
@@ -12,11 +13,30 @@ if (!userId) {
   Astro.redirect("/sign-in");
 }
 
+const token =
+  (await Astro.locals.auth().getToken({ template: "jwt-back-hermez" })) ?? "";
 const { id } = Astro.params;
+
+if (!id) {
+  throw new Error("ID de solicitud no proporcionado");
+}
+
+const {data: existsSolicitude, error} = await Astro.callAction(actions.Delivery.getQuoteById, {
+  quoteId: id,
+});
+
+const { expires_at, client_price } = existsSolicitude || {};
+console.log(existsSolicitude);
 ---
 
-<Layout sizeLogo="md" title={`Solicitud del domicilio: ${id}`} class="flex flex-col gap-12">
-  <span
+<Layout
+  sizeLogo="md"
+  title={`Solicitud del domicilio: ${id}`}
+  class="flex flex-col gap-12 dark:text-H-blue-100"
+>
+  {
+    existsSolicitude? (
+      <span
     class="flex flex-row gap-2 items-center justify-between rounded-md bg-H-blue-900 text-white p-4 max-w-3xl w-full mx-auto"
   >
     <div class="max-w-prose">
@@ -31,30 +51,46 @@ const { id } = Astro.params;
       }
     </div>
   </span>
-  <main class="grid grid-cols-1 md:grid-cols-2 gap-8 items-end justify-center">
+  <main class="grid grid-cols-1 md:grid-cols-2 gap-8 items-end justify-center dark:text-H-blue-100" id="solicitude-details" data-expirate={expires_at} data-quote-id={id}>
     <div class="flex flex-col items-center justify-center gap-2 min-h-full">
-      <h2 class="text-7xl md:text-8xl font-bold text-center text-H-black">00:00</h2>
-      <p class="text-center text-H-black">Tiempo estimado de espera</p>
+      <h2 class="text-7xl md:text-8xl font-bold text-center text-H-black dark:text-H-blue-100">
+        00:00
+      </h2>
+      <p class="text-center text-H-black dark:text-H-blue-100">Tiempo estimado de espera</p>
     </div>
     <div>
-      <div class="flex flex-row items-center justify-between gap-2 w-full max-w-3xl mx-auto">
-        <span class="rounded-md text-sm bg-H-blue-700 text-white p-2"> Total ofertas </span>
-        <b class="rounded-md text-sm border border-H-blue-700 text-H-blue-700 px-4 py-2"> 0 </b>
+      <div
+        class="flex flex-row items-center justify-between gap-2 w-full max-w-3xl mx-auto"
+      >
+        <span class="rounded-md text-sm bg-H-blue-700 text-white p-2">
+          Total ofertas
+        </span>
+        <b
+          class="rounded-md text-sm border border-H-blue-700 text-H-blue-700 dark:text-H-blue-100 px-4 py-2"
+        >
+          0
+        </b>
       </div>
-      <BannerOffer client:visible />
+      <BannerOffer quoteId={id} token={token} client:visible />
     </div>
     <div class="min-h-full flex flex-col justify-between">
       <div>
-        <p class="text-center text-H-black">Por su tarifa, su solicitud tiene prioridad</p>
+        <p class="text-center text-H-black dark:text-H-blue-100">
+          Por su tarifa, su solicitud tiene prioridad
+        </p>
         <div class="flex flex-row items-center justify-center gap-4">
           <button
+            id="btn-less-money"
             type="button"
             class="rounded-md text-sm bg-H-blue-700 text-white opacity-70 hover:opacity-100 cursor-pointer px-2 py-1"
           >
             -500
           </button>
-          <b class="rounded-md text-4xl text-H-black px-4 py-2 font-mono"> $4.000 </b>
+          <b class="rounded-md text-4xl text-H-black dark:text-H-blue-100 px-4 py-2 font-mono">
+            ${client_price.toString().split('.')[0].toLocaleString('es-CO')}
+          </b>
           <button
+            id="btn-more-money"
             type="button"
             class="rounded-md text-sm bg-H-blue-700 text-white opacity-70 hover:opacity-100 cursor-pointer px-2 py-1"
           >
@@ -62,9 +98,13 @@ const { id } = Astro.params;
           </button>
         </div>
       </div>
-      <Button type="button" className="w-full max-w-3xl mx-auto"> Nueva tarifa </Button>
+      <Button type="button" className="w-full max-w-3xl mx-auto">
+        Nueva tarifa
+      </Button>
     </div>
-    <div class="flex flex-col items-start justify-start gap-4 w-full max-w-3xl mx-auto">
+    <div
+      class="flex flex-col items-start justify-start gap-4 w-full max-w-3xl mx-auto dark:text-H-blue-100"
+    >
       <InputField
         id="accept-lowest"
         type="checkbox"
@@ -74,6 +114,7 @@ const { id } = Astro.params;
 
       <FromToPoint />
       <Button
+        id="btn-cancel-solicitude"
         type="button"
         variant="bordered"
         className="w-full max-w-3xl mx-auto border-red-300 text-red-300 hover:bg-red-600 hover:text-white duration-300"
@@ -82,6 +123,101 @@ const { id } = Astro.params;
       </Button>
     </div>
   </main>
+    ) : (
+      <p class="text-center text-red-600 font-bold text-xl">
+        La solicitud con ID {id} no existe.
+      </p>
+    )
+  }
 </Layout>
 
-<script></script>
+<script>
+import { toastStore } from "@stores/StoreToast";
+import { actions } from "astro:actions";
+import { navigate } from "astro:transitions/client";
+
+  document.addEventListener("astro:page-load", () => {
+    /// logica para el boton de cancelar solicitud
+    const btnCancelSolicitude = document.querySelector(
+      "#btn-cancel-solicitude"
+    ) as HTMLButtonElement;
+
+    btnCancelSolicitude?.addEventListener("click", async () => {
+      const quoteId = document.querySelector("#solicitude-details")?.getAttribute("data-quote-id");
+
+      if (!quoteId) {
+        toastStore.set({
+          type: "error",
+          visible: true,
+          message: "No se pudo cancelar la solicitud. ID no encontrado.",
+          autoClose: true,
+          autoCloseDelay: 5000,
+        });
+        return;
+      }
+
+      const {data: quoteCancelled, error} = await actions.Delivery.cancelQuote({
+        quoteId: quoteId,
+      });
+
+      if (error) {
+        toastStore.set({
+          type: "error",
+          visible: true,
+          message: "Error al cancelar la solicitud: " + error.message,
+          autoClose: true,
+          autoCloseDelay: 5000,
+        });
+        return;
+      }
+
+      toastStore.set({
+        type: "info",
+        visible: true,
+        message: "La solicitud ha sido cancelada.",
+        autoClose: true,
+        autoCloseDelay: 5000,
+      });
+      
+      navigate("/", { history: 'replace' });
+    });
+    /// Lógica del temporizador de expiración
+    const expirateEl = document.querySelector(
+      "#solicitude-details"
+    ) as HTMLDivElement;
+    const expirateAt = expirateEl?.dataset?.expirate;
+
+    if (expirateAt) {
+      const expirateDate = new Date(expirateAt);
+      const now = new Date();
+
+      let diff = expirateDate.getTime() - now.getTime();
+
+      const interval = setInterval(() => {
+        diff -= 1000;
+        
+        if (diff <= 0) {
+          clearInterval(interval);
+          toastStore.set({
+            type: "info",
+            visible: true,
+            message: "El tiempo de espera ha expirado.",
+            autoClose: true,
+            autoCloseDelay: 5000,
+          });
+          navigate("/", { history: 'replace' });
+          if (expirateEl?.querySelector("h2")) expirateEl!.querySelector("h2")!.textContent = "00:00";
+          return;
+        }
+
+
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        if (expirateEl?.querySelector("h2")) {
+          expirateEl!.querySelector("h2")!.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        }
+      }, 1000);
+    }
+  });
+</script>

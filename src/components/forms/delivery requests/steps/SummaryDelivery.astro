@@ -23,21 +23,24 @@ import FromToPoint from "../ui/FromToPoint.astro";
         <p class="text-sm">Vehículo</p>
         <span
           id="sum-veh"
-          class="text-base max-w-fit font-bold rounded-full bg-H-blue-300 px-2 py-1">Moto</span
+          class="text-base max-w-fit font-bold rounded-full bg-H-blue-300 px-2 py-1"
+          >Moto</span
         >
       </div>
       <div class="flex flex-col items-end gap-2">
         <p class="text-sm">Peso estimado</p>
         <span
           id="sum-estimated-weight"
-          class="text-base max-w-fit font-bold rounded-full bg-H-blue-300 px-2 py-1">-</span
+          class="text-base max-w-fit font-bold rounded-full bg-H-blue-300 px-2 py-1"
+          >-</span
         >
       </div>
       <div class="flex flex-col items-end gap-2">
         <p class="text-sm">Tamaño estimado</p>
         <span
           id="sum-estimated-size"
-          class="text-base max-w-fit font-bold rounded-full bg-H-blue-300 px-2 py-1">-</span
+          class="text-base max-w-fit font-bold rounded-full bg-H-blue-300 px-2 py-1"
+          >-</span
         >
       </div>
     </div>
@@ -72,7 +75,10 @@ import FromToPoint from "../ui/FromToPoint.astro";
       </div>
       <Button id="btn-change-price" className="bg-H-blue-900">Cambiar</Button>
     </div>
-    <div id="edit-price-container" class="hidden visible:flex items-center justify-between">
+    <div
+      id="edit-price-container"
+      class="hidden visible:flex items-center justify-between"
+    >
       <div class="flex-1 pr-4">
         <InputField
           id="edit-price-input"
@@ -86,14 +92,17 @@ import FromToPoint from "../ui/FromToPoint.astro";
       </div>
       <div class="flex gap-2">
         <Button id="btn-save-price" className="bg-H-blue-900">Guardar</Button>
-        <Button id="btn-cancel-price" className="bg-gray-400 text-white">Cancelar</Button>
+        <Button id="btn-cancel-price" className="bg-gray-400 text-white"
+          >Cancelar</Button
+        >
       </div>
     </div>
   </div>
   <div
     id="sum-errors"
     class="mt-2 hidden text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2"
-  ></div>
+  >
+  </div>
   <div class="pt-2">
     <Button id="btn-submit" className="w-full">Solicitar Servicio</Button>
   </div>
@@ -102,8 +111,12 @@ import FromToPoint from "../ui/FromToPoint.astro";
 <script>
   import { statusModal } from "@stores/ModalStore";
   import { toastStore } from "@stores/StoreToast";
+  import { navigate } from "astro/virtual-modules/transitions-router.js";
   import { actions } from "astro:actions";
-  import { deliveryData, resetStepper } from "../../../../stores/deliveryStepper";
+  import {
+    deliveryData,
+    resetStepper,
+  } from "../../../../stores/deliveryStepper";
 
   document.addEventListener("astro:page-load", () => {
     /// elementos del resumen
@@ -111,11 +124,17 @@ import FromToPoint from "../ui/FromToPoint.astro";
     const destEl = document.getElementById("sum-destination");
     const categoryEl = document.getElementById("sum-category");
     const vehEl = document.getElementById("sum-veh");
-    const payField = document.getElementById("sum-payment-field") as HTMLElement | null;
+    const payField = document.getElementById(
+      "sum-payment-field"
+    ) as HTMLElement | null;
     const priceEl = document.getElementById("sum-price");
     const editContainer = document.getElementById("edit-price-container");
-    const editInput = document.getElementById("edit-price-input") as HTMLInputElement | null;
-    const editHelper = document.getElementById("edit-price-input-helper") as HTMLSpanElement | null;
+    const editInput = document.getElementById(
+      "edit-price-input"
+    ) as HTMLInputElement | null;
+    const editHelper = document.getElementById(
+      "edit-price-input-helper"
+    ) as HTMLSpanElement | null;
     const errorsBox = document.getElementById("sum-errors");
     const notesEl = document.getElementById("sum-notes");
     const estimatedWeightEl = document.getElementById("sum-estimated-weight");
@@ -134,8 +153,10 @@ import FromToPoint from "../ui/FromToPoint.astro";
       if (destEl) destEl.textContent = d.delivery_address || "-";
       if (categoryEl) categoryEl.textContent = d.category.value || "-";
       if (vehEl) vehEl.textContent = d.vehicle_type.value || "-";
-      if (estimatedWeightEl) estimatedWeightEl.textContent = `${d.estimated_weight} kg` || "-";
-      if (estimatedSizeEl) estimatedSizeEl.textContent = d.estimated_size || "-";
+      if (estimatedWeightEl)
+        estimatedWeightEl.textContent = `${d.estimated_weight} kg` || "-";
+      if (estimatedSizeEl)
+        estimatedSizeEl.textContent = d.estimated_size || "-";
 
       if (!d.estimated_weight) {
         estimatedWeightEl?.closest("div")?.classList.add("hidden");
@@ -161,7 +182,8 @@ import FromToPoint from "../ui/FromToPoint.astro";
         } else {
           notesEl.innerHTML = (d.observations || [])
             .map(
-              (obs) => `<li class="text-gray-700 bg-gray-200 rounded-md px-3 py-2 mb-1">${obs}</li>`
+              (obs) =>
+                `<li class="text-gray-700 bg-gray-200 rounded-md px-3 py-2 mb-1">${obs}</li>`
             )
             .join("");
         }
@@ -227,7 +249,10 @@ import FromToPoint from "../ui/FromToPoint.astro";
       if (!d.delivery_address) errors.push("Falta la dirección de destino");
       if (!d.client_price || d.client_price <= 0)
         errors.push("El precio debe ser un número positivo");
-      if (!d.payment_method || !["efectivo", "nequi"].includes(d.payment_method)) {
+      if (
+        !d.payment_method ||
+        !["efectivo", "nequi"].includes(d.payment_method)
+      ) {
         errors.push("Selecciona un método de pago válido");
       }
 
@@ -271,6 +296,7 @@ import FromToPoint from "../ui/FromToPoint.astro";
       }
 
       if (data) {
+        console.log(data);
         resetStepper();
         statusModal.setKey("new-delivery", {
           isOpen: false,
@@ -282,6 +308,8 @@ import FromToPoint from "../ui/FromToPoint.astro";
           autoClose: true,
           autoCloseDelay: 3000,
         });
+
+        navigate(`/solicitude/${data.id}`);
 
         return;
       }

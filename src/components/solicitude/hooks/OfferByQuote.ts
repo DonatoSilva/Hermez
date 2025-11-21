@@ -1,29 +1,23 @@
 // Conexión simple con WebSocket nativo en un hook
 import { useEffect, useRef, useState } from 'react';
 
-export function useDeliveryQuotesSocket({ token }: { token?: string }) {
-    const [quotes, setQuotes] = useState<any[]>([]);
+export function useOfferByQuote({ token, quoteId }: { token?: string, quoteId?: string }) {
+    const [offer, setOffer] = useState<any[]>([]);
     const wsRef = useRef<WebSocket>(null);
-    const url = (token)
-        ? `ws://localhost:8000/ws/deliveries/new-quotes/?token=${encodeURIComponent(token)}`
-        : `ws://localhost:8000/ws/deliveries/new-quotes/`;
+    const url = `ws://localhost:8000/ws/deliveries/quotes/${quoteId}/`;
+
+    if (!token) {
+        throw new Error('Token is required for WebSocket connection');
+    }
 
     useEffect(() => {
-        wsRef.current = new WebSocket(url);
+        wsRef.current = new WebSocket(url, [token]);
 
         wsRef.current.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                // Asumiendo que el servidor envía un objeto { type: 'new_quote', payload: {...} }
-                if (data.type === 'initial_quotes') {
-                    setQuotes(data.quotes);
-                    return;
-                }
 
-                if (data.type === 'quote_created') {
-                    console.log(data);
-                    setQuotes((prev: any[]) => [data.data, ...prev]);
-                }
+                console.log('Received data:', data);
             } catch (err) {
                 console.error('Error parsing WS message', err);
             }
@@ -44,7 +38,7 @@ export function useDeliveryQuotesSocket({ token }: { token?: string }) {
     }, [url]);
 
     return {
-        quotes, send: (obj: any) => {
+        offer, send: (obj: any) => {
             if (wsRef.current?.readyState === WebSocket.OPEN) {
                 wsRef.current.send(JSON.stringify(obj));
             }

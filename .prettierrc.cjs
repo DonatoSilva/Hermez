@@ -1,6 +1,6 @@
 // .prettierrc.mjs
 /** @type {import("prettier").Config} */
-export default {
+module.exports = {
     plugins: ['prettier-plugin-astro'],
     semi: true,
     singleQuote: false,

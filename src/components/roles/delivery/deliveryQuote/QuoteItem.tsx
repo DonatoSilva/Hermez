@@ -10,12 +10,13 @@ export interface QuoteItemProps {
   category: string;
   distance: string;
   deliveryType: string;
-  onNotInterested?: () => void;
-  onInterested?: () => void;
-  onOffer?: () => void;
+  onNotInterested?: (id: string) => void;
+  onInterested?: (id: string) => void;
+  onOffer?: (id: string) => void;
 }
 
 const QuoteItem: React.FC<QuoteItemProps> = ({
+  id,
   pickup_address,
   delivery_address,
   client_price,
@@ -25,6 +26,25 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
   onInterested,
   onOffer
 }) => {
+
+  const handleNotInterested = () => {
+    if (onNotInterested) {
+      onNotInterested(id);
+    }
+  }
+
+  const handleInterested = () => {
+    if (onInterested) {
+      onInterested(id);
+    }
+  }
+
+  const handleOffer = () => {
+    if (onOffer) {
+      onOffer(id);
+    }
+  }
+
   return (
     <div className="relative border border-gray-200 rounded-lg p-3 flex flex-col gap-2 bg-white hover:shadow-sm w-full transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">
       <div>
@@ -45,19 +65,19 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
         <div className="text-sm text-gray-700 flex items-center gap-2 dark:text-gray-300"><Icon icon="solar:user-bold" width="24" height="24" /> {"Prueba"}</div>
         <div className="flex gap-2 ml-auto">
           <button
-            onClick={onNotInterested}
+            onClick={handleNotInterested}
             className="flex flex-row items-center justify-center gap-2.5 px-4 py-2 rounded-md transition-colors cursor-pointer bg-transparent text-H-blue-700 dark:text-H-blue-300 border border-H-blue-300 hover:border-H-blue-500 hover:text-H-blue-100 dark:border-H-blue-500 dark:hover:text-H-blue-100 dark:hover:border-H-blue-300"
           >
             <Icon icon="solar:close-square-bold" width="24" height="24" />
           </button>
           <button
-            onClick={onInterested}
+            onClick={handleInterested}
             className="flex flex-row items-center justify-center gap-2.5 px-4 py-2 rounded-md transition-colors cursor-pointer bg-emerald-500 text-white hover:bg-emerald-600"
           >
             <Icon icon="solar:check-circle-bold" width="24" height="24" />
           </button>
           <button
-            onClick={onOffer}
+            onClick={handleOffer}
             className="flex flex-row items-center justify-center gap-2.5 px-4 py-2 rounded-md transition-colors cursor-pointer bg-H-blue-500 text-white hover:bg-H-blue-700"
           >
             Ofertar

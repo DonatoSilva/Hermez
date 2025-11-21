@@ -75,6 +75,81 @@ export const Delivery = {
             return data;
         }
     }),
+    getQuoteById: defineAction({
+        input: z.object({
+            quoteId: z.string().uuid(),
+        }),
+        handler: async ({ quoteId }, { locals }) => {
+
+            const token = await locals.auth().getToken({
+                template: "jwt-back-hermez",
+            });
+            if (!token) {
+                throw new ActionError({
+                    code: "UNAUTHORIZED",
+                    message: "No se pudo obtener el token de autenticación",
+                });
+            }
+
+            const response = await fetch(
+                `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/quotes/${quoteId}/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    return null; // Cotización no encontrada
+                }
+
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: "No se pudo obtener la cotización",
+                });
+            }
+
+            const data = await response.json();
+            return data;
+        }
+    }),
+    cancelQuote: defineAction({
+        input: z.object({
+            quoteId: z.string().uuid(),
+        }),
+        handler: async ({ quoteId }, { locals }) => {
+            const token = await locals.auth().getToken({
+                template: "jwt-back-hermez",
+            });
+
+            if (!token) {
+                throw new ActionError({
+                    code: "UNAUTHORIZED",
+                    message: "No se pudo obtener el token de autenticación",
+                });
+            }
+
+            const response = await fetch(
+                `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/quotes/${quoteId}/cancel/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: "No se pudo cancelar la cotización",
+                });
+            }
+            const data = await response.json();
+            return data;
+        }
+    }),
     getDeliveryTypes: defineAction({
         input: z.object({}),
         handler: async (input, { locals }) => {

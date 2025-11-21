@@ -33,17 +33,18 @@ const frasesVacios = [
 
 const imgs = [personaAburrida, sillaCasco];
 
-const fraseVacio = frasesVacios[Math.floor(Math.random() * frasesVacios.length)];
+const fraseVacio =
+  frasesVacios[Math.floor(Math.random() * frasesVacios.length)];
 const img = imgs[Math.floor(Math.random() * imgs.length)];
 
 const token =
-  (await Astro.locals.auth().getToken({
-    template: "jwt-back-hermez",
-  })) || "";
+  (await Astro.locals.auth().getToken({ template: "jwt-back-hermez" })) || "";
 ---
 
 <section>
-  <div class="container relative h-full min-h-full flex flex-col justify-center mx-auto gap-4">
+  <div
+    class="container relative h-full min-h-full flex flex-col justify-center mx-auto gap-4"
+  >
     <div
       class="flex flex-col md:flex-row md:justify-between gap-4 md:gap-8 p-2 bg-H-blue-300 rounded-md"
     >
@@ -53,7 +54,11 @@ const token =
           <span class="text-H-blue-700">Disponible</span>
         </div>
         <Button variant={"default"}
-          >Cambiar<Icon name="solar:alt-arrow-right-bold-duotone" width={24} height={24} /></Button
+          >Cambiar<Icon
+            name="solar:alt-arrow-right-bold-duotone"
+            width={24}
+            height={24}
+          /></Button
         >
       </div>
       <div
