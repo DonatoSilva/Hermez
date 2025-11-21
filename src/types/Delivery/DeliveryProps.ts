@@ -18,8 +18,21 @@ export const typeDelivery = {
     },
 }
 
+export interface DeliveryCategory {
+    id: string;
+    name: string;
+    description?: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+
 export interface QuoteProps {
-    category: string; // Asumiendo que esto es el ID de la categoría o un identificador
+    category: {
+        id: string;
+        value: string;
+    };
     client_price: number; // Corresponde a 'client_price'
     payment_method: "efectivo" | "nequi" | null;
     pickup_address: string;

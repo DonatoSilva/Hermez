@@ -43,7 +43,6 @@ export const User = {
 
                 return { gender, phone, age, emailAddresses, firstName, lastName, imageUrl };
             } catch (error) {
-                console.log(error);
                 if (error instanceof ActionError) {
                     throw error;
                 }

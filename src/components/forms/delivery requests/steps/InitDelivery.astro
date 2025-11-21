@@ -1,7 +1,16 @@
 ---
+import { actions } from "astro:actions";
 import Button from "../../elements/buttons/Button.astro";
 import InputField from "../../elements/inputs/InputField.astro";
 import LocationItem from "../ui/LocationItem.astro";
+
+import type { Address } from "../../../../types/Address/AddressProps";
+
+const { data: meAddress, error } = await Astro.callAction(actions.User.Address.get, new FormData());
+
+if (error) {
+  console.error(error);
+}
 ---
 
 <div class="flex flex-col gap-8">
@@ -110,35 +119,22 @@ import LocationItem from "../ui/LocationItem.astro";
     <div class="space-y-3">
       <h4 class="text-lg font-semibold text-H-blue-900 dark:text-white">Tus ubicaciones </h4>
       <div class="space-y-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Ubicación 1 -->
-        <LocationItem
-          id="location1"
-          name="Casa"
-          address="Calle 123 #45-67, Barrio Centro"
-          distance="2.1 km"
-          type="casa"
-          onEvent={{ name: "selectLocation", bubble: true }}
-        />
-
-        <!-- Ubicación 2 -->
-        <LocationItem
-          id="location2"
-          name="Oficina"
-          address="Carrera 89 #12-34, Zona Rosa"
-          distance="5.7 km"
-          type="trabajo"
-          onEvent={{ name: "selectLocation", bubble: true }}
-        />
-
-        <!-- Ubicación 3 -->
-        <LocationItem
-          id="location3"
-          name="Universidad"
-          address="Avenida 45 #78-90, Campus Norte"
-          distance="3.2 km"
-          type="edificio"
-          onEvent={{ name: "selectLocation", bubble: true }}
-        />
+        {
+          meAddress?.length ? (
+            meAddress?.map((address: Address) => (
+              <LocationItem
+                id={address.addressId}
+                name={address.name}
+                address={address.address}
+                distance={"23 km"}
+                type={address.type}
+                onEvent={{ name: "selectLocation", bubble: true }}
+              />
+            ))
+          ) : (
+            <p class="text-sm text-gray-500 dark:text-gray-400">No tienes ubicaciones guardadas.</p>
+          )
+        }
       </div>
 
       <!-- Opción para agregar nueva ubicación -->

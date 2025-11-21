@@ -1,15 +1,20 @@
 ---
 import { typeVehicle } from "src/types/Vehicle/VehicleProps";
 import VehicleItem from "../ui/VehicleItem.astro";
-import { typeDelivery } from "src/types/Delivery/DeliveryProps";
 import ObservationsList from "../ui/ObservationsList";
 import { actions } from "astro:actions";
 import type { VehicleType } from "src/types/Vehicle/VehicleProps";
+import type { DeliveryCategory } from "src/types/Delivery/DeliveryProps";
 import SelectField from "@components/forms/elements/selects/SelectField.astro";
 
 const { data: vehicleTypes, error: vehicleTypesError } = await Astro.callAction(
   actions.User.Vehicle.getVehicleTypes,
   new FormData()
+);
+
+const { data: deliveryTypes, error: deliveryTypesError } = await Astro.callAction(
+  actions.Delivery.getDeliveryTypes,
+  {}
 );
 ---
 
@@ -43,20 +48,21 @@ const { data: vehicleTypes, error: vehicleTypesError } = await Astro.callAction(
       <p class="text-base">Seleccione el tipo de domicilio</p>
       <div class="flex flex-wrap items-center gap-3">
         {
-          Object.entries(typeDelivery).map(([key, value]) => (
+          deliveryTypes?.map((type: DeliveryCategory) => (
             <span class="mb-3">
               <input
                 type="radio"
-                id={`category-${key}`}
+                id={`category-${type.name.toLowerCase()}`}
                 name="category"
-                value={key}
+                value={type.id}
+                data-category={type.name}
                 class="peer hidden"
               />
               <label
-                for={`category-${key}`}
+                for={`category-${type.name.toLowerCase()}`}
                 class="font-medium text-gray-900 dark:text-gray-300 px-4 py-2 rounded-md peer-checked:bg-H-blue-700 peer-checked:text-white cursor-pointer bg-gray-200 hover:bg-H-blue-300 transition-colors hover:text-H-blue-900"
               >
-                {value.label}
+                {type.name}
               </label>
             </span>
           ))
@@ -111,7 +117,6 @@ const { data: vehicleTypes, error: vehicleTypesError } = await Astro.callAction(
 </div>
 
 <script>
-  import type { typeDelivery } from "src/types/Delivery/DeliveryProps";
   import { deliveryData } from "../../../../stores/deliveryStepper";
 
   document.addEventListener("astro:page-load", () => {
@@ -127,10 +132,14 @@ const { data: vehicleTypes, error: vehicleTypesError } = await Astro.callAction(
       });
     }
     // Selecciona el input radio de deliveryType con el valor por defecto
-    const defaultCategoryInput = document.querySelector<HTMLInputElement>(`input[name="category"]`);
-    if (defaultCategoryInput) {
-      defaultCategoryInput.checked = true;
-      deliveryData.setKey("category", defaultCategoryInput.value as keyof typeof typeDelivery);
+    const defaultCategoryInputs =
+      document.querySelectorAll<HTMLInputElement>(`input[name="category"]`);
+    if (defaultCategoryInputs) {
+      defaultCategoryInputs[0].checked = true;
+      deliveryData.setKey("category", {
+        id: defaultCategoryInputs[0].value,
+        value: defaultCategoryInputs[0].dataset.category || "",
+      });
     }
 
     // Cargar valores actuales del store
@@ -153,31 +162,27 @@ const { data: vehicleTypes, error: vehicleTypesError } = await Astro.callAction(
         id,
         value,
       });
-    const setCategory = (t: keyof typeof typeDelivery) => deliveryData.setKey("category", t);
 
     document.addEventListener("vehicle_type", (e) => {
       const customEvent = e as CustomEvent;
       const { id, value } = customEvent.detail;
-
-      console.log(id, value);
 
       if (id) {
         setVeh(id, value);
       }
     });
 
-    document
-      .getElementById("category-alimento")
-      ?.addEventListener("click", () => setCategory("alimento"));
-    document
-      .getElementById("category-persona")
-      ?.addEventListener("click", () => setCategory("persona"));
-    document
-      .getElementById("category-documentos")
-      ?.addEventListener("click", () => setCategory("documentos"));
-    document
-      .getElementById("category-paquete")
-      ?.addEventListener("click", () => setCategory("paquete"));
+    const setCategory = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      const id = target.value;
+      const value = target.dataset.category || "";
+
+      deliveryData.setKey("category", { id, value });
+    };
+
+    defaultCategoryInputs.forEach((input) => {
+      input.addEventListener("change", setCategory);
+    });
 
     estimatedWeightInput?.addEventListener("input", (e) => {
       const value = (e.target as HTMLInputElement).value;

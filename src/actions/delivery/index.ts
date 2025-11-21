@@ -47,29 +47,66 @@ export const Delivery = {
                     'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    client: userId,
-                    category,
+                    client_id: userId,
+                    category_id: category,
                     client_price,
                     payment_method,
                     pickup_address,
                     delivery_address,
                     description,
                     observations,
-                    vehicle_type,
+                    vehicle_type_id: vehicle_type,
                     estimated_weight,
                     estimated_size
                 }),
             });
 
             if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error response:", errorData);
+
                 throw new ActionError({
                     code: "BAD_REQUEST",
-                    message: "No se pudo agregar la cotización",
+                    message: errorData.detail || "No se pudo agregar la cotización",
                 });
             }
 
             const data = await response.json();
             return data;
         }
-    })
+    }),
+    getDeliveryTypes: defineAction({
+        input: z.object({}),
+        handler: async (input, { locals }) => {
+            const token = await locals.auth().getToken({
+                template: "jwt-back-hermez",
+            });
+
+            if (!token) {
+                throw new ActionError({
+                    code: "UNAUTHORIZED",
+                    message: "No se pudo obtener el token de autenticación",
+                });
+            }
+
+            const response = await fetch(
+                `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/categories/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: "No se pudo obtener los tipos de domicilio",
+                });
+            }
+
+            const data = await response.json();
+            return data;
+        }
+    }),
 }

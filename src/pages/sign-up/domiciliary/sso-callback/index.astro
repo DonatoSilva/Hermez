@@ -21,7 +21,6 @@ export const prerender = false;
 
   async function handleOAuthCallback() {
     const clerk = new Clerk(PUBLIC_CLERK_PUBLISHABLE_KEY);
-    console.log("Iniciando callback de OAuth...");
     try {
       await clerk.load();
       const user = await clerk.handleRedirectCallback();

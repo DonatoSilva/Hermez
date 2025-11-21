@@ -47,7 +47,6 @@ export const prerender = false;
   // Timeout de seguridad - si después de 10 segundos no se resuelve, redirigir
   setTimeout(() => {
     if (window.location.pathname.includes("sso-callback")) {
-      console.log("⏰ Timeout de seguridad - redirigiendo...");
       window.location.href = "/sign-in/client";
     }
   }, 10000);

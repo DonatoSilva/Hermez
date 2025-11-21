@@ -25,7 +25,6 @@ export const onRequest = clerkMiddleware(
 
             try {
                 const url = `${URL_LOCAL_BACKEND}/${API_USERS}/me`
-                console.log(`Fetching user data from: ${url}`)
                 const res = await fetch(url)
                 userExists = res.status !== 404
 

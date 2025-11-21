@@ -19,6 +19,19 @@ export const typeAddress = {
     },
 };
 
+export interface Address {
+    addressId: string;
+    userId: string;
+    name: string;
+    description?: string;
+    type: 'casa' | 'trabajo' | 'edificio';
+    address: string;
+    city: string;
+    isFavorite?: boolean;
+}
+
+
+
 export type AddressItemProps = {
     addressId: string;
     userId: string;

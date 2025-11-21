@@ -19,12 +19,10 @@ export default function VehicleItem({ vehicle, onEdit, onDelete }: {
   onDelete: (vehicleID: VehicleItemProps["vehicleId"]) => void;
 }) {
 
-  console.log(vehicle);
-
   const color = vehicle.color || "#1d4ed8"; // fallback a azul de la empresa
   const textColor = getContrastText(color);
   const type = vehicle.type?.id || "180647da-e54e-441c-ae7b-8e5d078f31b5";
-  const typeInfo = typeVehicle[type];
+  const typeInfo = typeVehicle[type as keyof typeof typeVehicle];
 
   // Función para editar la dirección
   const handleEdit = useCallback(() => {

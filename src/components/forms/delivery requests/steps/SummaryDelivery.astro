@@ -129,9 +129,10 @@ import FromToPoint from "../ui/FromToPoint.astro";
 
     const render = () => {
       const d = deliveryData.get();
+
       if (originEl) originEl.textContent = d.pickup_address || "-";
       if (destEl) destEl.textContent = d.delivery_address || "-";
-      if (categoryEl) categoryEl.textContent = d.category || "-";
+      if (categoryEl) categoryEl.textContent = d.category.value || "-";
       if (vehEl) vehEl.textContent = d.vehicle_type.value || "-";
       if (estimatedWeightEl) estimatedWeightEl.textContent = `${d.estimated_weight} kg` || "-";
       if (estimatedSizeEl) estimatedSizeEl.textContent = d.estimated_size || "-";
@@ -246,6 +247,7 @@ import FromToPoint from "../ui/FromToPoint.astro";
         ...d,
         payment_method: d.payment_method as "efectivo" | "nequi",
         vehicle_type: d.vehicle_type.id,
+        category: d.category.id as string,
       };
 
       if (errorsBox) errorsBox.classList.add("hidden");
@@ -264,7 +266,33 @@ import FromToPoint from "../ui/FromToPoint.astro";
           autoClose: true,
           autoCloseDelay: 3000,
         });
+
+        return;
       }
+
+      if (data) {
+        resetStepper();
+        statusModal.setKey("new-delivery", {
+          isOpen: false,
+        });
+        toastStore.set({
+          visible: true,
+          message: "Solicitud de servicio enviada con éxito",
+          type: "success",
+          autoClose: true,
+          autoCloseDelay: 3000,
+        });
+
+        return;
+      }
+
+      toastStore.set({
+        visible: true,
+        message: "No deberias ver este mensaje, por favor contacta con soporte",
+        type: "error",
+        autoClose: true,
+        autoCloseDelay: 3000,
+      });
     });
     render();
   });
