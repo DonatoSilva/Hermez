@@ -30,8 +30,6 @@ export interface Address {
     isFavorite?: boolean;
 }
 
-
-
 export type AddressItemProps = {
     addressId: string;
     userId: string;

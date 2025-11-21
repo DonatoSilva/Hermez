@@ -3,11 +3,11 @@ import React from 'react';
 import { typeDelivery } from 'src/types/Delivery/DeliveryProps';
 
 export interface QuoteItemProps {
-  pickupAddress: string;
-  dropoffAddress: string;
-  requesterName: string;
-  price: number;
-  eta: string;
+  id: string;
+  pickup_address: string;
+  delivery_address: string;
+  client_price: number;
+  category: string;
   distance: string;
   deliveryType: string;
   onNotInterested?: () => void;
@@ -16,13 +16,11 @@ export interface QuoteItemProps {
 }
 
 const QuoteItem: React.FC<QuoteItemProps> = ({
-  pickupAddress,
-  dropoffAddress,
-  requesterName,
-  price,
-  eta,
+  pickup_address,
+  delivery_address,
+  client_price,
+  category,
   distance,
-  deliveryType,
   onNotInterested,
   onInterested,
   onOffer
@@ -30,21 +28,21 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
   return (
     <div className="relative border border-gray-200 rounded-lg p-3 flex flex-col gap-2 bg-white hover:shadow-sm w-full transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">
       <div>
-        <div className="text-2xl md:text-3xl font-bold dark:text-gray-200">${price.toLocaleString('es-CO')}</div>
-        <div className="text-xs text-gray-500 dark:text-gray-400">{eta} · {distance}</div>
+        <div className="text-2xl md:text-3xl font-bold dark:text-gray-200">${client_price.toLocaleString('es-CO')}</div>
+        <div className="text-xs text-gray-500 dark:text-gray-400">{category} · {distance ?? "distancia no disponible"}</div>
       </div>
 
       <div className="flex flex-col gap-1.5">
         <div className="text-sm text-gray-700 flex items-center gap-2 dark:text-gray-300">
-          <strong><Icon icon="solar:map-point-wave-bold-duotone" width="24" height="24" /></strong> {pickupAddress}
+          <strong><Icon icon="solar:map-point-wave-bold-duotone" width="24" height="24" /></strong> {pickup_address}
         </div>
         <div className="text-sm text-gray-700 flex items-center gap-2 dark:text-gray-300">
-          <strong><Icon icon="solar:map-point-wave-bold" width="24" height="24" /></strong> {dropoffAddress}
+          <strong><Icon icon="solar:map-point-wave-bold" width="24" height="24" /></strong> {delivery_address}
         </div>
       </div>
 
       <div className="flex flex-wrap justify-between items-center gap-2">
-        <div className="text-sm text-gray-700 flex items-center gap-2 dark:text-gray-300"><Icon icon="solar:user-bold" width="24" height="24" /> {requesterName}</div>
+        <div className="text-sm text-gray-700 flex items-center gap-2 dark:text-gray-300"><Icon icon="solar:user-bold" width="24" height="24" /> {"Prueba"}</div>
         <div className="flex gap-2 ml-auto">
           <button
             onClick={onNotInterested}
@@ -66,7 +64,7 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
           </button>
         </div>
       </div>
-      <img src={typeDelivery[deliveryType as keyof typeof typeDelivery].image} alt="Delivery" className="absolute top-2 right-2 w-32 h-32 rounded-full" />
+      <img src={typeDelivery[category.toLowerCase() as keyof typeof typeDelivery]?.image} alt="Delivery" className="absolute top-2 right-2 w-32 h-32 rounded-full" />
     </div>
   );
 };

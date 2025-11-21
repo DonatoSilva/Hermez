@@ -1,5 +1,13 @@
 
 export const typeDelivery = {
+    mercado: {
+        label: "Mercado",
+        image: "/images/tiposEnvio/mercado.png",
+    },
+    comida: {
+        label: "Comida",
+        image: "/images/tiposEnvio/comida.png",
+    },
     alimento: {
         label: "Alimento",
         image: "/images/tiposEnvio/alimento.png",
@@ -12,7 +20,7 @@ export const typeDelivery = {
         label: "Documentos",
         image: "/images/tiposEnvio/sobre-min.png",
     },
-    paquete: {
+    paquetes: {
         label: "Paquete",
         image: "/images/tiposEnvio/paquete-min.png",
     },

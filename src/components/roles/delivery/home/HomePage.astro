@@ -35,6 +35,11 @@ const imgs = [personaAburrida, sillaCasco];
 
 const fraseVacio = frasesVacios[Math.floor(Math.random() * frasesVacios.length)];
 const img = imgs[Math.floor(Math.random() * imgs.length)];
+
+const token =
+  (await Astro.locals.auth().getToken({
+    template: "jwt-back-hermez",
+  })) || "";
 ---
 
 <section>
@@ -65,7 +70,7 @@ const img = imgs[Math.floor(Math.random() * imgs.length)];
         </div>
       </div>
     </div>
-    <QuoteContent client:visible>
+    <QuoteContent token={!token ? undefined : token} client:load>
       <Banner title="No hay pedidos disponibles" className="min-w-full gap-4">
         <p
           slot="optional-content"
