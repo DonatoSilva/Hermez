@@ -150,38 +150,115 @@ export const Delivery = {
             return data;
         }
     }),
+    addOfferByQuote: defineAction({
+        accept: 'form',
+        handler: async (formData, ctx) => {
+            const { locals } = ctx;
+            try {
+
+                const token = await locals.auth().getToken({
+                    template: "jwt-back-hermez",
+                });
+
+                if (!token) {
+                    throw new ActionError({
+                        code: "UNAUTHORIZED",
+                        message: "No se pudo obtener el token de autenticación",
+                    });
+                }
+
+                const userId = await locals.auth().userId;
+
+                if (!userId) {
+                    throw new ActionError({
+                        code: "UNAUTHORIZED",
+                        message: "No se pudo obtener el ID de usuario",
+                    });
+                }
+
+                const quoteId = formData.get('quoteId')?.toString();
+                const proposedPrice = Number(formData.get('proposedPrice') ?? 0);
+                const message = formData.get('message')?.toString() ?? '';
+
+                if (proposedPrice <= 0) {
+                    throw new ActionError({
+                        code: "BAD_REQUEST",
+                        message: "El precio propuesto debe ser un número positivo",
+                    });
+                }
+
+                const response = await fetch(
+                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/quotes/${quoteId}/offers/`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                            delivery_person_id: userId,
+                            quote_id: quoteId,
+                            proposed_price: proposedPrice,
+                            message: message,
+                        }),
+                    });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Error response:", errorData);
+                    throw new ActionError({
+                        code: "BAD_REQUEST",
+                        message: errorData.detail || "No se pudo agregar la oferta",
+                    });
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error al agregar la oferta:', error);
+                if (error instanceof ActionError) throw error;
+                throw new ActionError({ message: 'Error inesperado al agregar la oferta', code: 'INTERNAL_SERVER_ERROR' });
+            }
+        }
+    }),
     getDeliveryTypes: defineAction({
         input: z.object({}),
         handler: async (input, { locals }) => {
-            const token = await locals.auth().getToken({
-                template: "jwt-back-hermez",
-            });
-
-            if (!token) {
-                throw new ActionError({
-                    code: "UNAUTHORIZED",
-                    message: "No se pudo obtener el token de autenticación",
+            try {
+                const token = await locals.auth().getToken({
+                    template: "jwt-back-hermez",
                 });
-            }
 
-            const response = await fetch(
-                `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/categories/`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
+                if (!token) {
+                    throw new ActionError({
+                        code: "UNAUTHORIZED",
+                        message: "No se pudo obtener el token de autenticación",
+                    });
+                }
 
-            if (!response.ok) {
-                throw new ActionError({
-                    code: "BAD_REQUEST",
-                    message: "No se pudo obtener los tipos de domicilio",
+                const response = await fetch(
+                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/categories/`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
                 });
-            }
 
-            const data = await response.json();
-            return data;
+                if (!response.ok) {
+                    throw new ActionError({
+                        code: "BAD_REQUEST",
+                        message: "No se pudo obtener los tipos de domicilio",
+                    });
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error al obtener los tipos de domicilio:', error);
+                if (error instanceof ActionError) throw error;
+                throw new ActionError({ message: 'Error inesperado al obtener los tipos de domicilio', code: 'INTERNAL_SERVER_ERROR' });
+            }
         }
     }),
 }

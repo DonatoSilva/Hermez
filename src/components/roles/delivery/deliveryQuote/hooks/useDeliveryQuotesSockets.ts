@@ -6,16 +6,19 @@ export function useDeliveryQuotesSocket({ token }: { token?: string }) {
     const wsRef = useRef<WebSocket>(null);
     const url = `ws://localhost:8000/ws/deliveries/new-quotes/`;
 
-    if (!token) {
-        throw new Error('Token is required for WebSocket connection');
-    }
 
     useEffect(() => {
+        if (!token) {
+            throw new Error('Token is required for WebSocket connection');
+        }
+
         wsRef.current = new WebSocket(url, [token]);
 
         wsRef.current.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
+
+                console.log("Received data:", data);
 
                 if (data.type === 'initial_quotes') {
                     setQuotes(data.quotes);
@@ -25,6 +28,13 @@ export function useDeliveryQuotesSocket({ token }: { token?: string }) {
                 if (data.type === 'quote_created') {
                     console.log(data);
                     setQuotes((prev: any[]) => [data.data, ...prev]);
+                }
+
+
+                if (data.type === 'quote_expired') {
+                    setQuotes((prev: any[]) =>
+                        prev.filter((quote) => quote.id !== data.data.id)
+                    );
                 }
             } catch (err) {
                 console.error('Error parsing WS message', err);

@@ -25,7 +25,7 @@ const {data: existsSolicitude, error} = await Astro.callAction(actions.Delivery.
   quoteId: id,
 });
 
-const { expires_at, client_price } = existsSolicitude || {};
+const { expires_at, client_price, pickup_address, delivery_address } = existsSolicitude || {};
 console.log(existsSolicitude);
 ---
 
@@ -112,7 +112,7 @@ console.log(existsSolicitude);
         textLabel="Aceptar automaticamente la tarifa más baja"
       />
 
-      <FromToPoint />
+      <FromToPoint pickupAddress={pickup_address} deliveryAddress={delivery_address} />
       <Button
         id="btn-cancel-solicitude"
         type="button"
@@ -137,13 +137,16 @@ import { actions } from "astro:actions";
 import { navigate } from "astro:transitions/client";
 
   document.addEventListener("astro:page-load", () => {
+    const solicitudeDetailsEl = document.querySelector(
+      "#solicitude-details"
+    ) as HTMLDivElement;
     /// logica para el boton de cancelar solicitud
     const btnCancelSolicitude = document.querySelector(
       "#btn-cancel-solicitude"
     ) as HTMLButtonElement;
 
     btnCancelSolicitude?.addEventListener("click", async () => {
-      const quoteId = document.querySelector("#solicitude-details")?.getAttribute("data-quote-id");
+      const quoteId = solicitudeDetailsEl?.getAttribute("data-quote-id");
 
       if (!quoteId) {
         toastStore.set({
@@ -178,14 +181,63 @@ import { navigate } from "astro:transitions/client";
         autoClose: true,
         autoCloseDelay: 5000,
       });
-      
+
       navigate("/", { history: 'replace' });
     });
+    /// logica para el checkbox de aceptar automaticamente la tarifa mas baja
+    const acceptLowestCheckbox = document.querySelector(
+      "#accept-lowest"
+    ) as HTMLInputElement;
+
+    acceptLowestCheckbox?.addEventListener("change", async (e) => {
+      const isChecked = (e.target as HTMLInputElement).checked;
+      const quoteId = solicitudeDetailsEl?.getAttribute("data-quote-id");
+
+      if (!quoteId) {
+        toastStore.set({
+          type: "error",
+          visible: true,
+          message: "No se pudo actualizar la preferencia. ID no encontrado.",
+          autoClose: true,
+          autoCloseDelay: 5000,
+        });
+        return;
+      }
+
+      if (!isChecked) return; /// por ahora no se permite activar esta funcion
+
+      const error = {
+        message: "Esta funcion todavia no esta implementada, pero muy pronto 😎⭐",
+      }
+
+      /* const {data: updatedPreference, error} = await actions.Delivery.updateAcceptLowestPreference({
+        quoteId: quoteId,
+        acceptLowest: isChecked,
+      }); */
+
+      if (error) {
+        toastStore.set({
+          type: "error",
+          visible: true,
+          message: "Error al actualizar la preferencia: " + error.message,
+          autoClose: true,
+          autoCloseDelay: 5000,
+        });
+        (e.target as HTMLInputElement).checked = !isChecked;
+        return;
+      }
+
+      toastStore.set({
+        type: "success",
+        visible: true,
+        message: "Preferencia actualizada correctamente.",
+        autoClose: true,
+        autoCloseDelay: 5000,
+      });
+    });
+
     /// Lógica del temporizador de expiración
-    const expirateEl = document.querySelector(
-      "#solicitude-details"
-    ) as HTMLDivElement;
-    const expirateAt = expirateEl?.dataset?.expirate;
+    const expirateAt = solicitudeDetailsEl?.dataset?.expirate;
 
     if (expirateAt) {
       const expirateDate = new Date(expirateAt);
@@ -206,7 +258,7 @@ import { navigate } from "astro:transitions/client";
             autoCloseDelay: 5000,
           });
           navigate("/", { history: 'replace' });
-          if (expirateEl?.querySelector("h2")) expirateEl!.querySelector("h2")!.textContent = "00:00";
+          if (solicitudeDetailsEl?.querySelector("h2")) solicitudeDetailsEl!.querySelector("h2")!.textContent = "00:00";
           return;
         }
 
@@ -214,8 +266,8 @@ import { navigate } from "astro:transitions/client";
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        if (expirateEl?.querySelector("h2")) {
-          expirateEl!.querySelector("h2")!.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        if (solicitudeDetailsEl?.querySelector("h2")) {
+          solicitudeDetailsEl!.querySelector("h2")!.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
         }
       }, 1000);
     }

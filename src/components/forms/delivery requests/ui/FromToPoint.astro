@@ -1,5 +1,12 @@
 ---
 import { Icon } from "astro-icon/components";
+
+interface FromToPointProps {
+  pickupAddress: string;
+  deliveryAddress: string;
+}
+
+const { pickupAddress, deliveryAddress } = Astro.props as FromToPointProps;
 ---
 
 <div class="flex flex-col gap-4">
@@ -7,14 +14,18 @@ import { Icon } from "astro-icon/components";
     <Icon name="solar:map-point-bold-duotone" size={35} />
     <div>
       <p class="text-sm text-gray-600">De</p>
-      <p id="sum-origin" class="text-base font-bold">Carrera 12 #23A-09</p>
+      <p id="sum-origin" class="text-base font-bold">
+        {pickupAddress ?? "Desconocido"}
+      </p>
     </div>
   </div>
   <div class="flex items-center justify-start gap-2">
     <Icon name="solar:map-point-bold" size={35} />
     <div>
       <p class="text-sm text-gray-600">A</p>
-      <p id="sum-destination" class="text-base font-bold">Carrera 12 #23A-09</p>
+      <p id="sum-destination" class="text-base font-bold">
+        {deliveryAddress ?? "Desconocido"}
+      </p>
     </div>
   </div>
 </div>

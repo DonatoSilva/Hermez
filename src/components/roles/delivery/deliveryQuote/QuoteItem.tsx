@@ -11,7 +11,7 @@ export interface QuoteItemProps {
   distance: string;
   deliveryType: string;
   onNotInterested?: (id: string) => void;
-  onInterested?: (id: string) => void;
+  onInterested?: (id: string, client_price: number) => void;
   onOffer?: (id: string) => void;
 }
 
@@ -35,7 +35,7 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
 
   const handleInterested = () => {
     if (onInterested) {
-      onInterested(id);
+      onInterested(id, client_price);
     }
   }
 

@@ -17,7 +17,17 @@ export function useOfferByQuote({ token, quoteId }: { token?: string, quoteId?: 
             try {
                 const data = JSON.parse(event.data);
 
-                console.log('Received data:', data);
+                if (data.type === 'offer_made') {
+                    setOffer((prev: any[]) => [data.data, ...prev]);
+                }
+
+                if (data.type === 'offer_updated') {
+                    setOffer((prev: any[]) =>
+                        prev.map((offer) =>
+                            offer.id === data.data.id ? data.data : offer
+                        )
+                    );
+                }
             } catch (err) {
                 console.error('Error parsing WS message', err);
             }

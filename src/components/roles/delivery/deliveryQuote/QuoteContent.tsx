@@ -1,4 +1,7 @@
-import React from 'react';
+import { withState } from '@astrojs/react/actions';
+import { toastStore } from '@stores/StoreToast';
+import { actions } from 'astro:actions';
+import React, { startTransition, useActionState } from 'react';
 import QuoteItem from './QuoteItem';
 import { useDeliveryQuotesSocket } from './hooks/useDeliveryQuotesSockets';
 
@@ -8,6 +11,10 @@ export interface QuoteContentProps {
 }
 
 export function QuoteContent({ token, children }: QuoteContentProps) {
+    const [reqAddOffer, addOffer, pendingAddOffer = true] = useActionState(
+            withState(actions.Delivery.addOfferByQuote),
+            { data: [], error: undefined }
+        )
     const { quotes } = useDeliveryQuotesSocket({ token });
 
     if (quotes.length === 0) return <>{children}</>;
@@ -16,8 +23,32 @@ export function QuoteContent({ token, children }: QuoteContentProps) {
         console.log('No estoy interesado en la cotización con ID:', id);
     }
 
-    const handleAcceptQuote = (id: string) => {
+    const handleAcceptQuote = async (id: string, proposedPrice: number) => {
         console.log('Acepto la cotización con ID:', id);
+        try {
+            const form = new FormData();
+            form.set('quoteId', id);
+            form.set('proposedPrice', proposedPrice.toString());
+            const result =  startTransition(() => {
+                addOffer(form)
+                });
+            toastStore.set({
+                visible: true,
+                type: 'success',
+                message: 'Cotización aceptada correctamente',
+                autoClose: true,
+                autoCloseDelay: 3000,
+            });
+        } catch (error) {
+            console.error('Error accepting quote:', error);
+            toastStore.set({
+                visible: true,
+                message: 'Error al aceptar la cotización',
+                type: 'error',
+                autoClose: true,
+                autoCloseDelay: 3000,
+            })
+        }
     }
 
     const handleOffer = (id: string) => {
@@ -27,7 +58,7 @@ export function QuoteContent({ token, children }: QuoteContentProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {quotes.map((quote) => (
-                <QuoteItem key={quote.id} {...quote} onInterested={handleNoInterested} onNotInterested={handleAcceptQuote} onOffer={handleOffer} />
+                <QuoteItem key={quote.id} {...quote} onInterested={handleAcceptQuote} onNotInterested={handleNoInterested} onOffer={handleOffer} />
             ))}
         </div>
     );
