@@ -27,6 +27,9 @@ const {data: existsSolicitude, error} = await Astro.callAction(actions.Delivery.
 
 const { expires_at, client_price, pickup_address, delivery_address } = existsSolicitude || {};
 console.log(existsSolicitude);
+
+const protocol = Astro.request.headers.get("protocol") || "http";
+const host = Astro.request.headers.get("host") || "localhost:4321";
 ---
 
 <Layout
@@ -71,7 +74,7 @@ console.log(existsSolicitude);
           0
         </b>
       </div>
-      <BannerOffer quoteId={id} token={token} client:visible />
+      <BannerOffer quoteId={id} token={token} client:visible protocol={protocol} host={host} />
     </div>
     <div class="min-h-full flex flex-col justify-between">
       <div>

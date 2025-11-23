@@ -22,14 +22,32 @@ export const onRequest = clerkMiddleware(
 
         if (userId && hasUserDataCookie !== userId) {
             let userExists = false
+            const token = await auth().getToken({
+                template: 'jwt-back-hermez'
+            })
 
             try {
-                const url = `${URL_LOCAL_BACKEND}/${API_USERS}/me`
-                const res = await fetch(url)
-                userExists = res.status !== 404
+                const url = `${URL_LOCAL_BACKEND}/${API_USERS}/me/`
+                const res = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                const [data] = await res.json()
+                
+                if (res.status === 404) {
+                    userExists = false
+                    return
+                }
+
+                if (data.userid !== userId || !data.gender || !data.phone || !data.age) {
+                    userExists = false
+                    return
+                }
 
                 /// guardamos la existencia del usuario en la cookie para evitar futuras consultas
                 if (userExists) cookies.set('data-user', userId, { path: '/', maxAge: 60 * 60 * 24 * 15 }) // 15 days;
+                userExists = true
             } catch (e) {
                 userExists = false
             }

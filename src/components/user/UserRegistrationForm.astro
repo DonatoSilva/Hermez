@@ -4,6 +4,9 @@ interface Props {
 }
 
 const { userId } = Astro.props;
+import Button from "../forms/elements/buttons/Button.astro";
+import SelectField from "../forms/elements/selects/SelectField.astro";
+import InputField from "../forms/elements/inputs/InputField.astro";
 ---
 
 <aside class="flex flex-col lg:flex-row items-center gap-8 p-6 rounded-lg transition-all lg:ms-3">
@@ -44,129 +47,114 @@ const { userId } = Astro.props;
     <input type="hidden" name="userid" value={userId} />
     <h2 class="text-xl font-bold text-H-blue-900 dark:text-white mb-2"> Registra tus datos </h2>
     <div class="flex flex-col gap-2">
-      <label for="gender" class="text-sm font-medium text-H-blue-900 dark:text-white">
-        Género
-      </label>
-      <select
+      <SelectField
         id="gender"
         name="gender"
-        required
-        class="border border-gray-300 dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700"
-      >
-        <option value="">Selecciona tu género</option>
-        <option value="male">Masculino</option>
-        <option value="female">Femenino</option>
-        <option value="other">Otro</option>
-      </select>
+        textLabel="Género"
+        placeholder="Selecciona tu género"
+        required={true}
+        styling={{
+          label: "font-medium text-H-blue-900 dark:text-white",
+          select:
+            "dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700",
+        }}
+        data={{
+          options: [
+            { value: "male", label: "Masculino" },
+            { value: "female", label: "Femenino" },
+          ],
+        }}
+      />
     </div>
     <div class="flex flex-col gap-2">
-      <label for="phone" class="text-sm font-medium text-H-blue-900 dark:text-white">
-        Teléfono
-      </label>
-      <input
+      <InputField
         id="phone"
         name="phone"
         type="tel"
         pattern="[0-9]{10}"
-        required
+        required={true}
+        textLabel="Teléfono"
         placeholder="Ej: 3001234567"
-        class="border border-gray-300 dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700"
+        classLabel="font-medium text-H-blue-900 dark:text-white"
+        className="dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700"
       />
     </div>
     <div class="flex flex-col gap-2">
-      <label for="age" class="text-sm font-medium text-H-blue-900 dark:text-white"> Edad </label>
-      <input
+      <InputField
         id="age"
         name="age"
+        placeholder="Ej: 25"
         type="number"
         min="1"
         max="120"
-        required
-        class="border border-gray-300 dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700"
+        required={true}
+        textLabel="Edad"
+        classLabel="font-medium text-H-blue-900 dark:text-white"
+        className="dark:border-H-blue-800 bg-white dark:bg-H-blue-900 text-H-blue-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-H-blue-400 dark:focus:ring-H-blue-700"
       />
     </div>
-    <button
+    <Button
       type="submit"
-      class="bg-H-blue-900 dark:bg-H-blue-700 text-white font-semibold py-2 rounded hover:bg-H-blue-800 dark:hover:bg-H-blue-600 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group flex items-center justify-center gap-2"
+      className="w-full bg-H-blue-900 dark:bg-H-blue-700 hover:bg-H-blue-800 dark:hover:bg-H-blue-600 group"
     >
       <span>Guardar mis datos</span>
       <span
         class="ml-2 inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin transition-opacity duration-200 opacity-0 group-disabled:opacity-100"
         aria-hidden="true"></span>
-    </button>
+    </Button>
   </form>
 </aside>
 
 <script>
-  import { API_USERS, URL_LOCAL_BACKEND } from "astro:env/client";
-  import { navigate } from "astro:transitions/client";
-  import { toastStore } from "src/stores/StoreToast";
+  import { actions } from "astro:actions";
+import { navigate } from "astro:transitions/client";
+import { toastStore } from "src/stores/StoreToast";
 
   const onFormsubmit = () => {
     const form = document.getElementById("userDataForm") as HTMLFormElement | null;
     if (!form) return;
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const btnSubmit = form.querySelector("button[type='submit']");
       btnSubmit?.setAttribute("disabled", "true");
 
       const formData = new FormData(form);
-      const data = Object.fromEntries(formData);
+      const AUTO_CLOSE_DELAY = 500;
 
-      if (!data.userid) return;
+      const { error } = await actions.User.register(formData);
 
-      const url = URL_LOCAL_BACKEND + API_USERS;
-      const AUTO_CLOSE_DELAY = 2500;
-
-      fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      })
-        .then((resq) => {
-          if (!resq.ok) {
-            toastStore.set({
-              visible: true,
-              title: "Error al guardar los datos",
-              message: "Por favor, intenta nuevamente más tarde.",
-              emoji: "⚠️",
-              type: "error",
-              autoClose: true,
-              autoCloseDelay: AUTO_CLOSE_DELAY,
-            });
-            return;
-          }
-          toastStore.set({
-            visible: true,
-            title: "Datos guardados",
-            message: "Tus datos se han guardado correctamente.",
-            emoji: "✅",
-            type: "success",
-            autoClose: true,
-            autoCloseDelay: AUTO_CLOSE_DELAY,
-          });
-          setTimeout(async () => {
-            await navigate("/");
-          }, AUTO_CLOSE_DELAY);
-        })
-        .catch(() => {
-          toastStore.set({
-            visible: true,
-            title: "Error al guardar los datos",
-            message: "Por favor, intenta nuevamente más tarde.",
-            emoji: "⚠️",
-            type: "error",
-            autoClose: true,
-            autoCloseDelay: AUTO_CLOSE_DELAY,
-          });
-        })
-        .finally(() => {
-          btnSubmit?.removeAttribute("disabled");
+      if (error) {
+        toastStore.set({
+          visible: true,
+          title: "Error al guardar los datos",
+          message: "Por favor, intenta nuevamente más tarde.",
+          emoji: "⚠️",
+          type: "error",
+          autoClose: true,
+          autoCloseDelay: AUTO_CLOSE_DELAY,
         });
+        btnSubmit?.removeAttribute("disabled");
+        return;
+      }
+
+      toastStore.set({
+        visible: true,
+        title: "Datos guardados",
+        message: "Tus datos se han guardado correctamente.",
+        emoji: "✅",
+        type: "success",
+        autoClose: true,
+        autoCloseDelay: AUTO_CLOSE_DELAY,
+      });
+
+      setTimeout(async () => {
+        await navigate("/");
+      }, AUTO_CLOSE_DELAY);
+      
+      btnSubmit?.removeAttribute("disabled");
     });
   };
 
   document.addEventListener("astro:page-load", onFormsubmit);
-  document.addEventListener("DOMContentLoaded", onFormsubmit);
 </script>

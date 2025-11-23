@@ -1,9 +1,11 @@
 import { Icon } from "@iconify-icon/react";
-import { useOfferByQuote } from "./hooks/OfferByQuote";
+import { useOfferByQuote } from "./hooks/useOfferByQuote";
 
 type BannerOfferProps = {
   quoteId: string | undefined;
   token: string;
+  protocol?: string;
+  host?: string;
   imageSrc?: string;
   text?: string;
   onPrev?: () => void;
@@ -13,12 +15,14 @@ type BannerOfferProps = {
 export function BannerOffer({
   quoteId,
   token,
+  protocol,
+  host,
   imageSrc = "/images/Casco-con-telaranas.png",
   text = "Esperando ofertas",
   onPrev,
   onNext,
 }: BannerOfferProps) {
-  const { offer } = useOfferByQuote({ token, quoteId });
+  const { offer } = useOfferByQuote({ token, quoteId, protocol, host });
 
   const lenRight = 0
   const lenLeft = 0

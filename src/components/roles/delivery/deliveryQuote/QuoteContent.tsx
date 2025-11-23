@@ -8,14 +8,16 @@ import { useDeliveryQuotesSocket } from './hooks/useDeliveryQuotesSockets';
 export interface QuoteContentProps {
     children?: React.ReactNode;
     token?: string;
+    protocol?: string;
+    host?: string;
 }
 
-export function QuoteContent({ token, children }: QuoteContentProps) {
+export function QuoteContent({ token, children, protocol, host }: QuoteContentProps) {
     const [reqAddOffer, addOffer, pendingAddOffer = true] = useActionState(
             withState(actions.Delivery.addOfferByQuote),
             { data: [], error: undefined }
         )
-    const { quotes } = useDeliveryQuotesSocket({ token });
+    const { quotes } = useDeliveryQuotesSocket({ token, protocol, host });
 
     if (quotes.length === 0) return <>{children}</>;
 

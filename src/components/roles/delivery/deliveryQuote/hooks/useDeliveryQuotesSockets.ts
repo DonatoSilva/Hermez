@@ -1,10 +1,12 @@
+
 // Conexión simple con WebSocket nativo en un hook
 import { useEffect, useRef, useState } from 'react';
 
-export function useDeliveryQuotesSocket({ token }: { token?: string }) {
+export function useDeliveryQuotesSocket({ token, protocol, host }: { token?: string, protocol?: string, host?: string }) {
     const [quotes, setQuotes] = useState<any[]>([]);
     const wsRef = useRef<WebSocket>(null);
-    const url = `ws://localhost:8000/ws/deliveries/new-quotes/`;
+    const protocolWS = protocol || (window.location.protocol === 'https:' ? 'wss' : 'ws');
+    const url = `${protocolWS}://${host || window.location.host}/ws/deliveries/new-quotes/`;
 
 
     useEffect(() => {

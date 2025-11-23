@@ -1,4 +1,5 @@
 import { createClerkClient } from "@clerk/astro/server";
+import { toJSON } from "@scripts/formDataToJson";
 import { ActionError } from "astro/actions/runtime/shared.js";
 import { defineAction } from "astro:actions";
 import { API_USERS, URL_LOCAL_BACKEND } from 'astro:env/client';
@@ -48,6 +49,47 @@ export const User = {
                 }
                 throw new ActionError({
                     message: 'Error inesperado al obtener el usuario desde el action',
+                    code: 'INTERNAL_SERVER_ERROR',
+                });
+            }
+        }
+    }),
+    register: defineAction({
+        accept: 'form',
+        handler: async (formData, { locals }) => {
+            try {
+                const token = await locals.auth().getToken({
+                    template: "jwt-back-hermez",
+                });
+
+                if (token === null) {
+                    throw new Error("Token not found");
+                }
+
+                const payload = toJSON(formData);
+                const response = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    throw new ActionError({
+                        message: 'Error al guardar los datos',
+                        code: 'BAD_REQUEST',
+                    });
+                }
+
+                return { success: true };
+            } catch (error) {
+                if (error instanceof ActionError) {
+                    throw error;
+                }
+                throw new ActionError({
+                    message: 'Error inesperado al registrar el usuario',
                     code: 'INTERNAL_SERVER_ERROR',
                 });
             }
@@ -189,45 +231,17 @@ export const User = {
                     });
                 }
 
-                // se elimina el usuario de la base de datos
-                const token = await locals.auth().getToken({
-                    template: "jwt-back-hermez",
+                const clerkClient = createClerkClient({
+                    secretKey: import.meta.env.CLERK_SECRET_KEY,
                 });
+                await clerkClient.users.deleteUser(userId);
 
-                const response = await fetch(
-                    `${URL_LOCAL_BACKEND}/${API_USERS}/me/delete/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
+                return { success: true, message: 'Usuario eliminado con éxito', code: 'OK' };
 
-                if (!response.ok) {
-                    const responseData = await response.json();
-                    const message = Object.values(responseData).join(', ');
-                    throw new ActionError({
-                        message: message || 'Error al eliminar el usuario en la base de datos',
-                        code: 'INTERNAL_SERVER_ERROR',
-                    });
-                }
-
-                if (response.status === 204) {
-                    // se elimina el usuario de clerk
-                    const clerkClient = createClerkClient({
-                        secretKey: import.meta.env.CLERK_SECRET_KEY,
-                    });
-                    await clerkClient.users.deleteUser(userId);
-
-                    return { success: true, message: 'Usuario eliminado con éxito', code: 'OK' };
-                }
-
-                throw new ActionError({
-                    message: `Este mensaje no se deberia ver, el usuario no fue eliminado de Clerk, el servidor respondio con ${response.status}`,
-                    code: 'GONE',
-                })
             } catch (error) {
-                console.error('Error al eliminar usuario:', error);
+                if (error instanceof ActionError) {
+                    throw error;
+                }
                 throw new ActionError({
                     message: 'Error al eliminar el usuario',
                     code: 'INTERNAL_SERVER_ERROR',

@@ -1,8 +1,8 @@
 ---
 import HomeClientePage from "@components/roles/client/home/HomePage.astro";
-import UserRegistrationForm from "../components/user/UserRegistrationForm.astro";
-import Layout from "@layouts/Layout.astro";
 import HomeDeleveryPage from "@components/roles/delivery/home/HomePage.astro";
+import Layout from "@layouts/Layout.astro";
+import UserRegistrationForm from "../components/user/UserRegistrationForm.astro";
 
 const { userId } = Astro.locals.auth();
 
@@ -12,6 +12,8 @@ if (!userId) {
 
 const isClient = Astro.locals.userRole === "User";
 const userExistsAPI = Astro.locals.userExistsAPI;
+
+console.log(userExistsAPI)
 ---
 
 <Layout sizeLogo="md" title="Inicio - Hermez" class="flex flex-col gap-4">

@@ -1,10 +1,10 @@
 // Conexión simple con WebSocket nativo en un hook
 import { useEffect, useRef, useState } from 'react';
 
-export function useOfferByQuote({ token, quoteId }: { token?: string, quoteId?: string }) {
+export function useOfferByQuote({ token, quoteId, protocol, host }: { token?: string, quoteId?: string, protocol?: string, host?: string }) {
     const [offer, setOffer] = useState<any[]>([]);
     const wsRef = useRef<WebSocket>(null);
-    const url = `ws://localhost:8000/ws/deliveries/quotes/${quoteId}/`;
+    const url = `ws://${protocol || 'http'}://${host || 'localhost:4321'}/ws/deliveries/quotes/${quoteId}/`;
 
     if (!token) {
         throw new Error('Token is required for WebSocket connection');
