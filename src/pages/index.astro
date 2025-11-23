@@ -12,22 +12,37 @@ if (!userId) {
 
 const isClient = Astro.locals.userRole === "User";
 const userExistsAPI = Astro.locals.userExistsAPI;
-
-console.log(userExistsAPI)
+const dataUser = Astro.locals.dataUser;
 ---
 
 <Layout sizeLogo="md" title="Inicio - Hermez" class="flex flex-col gap-4">
-  <section>
-    {
-      userExistsAPI ? (
-        isClient ? (
-          <HomeClientePage />
-        ) : (
-          <HomeDeleveryPage />
-        )
-      ) : (
-        <UserRegistrationForm userId={userId!} />
-      )
-    }
-  </section>
+  {
+    !dataUser ? (
+      <div
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+        role="alert"
+      >
+        <strong class="font-bold">Error inesperado:</strong>
+        <span class="block sm:inline"
+          >Hemos detectado un problema que no debería haber ocurrido. Por favor,
+          intenta de nuevo más tarde.</span
+        >
+      </div>
+
+    ) : (
+      <section>
+        {
+          userExistsAPI ? (
+            isClient ? (
+              <HomeClientePage />
+            ) : (
+              <HomeDeleveryPage />
+            )
+          ) : (
+            <UserRegistrationForm />
+          )
+        }
+      </section>
+    )
+  }
 </Layout>

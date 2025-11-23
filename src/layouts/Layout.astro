@@ -15,6 +15,7 @@ interface LayoutProps {
 const { title = "Hermez Domicilio", class: className = "", sizeLogo } = Astro.props as LayoutProps;
 
 const orgId: string | null = Astro.locals.orgId;
+console.log(orgId)
 ---
 
 <!doctype html>

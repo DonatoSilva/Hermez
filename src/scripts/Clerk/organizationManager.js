@@ -4,7 +4,7 @@ import { navigate } from "astro:transitions/client"
 
 
 export const handleOrganizationSelect = async (organizationId) => {
-
+    console.log(organizationId)
     if (!organizationId) {
         throw new Error('Organization ID is required')
     }

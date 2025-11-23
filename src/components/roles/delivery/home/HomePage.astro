@@ -8,6 +8,7 @@ import personaAburrida from "public/images/persona-aburrida.png";
 import sillaCasco from "public/images/silla-y-casco.png";
 import { QuoteContent } from "../deliveryQuote/QuoteContent";
 
+
 const frasesVacios = [
   "Rayos, ¡tenemos una mala racha! De seguro en unos minutos explota el chat.",
   "Nada como un café mientras el celular se cobija… ¡y el primer pedido llega!",
@@ -42,6 +43,9 @@ const token =
 
 const protocol = Astro.request.headers.get("protocol") || "http";
 const host = Astro.request.headers.get("host") || "localhost:4321";
+
+
+const { current_vehicle } = Astro.locals.dataUser!
 ---
 
 <section>
@@ -78,7 +82,8 @@ const host = Astro.request.headers.get("host") || "localhost:4321";
         </div>
       </div>
     </div>
-    <QuoteContent token={!token ? undefined : token} client:visible protocol={protocol} host={host}>
+    {
+      current_vehicle ? (<QuoteContent token={!token ? undefined : token} client:visible protocol={protocol} host={host}>
       <Banner title="No hay pedidos disponibles" className="min-w-full gap-4">
         <p
           slot="optional-content"
@@ -95,6 +100,25 @@ const host = Astro.request.headers.get("host") || "localhost:4321";
           format="webp"
         />
       </Banner>
-    </QuoteContent>
+    </QuoteContent>) : (
+      <Banner title="No tienes un vehículo activo" className="min-w-full gap-4">
+        <p
+          slot="optional-content"
+          class="text-H-blue-100 text-balance text-base font-normal max-w-prose z-10"
+        >
+          Para empezar a recibir pedidos, registra o activa un vehículo desde tu perfil.
+        </p>
+        <Button href="/settings?section=vehicles" slot="button" variant={"default"} className="max-w-fit" color="text-H-blue-100 border border-H-blue-100 border-dashed">Registra un vehículo</Button>
+        <Image
+          src={sillaCasco}
+          slot="image"
+          class="min-w-26 w-full max-w-48 h-full object-cover z-0 transition-all md:max-w-62 blur-xs md:blur-none"
+          alt="Imagen decorativa para cuando no hay vehículo activo"
+          sizes="250px"
+          format="webp"
+        />
+      </Banner>
+    )
+    }
   </div>
 </section>

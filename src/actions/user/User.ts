@@ -56,7 +56,7 @@ export const User = {
     }),
     register: defineAction({
         accept: 'form',
-        handler: async (formData, { locals }) => {
+        handler: async (formData, { locals }) => { 
             try {
                 const token = await locals.auth().getToken({
                     template: "jwt-back-hermez",
@@ -67,8 +67,8 @@ export const User = {
                 }
 
                 const payload = toJSON(formData);
-                const response = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/`, {
-                    method: 'POST',
+                const response = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/update/`, {
+                    method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`,

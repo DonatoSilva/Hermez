@@ -2,12 +2,27 @@
 /// <reference types="astro/client" />
 
 export { };
+interface User {
+    userid: string;
+    gender: 'male' | 'female' | 'other' | null;
+    phone: string | null;
+    age: number | null;
+    role: 'client' | 'delivery' | null;
+    is_online: boolean;
+    is_available: boolean;
+    current_vehicle: string | null; // Assuming this refers to the vehicle's ID
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    image_url: string | null;
+}
 
 
 declare global {
     namespace App {
         interface Locals extends ClerkLocals {
             userRole: "User" | "Domiciliary" | null;
+            dataUser: User | null;
             orgId: string | null;
             userExistsAPI: boolean;
         }
