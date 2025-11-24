@@ -1,12 +1,13 @@
 
 // Conexión simple con WebSocket nativo en un hook
+import { URL_LOCAL_BACKEND } from 'astro:env/client';
 import { useEffect, useRef, useState } from 'react';
 
 export function useDeliveryQuotesSocket({ token, protocol, host }: { token?: string, protocol?: string, host?: string }) {
     const [quotes, setQuotes] = useState<any[]>([]);
     const wsRef = useRef<WebSocket>(null);
-    const protocolWS = protocol || (window.location.protocol === 'https:' ? 'wss' : 'ws');
-    const url = `${protocolWS}://${host || window.location.host}/ws/deliveries/new-quotes/`;
+    const protocolWS ='ws';
+    const url = `${protocolWS}://${URL_LOCAL_BACKEND.split("/").pop()}/ws/deliveries/new-quotes/`;
 
 
     useEffect(() => {

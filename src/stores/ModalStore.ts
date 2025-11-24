@@ -1,4 +1,4 @@
-import { deepMap } from 'nanostores';
+import { deepMap } from '@nanostores/deepmap';
 
 export interface DataKey {
     isOpen: boolean;

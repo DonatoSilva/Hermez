@@ -5,7 +5,6 @@ document.addEventListener("astro:page-load", () => {
     const url = new URL(window.location.href)
     if (url.searchParams.has("org")) {
         const orgId = document.documentElement.getAttribute("data-org-id")
-        console.log(orgId)
         if (orgId) {
             handleOrganizationSelect(orgId)
         }

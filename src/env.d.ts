@@ -4,6 +4,7 @@
 export { };
 interface User {
     userid: string;
+    username: string;
     gender: 'male' | 'female' | 'other' | null;
     phone: string | null;
     age: number | null;
@@ -36,6 +37,8 @@ interface ImportMetaEnv {
     readonly ID_ORG_DOMICILIARY: string;
     readonly ID_ORG_CLIENT: string;
     readonly URL_LOCAL_BACKEND: string;
+    readonly URL_TUNNEL_BACKEND: string;
+    readonly URL_LOCAL_FRONTEND: string;
     readonly API_USERS: string;
     readonly API_ADDRESSES: string;
     readonly API_DELIVERY_REQUESTS: string;

@@ -19,38 +19,42 @@ export const onRequest = clerkMiddleware(
         locals.dataUser = null
         locals.userExistsAPI = true
         
-        /// obteniendo los datos del usuario
-        const token = await auth().getToken({
-            template: 'jwt-back-hermez'
-        })
-        const res = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        const [data] = await res.json()
-        locals.dataUser = data
-        
-        const hasUserDataCookie = cookies.get('data-user')?.value
-        if (userId && hasUserDataCookie !== userId) {
-            let userExists = false
+        if (userId) {
+            /// obteniendo los datos del usuario
+            const token = await auth().getToken({
+                template: 'jwt-back-hermez'
+            })
+            const res = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            
+            const responseData = await res.json()
+            const data = Array.isArray(responseData) ? responseData[0] : responseData
+            locals.dataUser = data
+            
+            const hasUserDataCookie = cookies.get('data-user')?.value
+            if (hasUserDataCookie !== userId) {
+                let userExists = false
 
-            try {
-                if (res.status === 404 || !res.ok) {
+                try {
+                    if (res.status === 404 || !res.ok) {
+                        userExists = false
+                    } else if (data.userid !== userId || !data.gender || !data.phone || !data.age) {
+                        userExists = false
+                    } else {
+                        userExists = true
+                        /// guardamos la existencia del usuario en la cookie para evitar futuras consultas
+                        cookies.set('data-user', userId, { path: '/', maxAge: 60 * 60 * 24 * 15 }) // 15 days
+                    }
+
+                } catch (e) {
                     userExists = false
-                } else if (data.userid !== userId || !data.gender || !data.phone || !data.age) {
-                    userExists = false
-                } else {
-                    userExists = true
-                    /// guardamos la existencia del usuario en la cookie para evitar futuras consultas
-                    cookies.set('data-user', userId, { path: '/', maxAge: 60 * 60 * 24 * 15 }) // 15 days
                 }
 
-            } catch (e) {
-                userExists = false
+                locals.userExistsAPI = userExists
             }
-
-            locals.userExistsAPI = userExists
         }
 
         switch (sessionClaims?.o?.id) {

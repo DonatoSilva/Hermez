@@ -1,3 +1,4 @@
+import { toJSON } from "@scripts/formDataToJson";
 import { ActionError, defineAction } from "astro:actions";
 import { API_DELIVERY_REQUESTS, URL_LOCAL_BACKEND } from "astro:env/client";
 import { z } from "astro:schema";
@@ -176,11 +177,8 @@ export const Delivery = {
                     });
                 }
 
-                const quoteId = formData.get('quoteId')?.toString();
-                const proposedPrice = Number(formData.get('proposedPrice') ?? 0);
-                const message = formData.get('message')?.toString() ?? '';
-
-                if (proposedPrice <= 0) {
+                const payload = toJSON(formData);
+                if (payload.proposed_price <= 0) {
                     throw new ActionError({
                         code: "BAD_REQUEST",
                         message: "El precio propuesto debe ser un número positivo",
@@ -188,7 +186,7 @@ export const Delivery = {
                 }
 
                 const response = await fetch(
-                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/quotes/${quoteId}/offers/`,
+                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/quotes/${payload.quote_id}/offers/`,
                     {
                         method: 'POST',
                         headers: {
@@ -197,9 +195,7 @@ export const Delivery = {
                         },
                         body: JSON.stringify({
                             delivery_person_id: userId,
-                            quote_id: quoteId,
-                            proposed_price: proposedPrice,
-                            message: message,
+                            ...payload
                         }),
                     });
 

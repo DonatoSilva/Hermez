@@ -1,10 +1,13 @@
 // Conexión simple con WebSocket nativo en un hook
+import { URL_LOCAL_BACKEND } from 'astro:env/client';
 import { useEffect, useRef, useState } from 'react';
 
 export function useOfferByQuote({ token, quoteId, protocol, host }: { token?: string, quoteId?: string, protocol?: string, host?: string }) {
     const [offer, setOffer] = useState<any[]>([]);
     const wsRef = useRef<WebSocket>(null);
-    const url = `ws://${protocol || 'http'}://${host || 'localhost:4321'}/ws/deliveries/quotes/${quoteId}/`;
+    const protocolWS ='ws';
+        
+    const url = `${protocolWS}://${URL_LOCAL_BACKEND.split("/").pop()}/ws/deliveries/quotes/${quoteId}/`;
 
     if (!token) {
         throw new Error('Token is required for WebSocket connection');
@@ -16,6 +19,14 @@ export function useOfferByQuote({ token, quoteId, protocol, host }: { token?: st
         wsRef.current.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
+
+                if (data.type === 'initial_quotes') {
+                    setOffer(data.quotes[0].offers);
+                }
+
+                if (data.type === 'offer_deleted') {
+                    setOffer((prev: any[]) => prev.filter((offer) => offer.id !== data.data.id));
+                }
 
                 if (data.type === 'offer_made') {
                     setOffer((prev: any[]) => [data.data, ...prev]);

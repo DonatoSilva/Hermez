@@ -1,7 +1,7 @@
-import { withState } from '@astrojs/react/actions';
+import { statusModal } from '@stores/ModalStore';
 import { toastStore } from '@stores/StoreToast';
 import { actions } from 'astro:actions';
-import React, { startTransition, useActionState } from 'react';
+import React from 'react';
 import QuoteItem from './QuoteItem';
 import { useDeliveryQuotesSocket } from './hooks/useDeliveryQuotesSockets';
 
@@ -13,27 +13,25 @@ export interface QuoteContentProps {
 }
 
 export function QuoteContent({ token, children, protocol, host }: QuoteContentProps) {
-    const [reqAddOffer, addOffer, pendingAddOffer = true] = useActionState(
-            withState(actions.Delivery.addOfferByQuote),
-            { data: [], error: undefined }
-        )
     const { quotes } = useDeliveryQuotesSocket({ token, protocol, host });
 
     if (quotes.length === 0) return <>{children}</>;
 
     const handleNoInterested = (id: string) => {
-        console.log('No estoy interesado en la cotización con ID:', id);
+        
     }
 
     const handleAcceptQuote = async (id: string, proposedPrice: number) => {
-        console.log('Acepto la cotización con ID:', id);
         try {
             const form = new FormData();
-            form.set('quoteId', id);
-            form.set('proposedPrice', proposedPrice.toString());
-            const result =  startTransition(() => {
-                addOffer(form)
-                });
+            form.set('quote_id', id);
+            form.set('proposed_price', proposedPrice.toString());
+            const { error } =  await actions.Delivery.addOfferByQuote(form)
+
+            if (error) {
+                throw error;
+            }
+
             toastStore.set({
                 visible: true,
                 type: 'success',
@@ -54,7 +52,13 @@ export function QuoteContent({ token, children, protocol, host }: QuoteContentPr
     }
 
     const handleOffer = (id: string) => {
-        console.log('Oferto la cotización con ID:', id);
+        statusModal.setKey('quoteOffer', {
+            isOpen: true,
+            metaData: {
+                title: 'Realizar oferta',
+                'quote_id': id,
+            }
+        })
     }
 
     return (
