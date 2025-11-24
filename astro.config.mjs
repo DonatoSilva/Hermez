@@ -49,6 +49,14 @@ export default defineConfig({
         context: "client",
         access: "public",
       }),
+      URL_TUNNEL_BACKEND: envField.string({
+        context: "client",
+        access: "public",
+      }),
+      URL_LOCAL_FRONTEND: envField.string({
+        context: "client",
+        access: "public",
+      }),
     }
   },
   integrations: [clerk({

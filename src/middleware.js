@@ -28,7 +28,15 @@ export const onRequest = clerkMiddleware(
                 'Authorization': `Bearer ${token}`
             }
         })
-        const [data] = await res.json()
+        
+        let data = null
+        try {
+            const responseData = await res.json()
+            data = Array.isArray(responseData) ? responseData[0] : responseData
+        } catch (e) {
+            console.error("Error parsing user data:", e)
+        }
+
         locals.dataUser = data
         
         const hasUserDataCookie = cookies.get('data-user')?.value
@@ -38,7 +46,7 @@ export const onRequest = clerkMiddleware(
             try {
                 if (res.status === 404 || !res.ok) {
                     userExists = false
-                } else if (data.userid !== userId || !data.gender || !data.phone || !data.age) {
+                } else if (data?.userid !== userId || !data?.gender || !data?.phone || !data?.age) {
                     userExists = false
                 } else {
                     userExists = true

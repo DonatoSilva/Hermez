@@ -18,7 +18,7 @@ export function QuoteContent({ token, children, protocol, host }: QuoteContentPr
             { data: [], error: undefined }
         )
     const { quotes } = useDeliveryQuotesSocket({ token, protocol, host });
-
+    
     if (quotes.length === 0) return <>{children}</>;
 
     const handleNoInterested = (id: string) => {
@@ -59,7 +59,7 @@ export function QuoteContent({ token, children, protocol, host }: QuoteContentPr
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {quotes.map((quote) => (
+            {quotes.map((quote: any) => (
                 <QuoteItem key={quote.id} {...quote} onInterested={handleAcceptQuote} onNotInterested={handleNoInterested} onOffer={handleOffer} />
             ))}
         </div>

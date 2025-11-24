@@ -219,6 +219,51 @@ export const User = {
             };
         }
     }),
+    toggleAvailability: defineAction({
+        input: z.object({}),
+        handler: async ({}, { locals }) => {
+            const token = await locals.auth().getToken({
+                template: "jwt-back-hermez",
+            });
+
+            if (!token) {
+                throw new ActionError({
+                    message: 'No autenticado',
+                    code: 'UNAUTHORIZED',
+                });
+            }
+
+            try {
+                const response = await fetch(
+                    `${URL_LOCAL_BACKEND}/${API_USERS}/me/toggle-availability/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new ActionError({
+                        message: data.detail || 'Error al cambiar la disponibilidad',
+                        code: 'BAD_REQUEST',
+                    });
+                }
+
+                return { is_available: data.is_available };
+            } catch (error) {
+                if (error instanceof ActionError) {
+                    throw error;
+                }
+                throw new ActionError({
+                    message: 'Error inesperado al cambiar la disponibilidad',
+                    code: 'INTERNAL_SERVER_ERROR',
+                });
+            }
+        }
+    }),
     delete: defineAction({
         input: z.object({}),
         handler: async (input, { locals }) => {
