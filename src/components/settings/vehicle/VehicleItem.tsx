@@ -23,7 +23,7 @@ export default function VehicleItem({ vehicle, onEdit, onDelete, onSelectVehicle
 
   const color = vehicle.color || "#1d4ed8"; // fallback a azul de la empresa
   const textColor = getContrastText(color);
-  const type = vehicle.type?.name.toLowerCase() || "";
+  const type = vehicle?.type?.name.toLowerCase() ;
   const typeInfo = typeVehicle[type as keyof typeof typeVehicle];
 
   const handleSelectVehicle = useCallback(() => {

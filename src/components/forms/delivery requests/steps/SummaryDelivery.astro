@@ -110,13 +110,13 @@ import FromToPoint from "../ui/FromToPoint.astro";
 
 <script>
   import { statusModal } from "@stores/ModalStore";
-  import { toastStore } from "@stores/StoreToast";
-  import { navigate } from "astro/virtual-modules/transitions-router.js";
-  import { actions } from "astro:actions";
-  import {
-    deliveryData,
-    resetStepper,
-  } from "../../../../stores/deliveryStepper";
+import { toastStore } from "@stores/StoreToast";
+import { navigate } from "astro/virtual-modules/transitions-router.js";
+import { actions } from "astro:actions";
+import {
+deliveryData,
+resetStepper,
+} from "../../../../stores/deliveryStepper";
 
   document.addEventListener("astro:page-load", () => {
     /// elementos del resumen
@@ -296,7 +296,6 @@ import FromToPoint from "../ui/FromToPoint.astro";
       }
 
       if (data) {
-        console.log(data);
         resetStepper();
         statusModal.setKey("new-delivery", {
           isOpen: false,

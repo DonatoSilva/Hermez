@@ -21,6 +21,14 @@ export function useOfferByQuote({ token, quoteId, protocol, host }: { token?: st
             try {
                 const data = JSON.parse(event.data);
 
+                if (data.type === 'initial_quotes') {
+                    setOffer(data.quotes[0].offers);
+                }
+
+                if (data.type === 'offer_deleted') {
+                    setOffer((prev: any[]) => prev.filter((offer) => offer.id !== data.data.id));
+                }
+
                 if (data.type === 'offer_made') {
                     setOffer((prev: any[]) => [data.data, ...prev]);
                 }

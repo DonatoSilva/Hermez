@@ -7,6 +7,7 @@ export interface QuoteItemProps {
   pickup_address: string;
   delivery_address: string;
   client_price: number;
+  client: Record<string, any>;
   category: string;
   distance: string;
   deliveryType: string;
@@ -20,6 +21,7 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
   pickup_address,
   delivery_address,
   client_price,
+  client,
   category,
   distance,
   onNotInterested,
@@ -62,7 +64,7 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
       </div>
 
       <div className="flex flex-wrap justify-between items-center gap-2">
-        <div className="text-sm text-gray-700 flex items-center gap-2 dark:text-gray-300"><Icon icon="solar:user-bold" width="24" height="24" /> {"Prueba"}</div>
+        <div className="text-sm text-gray-700 flex items-center gap-2 dark:text-gray-300"><Icon icon="solar:user-bold" width="24" height="24" /> <b>{client.username}</b></div>
         <div className="flex gap-2 ml-auto">
           <button
             onClick={handleNotInterested}

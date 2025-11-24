@@ -11,7 +11,7 @@ interface Props {
 const { className = "", visibleSize = "md", position = "down" } = Astro.props;
 
 const role: "User" | "Domiciliary" | null = Astro.locals.userRole;
-const { username, imageUrl: avatarUrl } = (await Astro.locals.currentUser()) ?? {};
+const { username, image_url: avatarUrl } = Astro.locals.dataUser!;
 
 const visibility =
   {

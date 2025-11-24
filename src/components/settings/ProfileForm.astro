@@ -1,33 +1,16 @@
 ---
 import Button from "@components/forms/elements/buttons/Button.astro";
 import InputField from "@components/forms/elements/inputs/InputField.astro";
-import { server as actions } from "@actions/index";
 import SelectField from "@components/forms/elements/selects/SelectField.astro";
 
-interface Props {
+interface ProfileFormProps {
   isActive: boolean;
 }
 
-const { isActive } = Astro.props as Props;
+const { isActive } = Astro.props as ProfileFormProps;
 
-const { imageUrl, firstName, lastName, emailAddresses, username } =
-  (await Astro.locals.currentUser()) ?? {};
-let userData = { gender: "notFound", phone: "notFound", age: 0 };
-
-const { data, error } = await Astro.callAction(actions.User.get, {});
-
-if (error) {
-  console.error("Backend error:", error);
-  throw new Error("Backend error: " + error);
-} else {
-  userData = data ?? {
-    gender: "notFound",
-    phone: "notFound",
-    age: 0,
-  };
-}
-
-const { gender, phone, age } = userData;
+const data = Astro.locals.dataUser!;
+const { image_url, first_name, last_name, email, gender, phone, age, username } = data;
 ---
 
 <section class:list={["min-w-full", { active: isActive }]} id="section-profile">
@@ -41,7 +24,7 @@ const { gender, phone, age } = userData;
       class="flex flex-col md:flex-row lg:flex-col items-center justify-center gap-4 lg:col-span-1"
     >
       <img
-        src={imageUrl ?? "/images/clienteFelizEnPuerta-min.webp"}
+        src={image_url ?? "/images/clienteFelizEnPuerta-min.webp"}
         alt="avatar"
         class="w-full h-full object-cover max-w-24 max-h-24 lg:max-w-62 lg:max-h-62 rounded-md bg-H-blue-100"
       />
@@ -66,15 +49,15 @@ const { gender, phone, age } = userData;
     <div class="flex flex-col gap-4 lg:col-span-1">
       <InputField textLabel="Nombre de usuario" name="username" type="text" value={username} />
 
-      <InputField textLabel="Nombre" name="firstName" type="text" value={firstName} />
+      <InputField textLabel="Nombre" name="firstName" type="text" value={first_name} />
 
-      <InputField textLabel="Apellido" name="lastName" type="text" value={lastName} />
+      <InputField textLabel="Apellido" name="lastName" type="text" value={last_name} />
 
       <label class="flex flex-col gap-2">
         <span class="text-sm">Correo</span>
         <input
           class="border border-gray-300 rounded-md px-3 py-2 bg-gray-100 dark:bg-gray-700 cursor-crosshair"
-          value={emailAddresses?.[0]?.emailAddress}
+          value={email}
           readonly
         />
         <span class="text-xs text-gray-500">El correo no se puede modificar desde aquí</span>
@@ -120,9 +103,9 @@ const { gender, phone, age } = userData;
 
 <script>
   import { $userStore } from "@clerk/astro/client";
-  import { actions } from "astro:actions";
-  import { navigate } from "astro:transitions/client";
-  import { toastStore } from "src/stores/StoreToast";
+import { actions } from "astro:actions";
+import { navigate } from "astro:transitions/client";
+import { toastStore } from "src/stores/StoreToast";
 
   function initProfileForm() {
     // Lógica para la gestión de la imagen de perfil

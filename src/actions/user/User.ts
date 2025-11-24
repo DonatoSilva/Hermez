@@ -21,7 +21,7 @@ export const User = {
                 }
 
                 const response = await fetch(
-                    `${URL_LOCAL_BACKEND}/${API_USERS}/me`, {
+                    `${URL_LOCAL_BACKEND}/${API_USERS}/me/`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -82,8 +82,9 @@ export const User = {
                         code: 'BAD_REQUEST',
                     });
                 }
-
-                return { success: true };
+                
+                const data = await response.json();
+                return { success: true, message: data.message };
             } catch (error) {
                 if (error instanceof ActionError) {
                     throw error;
