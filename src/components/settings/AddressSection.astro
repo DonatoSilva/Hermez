@@ -130,13 +130,14 @@ const { isActive } = Astro.props as AddressSectionProps;
 
 <script>
   import type { Actions } from "astro:actions";
-  import { actions } from "astro:actions";
-  import { listenKeys } from "nanostores";
-  import { addressToEdit } from "src/stores/AddressStore";
-  import { changeStatusModal, getStatusModal, statusModal } from "src/stores/ModalStore";
-  import { toastStore } from "src/stores/StoreToast";
+import { actions } from "astro:actions";
+import { listenKeys } from "nanostores";
+import { addressToEdit, allAddresses } from "src/stores/AddressStore";
+import { changeStatusModal, getStatusModal, statusModal } from "src/stores/ModalStore";
+import { toastStore } from "src/stores/StoreToast";
 
   document.addEventListener("astro:page-load", () => {
+    let action: string | null = null;
     let fnAction:
       | Actions["User"]["Address"]["create"]
       | Actions["User"]["Address"]["update"]
@@ -187,7 +188,7 @@ const { isActive } = Astro.props as AddressSectionProps;
     });
 
     listenKeys(statusModal, ["form-address"], (newValues) => {
-      const { action } = newValues["form-address"];
+      action = newValues["form-address"].action || null;
 
       const span = btnActionAddress?.getElementsByTagName("span")[0];
       if (span)
@@ -245,6 +246,19 @@ const { isActive } = Astro.props as AddressSectionProps;
           autoClose: true,
           autoCloseDelay: 3000,
         });
+
+        if (action == "create") {
+          allAddresses.set([
+            ...allAddresses.get(),
+            data || {},
+          ]);
+        } else {
+          allAddresses.set(
+            allAddresses.get().map((address) =>
+              address.addressId === data?.addressId ? data : address
+            )
+          );
+        }
       } catch (err) {
         toastStore.set({
           visible: true,

@@ -13,16 +13,22 @@ function getContrastText(hex?: string | null) {
   return lum > 0.6 ? "#111827" : "#ffffff"; // dark text for light bg, white for dark bg
 }
 
-export default function VehicleItem({ vehicle, onEdit, onDelete }: {
+export default function VehicleItem({ vehicle, onEdit, onDelete, onSelectVehicle, isSelected }: {
   vehicle: VehicleItemProps;
   onEdit: (vehicleID: VehicleItemProps["vehicleId"]) => void;
   onDelete: (vehicleID: VehicleItemProps["vehicleId"]) => void;
+  onSelectVehicle?: (vehicleID: VehicleItemProps["vehicleId"]) => void;
+  isSelected?: boolean;
 }) {
 
   const color = vehicle.color || "#1d4ed8"; // fallback a azul de la empresa
   const textColor = getContrastText(color);
-  const type = vehicle.type?.id || "180647da-e54e-441c-ae7b-8e5d078f31b5";
+  const type = vehicle.type?.name.toLowerCase() || "";
   const typeInfo = typeVehicle[type as keyof typeof typeVehicle];
+
+  const handleSelectVehicle = useCallback(() => {
+    onSelectVehicle?.(vehicle.vehicleId);
+  }, [onSelectVehicle]);
 
   // Función para editar la dirección
   const handleEdit = useCallback(() => {
@@ -47,6 +53,9 @@ export default function VehicleItem({ vehicle, onEdit, onDelete }: {
           <div className="text-gray-500 ">Año: {vehicle.year}</div>
         </div>
         <div className="flex items-center gap-2 ${color}">
+          <button onClick={handleSelectVehicle} className="p-2 rounded-md bg-gray-100 hover:bg-gray-200 cursor-pointer">
+            {isSelected ? <Icon icon="solar:key-square-2-bold" width="20" height="20" /> : <Icon icon="solar:key-bold-duotone" width="20" height="20" />}
+          </button>
           <button onClick={handleEdit} className="p-2 rounded-md bg-gray-100 hover:bg-gray-200 cursor-pointer">
             <Icon icon="iconamoon:edit-fill" width="20" height="20" />
           </button>

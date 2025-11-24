@@ -190,7 +190,9 @@ export default function ContentAddresses({ emptyFavorite, emptyPoints }: { empty
                     <div className="flex flex-col gap-4">
                         {
                             addresses?.length > 0 ? addresses.map((address) => (
-                                <AddressItem key={address.addressId + "-all"} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
+                                address.isFavorite ? null : (
+                                    <AddressItem key={address.addressId + "-all"} {...address} handleDelete={handleDelete} handleEdit={handleEdit} handleFavorite={handleFavorite} />
+                                )
                             )) : emptyPoints
                         }
                     </div>

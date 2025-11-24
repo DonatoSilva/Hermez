@@ -28,6 +28,7 @@ export interface VehicleItemProps {
   color?: string | null;
   type?: {
     id: VehicleType["id"];
+    name: VehicleType["name"];
   };
   isVerified?: boolean;
 }

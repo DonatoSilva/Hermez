@@ -153,4 +153,34 @@ export const Vehicle = {
       return { message: "Vehículo eliminado con éxito" };
     },
   }),
+
+  setCurrentVehicle: defineAction({
+    accept: "form",
+    handler: async (fd, context) => {
+      const vehicleId = fd.get("vehicleId")?.toString();
+      if (!vehicleId) throw new ActionError({ code: "BAD_REQUEST", message: "vehicleId requerido" });
+
+      const { getToken } = await context.locals.auth?.();
+      const token = await getToken?.({ template: "jwt-back-hermez" });
+      if (!token) throw new ActionError({ code: "UNAUTHORIZED", message: "No autenticado" });
+
+      const res = await fetch(`${URL_LOCAL_BACKEND}/${API_USERS}/me/set-current-vehicle/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ vehicle_id: vehicleId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        const message = data?.detail || "No se pudo establecer el vehículo actual";
+        throw new ActionError({ code: "BAD_REQUEST", message });
+      }
+
+      return data;
+    },
+  }),
 };

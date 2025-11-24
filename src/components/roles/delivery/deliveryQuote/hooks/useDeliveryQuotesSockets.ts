@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 export function useDeliveryQuotesSocket({ token, protocol, host }: { token?: string, protocol?: string, host?: string }) {
     const [quotes, setQuotes] = useState<any[]>([]);
     const wsRef = useRef<WebSocket>(null);
-    const protocolWS = protocol || (window.location.protocol === 'https:' ? 'wss' : 'ws');
+    const protocolWS = 'wss'; /// en caso de que el protocolo sea http, se usara ws y si es https, se usara wss
     const url = `${protocolWS}://${host || window.location.host}/ws/deliveries/new-quotes/`;
 
 

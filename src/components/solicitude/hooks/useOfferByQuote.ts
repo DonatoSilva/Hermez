@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 export function useOfferByQuote({ token, quoteId, protocol, host }: { token?: string, quoteId?: string, protocol?: string, host?: string }) {
     const [offer, setOffer] = useState<any[]>([]);
     const wsRef = useRef<WebSocket>(null);
-    const url = `ws://${protocol || 'http'}://${host || 'localhost:4321'}/ws/deliveries/quotes/${quoteId}/`;
+    const protocolWS = 'wss'; /// en caso de que el protocolo sea http, se usara ws y si es https, se usara wss
+    const url = `${protocolWS}://${host || window.location.host}/ws/deliveries/quotes/${quoteId}/`;
 
     if (!token) {
         throw new Error('Token is required for WebSocket connection');

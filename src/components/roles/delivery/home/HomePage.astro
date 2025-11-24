@@ -83,24 +83,26 @@ const { current_vehicle } = Astro.locals.dataUser!
       </div>
     </div>
     {
-      current_vehicle ? (<QuoteContent token={!token ? undefined : token} client:visible protocol={protocol} host={host}>
-      <Banner title="No hay pedidos disponibles" className="min-w-full gap-4">
-        <p
-          slot="optional-content"
-          class="text-H-blue-100 text-balance text-base font-normal max-w-prose z-10"
-        >
-          {fraseVacio}
-        </p>
-        <Image
-          src={img}
-          slot="image"
-          class="min-w-26 w-full max-w-48 h-full object-cover z-0 transition-all md:max-w-62 blur-xs md:blur-none"
-          alt="Imagen decorativa para cuando no hay pedidos"
-          sizes="250px"
-          format="webp"
-        />
-      </Banner>
-    </QuoteContent>) : (
+      current_vehicle ? (
+      <QuoteContent token={!token ? undefined : token} client:load protocol={protocol} host={host}>
+        <Banner title="No hay pedidos disponibles" className="min-w-full gap-4">
+          <p
+            slot="optional-content"
+            class="text-H-blue-100 text-balance text-base font-normal max-w-prose z-10"
+          >
+            {fraseVacio}
+          </p>
+          <Image
+            src={img}
+            slot="image"
+            class="min-w-26 w-full max-w-48 h-full object-cover z-0 transition-all md:max-w-62 blur-xs md:blur-none"
+            alt="Imagen decorativa para cuando no hay pedidos"
+            sizes="250px"
+            format="webp"
+          />
+        </Banner>
+      </QuoteContent>
+    ) : (
       <Banner title="No tienes un vehículo activo" className="min-w-full gap-4">
         <p
           slot="optional-content"

@@ -2,12 +2,12 @@ import { withState } from "@astrojs/react/actions";
 import VehicleItem from "@components/settings/vehicle/VehicleItem";
 import VehicleItemSkeleton from "@components/settings/vehicle/VehicleItemSkeleton";
 import { useStore } from "@nanostores/react";
+import { changeStatusModal, getStatusModal } from "@stores/ModalStore";
+import { toastStore } from "@stores/StoreToast";
 import { allVehicles as $allVehicles, vehicleToEdit } from "@stores/VehicleStore";
 import { actions } from "astro:actions";
 import { startTransition, useActionState, useCallback, useEffect, useState } from "react";
 import type { VehicleItemProps } from "../../../types/Vehicle/VehicleProps";
-import { toastStore } from "@stores/StoreToast";
-import { changeStatusModal, getStatusModal } from "@stores/ModalStore";
 
 const SkeletonVehicles = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -17,8 +17,11 @@ const SkeletonVehicles = () => (
   </div>
 );
 
-export default function ContentVehicles({ emptyVehicle }: { emptyVehicle?: React.JSX.Element }) {
+export default function ContentVehicles({ emptyVehicle, currentVehicle }: { emptyVehicle?: React.JSX.Element, currentVehicle?: string | null }) {
   const [initLoad, setInitLoad] = useState(true);
+  const [currentVehicleId, setCurrentVehicleId] = useState(currentVehicle);
+
+  console.log(currentVehicleId);
 
   const allVehicles = useStore($allVehicles);
   const [vehiclesResp, loadVehicles, isLoading] = useActionState(withState(actions.User.Vehicle.get), {
@@ -103,6 +106,41 @@ export default function ContentVehicles({ emptyVehicle }: { emptyVehicle?: React
   }, [allVehicles]);
 
 
+  const handleSelectVehicle = useCallback(async (vehicleId: string) => {
+    const form = new FormData();
+    form.set('vehicleId', vehicleId);
+    const { data, error } = await actions.User.Vehicle.setCurrentVehicle(form);
+    if (error) {
+      toastStore.set({
+        visible: true,
+        message: error.message,
+        type: 'error',
+        autoClose: true,
+        autoCloseDelay: 3000,
+      });
+      return;
+    }
+    
+    if (data) {
+      toastStore.set({
+        visible: true,
+        message: 'Vehículo seleccionado con éxito',
+        type: 'success',
+        autoClose: true,
+        autoCloseDelay: 3000,
+      });
+
+      $allVehicles.set(allVehicles.map(v => {
+        if (v.vehicleId === vehicleId) {
+          setCurrentVehicleId(vehicleId);
+          return v;
+        };
+        return v;
+      }));
+    }
+  }, [allVehicles]);
+
+
   if (isLoading || initLoad) {
     return <SkeletonVehicles />
   }
@@ -113,11 +151,11 @@ export default function ContentVehicles({ emptyVehicle }: { emptyVehicle?: React
     );
   }
 
-
+  console.log(allVehicles);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {allVehicles?.map(v => (
-        <VehicleItem key={v.vehicleId} vehicle={v} onEdit={handleEdit} onDelete={handleDelete} />
+        <VehicleItem key={v.vehicleId} vehicle={v} onEdit={handleEdit} onDelete={handleDelete} onSelectVehicle={handleSelectVehicle} isSelected={currentVehicleId?.includes(v.licensePlate)}/>
       ))}
     </div>
   );

@@ -23,6 +23,7 @@ if (error) {
 }
 
 const { isActive } = Astro.props as VehicleSectionProps;
+const { current_vehicle = null } = Astro.locals.dataUser!;
 ---
 
 <section
@@ -42,7 +43,7 @@ const { isActive } = Astro.props as VehicleSectionProps;
   </header>
 
   <div class="mt-4">
-    <ContentVehicles client:only>
+    <ContentVehicles client:visible currentVehicle={current_vehicle}>
       <EmptyAddress
         slot="emptyVehicle"
         title="Sin vehículos registrados aún."
@@ -157,13 +158,14 @@ const { isActive } = Astro.props as VehicleSectionProps;
 
 <script>
   import type { Actions } from "astro:actions";
-  import { actions } from "astro:actions";
-  import { listenKeys } from "nanostores";
-  import { changeStatusModal, getStatusModal, statusModal } from "src/stores/ModalStore";
-  import { toastStore } from "src/stores/StoreToast";
-  import { vehicleToEdit } from "src/stores/VehicleStore";
+import { actions } from "astro:actions";
+import { listenKeys } from "nanostores";
+import { changeStatusModal, getStatusModal, statusModal } from "src/stores/ModalStore";
+import { toastStore } from "src/stores/StoreToast";
+import { allVehicles, vehicleToEdit } from "src/stores/VehicleStore";
 
   document.addEventListener("astro:page-load", () => {
+    let action: string | null = null;
     let fnAction:
       | Actions["User"]["Vehicle"]["create"]
       | Actions["User"]["Vehicle"]["update"]
@@ -214,8 +216,7 @@ const { isActive } = Astro.props as VehicleSectionProps;
     });
 
     listenKeys(statusModal, ["form-vehicle"], (newValues) => {
-      const { action } = newValues["form-vehicle"];
-
+      action = newValues["form-vehicle"].action || null;
       const span = btnActionVehicle?.getElementsByTagName("span")[0];
       if (span) span.textContent = action == "create" ? "Guardar vehículo" : "Actualizar vehículo";
 
@@ -236,6 +237,10 @@ const { isActive } = Astro.props as VehicleSectionProps;
 
           if (element) element.value = (data as any)[key] || "";
         });
+
+      const selectType = document?.querySelector("[name='type_id']") as HTMLSelectElement | null;
+      if (selectType) selectType.value = data?.type?.id || "";
+      selectType?.dispatchEvent(new Event("input"));
     });
 
     formVehicle?.addEventListener("change", () => {
@@ -268,6 +273,19 @@ const { isActive } = Astro.props as VehicleSectionProps;
           autoClose: true,
           autoCloseDelay: 3000,
         });
+
+        if (action == "create") {
+          allVehicles.set([
+            ...allVehicles.get(),
+            data || {},
+          ]);
+        } else {
+          allVehicles.set(
+            allVehicles.get().map((vehicle) =>
+              vehicle.vehicleId === data?.vehicleId ? data : vehicle
+            )
+          );
+        }
       } catch (err) {
         toastStore.set({
           visible: true,
