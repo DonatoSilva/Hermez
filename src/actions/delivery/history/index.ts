@@ -4,9 +4,7 @@ import { z } from "astro:schema";
 
 export const History =  {
     getHistorys: defineAction({
-        input: z.object({
-            
-        }),
+        input: z.object({}),
         handler: async (_, { locals }) => {
             const userId = await locals.auth().userId;
             

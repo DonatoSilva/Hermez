@@ -5,11 +5,12 @@ import { typeDelivery } from "src/types/Delivery/DeliveryProps";
 import type { HistoryItemProps } from "src/types/history/HistoryItemProps";
 
 export const statusColors = {
-  pendiente: "bg-yellow-500 text-white dark:text-yellow-900",
-  "en camino": "bg-blue-500 text-white dark:text-blue-900",
-  entregado: "bg-green-500 text-white dark:text-green-900",
-  pago: "bg-purple-500 text-white dark:text-purple-900",
-  cancelado: "bg-red-500 text-white dark:text-red-900",
+  assigned: "bg-yellow-500 text-white dark:text-yellow-900",
+  picked_up: "bg-orange-500 text-white dark:text-orange-900",
+  in_transit: "bg-blue-500 text-white dark:text-blue-900",
+  delivered: "bg-green-500 text-white dark:text-green-900",
+  paid: "bg-purple-500 text-white dark:text-purple-900",
+  cancelled: "bg-red-500 text-white dark:text-red-900",
 };
 
 

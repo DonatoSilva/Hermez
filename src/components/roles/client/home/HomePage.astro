@@ -32,7 +32,7 @@ import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
 >
   <div class="flex flex-row justify-between items-center w-full">
     <h3 class="font-normal text-H-black dark:text-white text-2xl text-nowrap">
-      Historial solicitudes
+      Solicitudes
     </h3>
     <button
       id="btnHistoryToday"
@@ -55,10 +55,10 @@ import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
   <ContentItems>
     <HistoryItem
       id="add32"
-      type="paquete"
+      type="paquetes"
       price="4000"
       address="Cra 10 #20-30 ➝ Av. 5 #45-12"
-      status="en camino"
+      status="En camino"
       client:visible
     />
   </ContentItems>
@@ -68,7 +68,7 @@ import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
 </section>
 <script>
   import { navigate } from "astro:transitions/client";
-  import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
+import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
 
   function main() {
     const historyToday = document.getElementById("historyToday");

@@ -1,5 +1,8 @@
 import { Icon } from "@iconify-icon/react";
-import { useState } from "react";
+import { totalOffers } from "@stores/deliveryStepper";
+import { toastStore } from "@stores/StoreToast";
+import { actions } from "astro:actions";
+import { useEffect, useState } from "react";
 import { useOfferByQuote } from "./hooks/useOfferByQuote";
 
 type BannerOfferProps = {
@@ -24,6 +27,10 @@ export function BannerOffer({
   const { offer } = useOfferByQuote({ token, quoteId, protocol, host });
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  useEffect(() => {
+    totalOffers.set(offer.length);
+  }, [offer]);
+
   const handleNext = () => {
     if (currentIndex < offer.length - 1) {
       setCurrentIndex(currentIndex + 1);
@@ -41,9 +48,29 @@ export function BannerOffer({
     // TODO: Implement accept logic
   };
 
-  const handleCancel = (offerId: string) => {
-    console.log('Cancelar oferta:', offerId);
-    // TODO: Implement cancel logic
+  const handleCancel = async (offerId: string) => {
+    const { error } = await actions.Delivery.rejectOffer({ offerId });
+
+    if (error) {
+      toastStore.set({
+        message: error.message,
+        type: "error",
+        emoji: "❌",
+        visible: true,
+        autoClose: true,
+        autoCloseDelay: 2500,
+      })
+      return;
+    }
+
+    toastStore.set({
+      message: "Oferta rechazada",
+      type: "success",
+      emoji: "✅",
+      visible: true,
+      autoClose: true,
+      autoCloseDelay: 2500,
+    })
   };
 
   return (

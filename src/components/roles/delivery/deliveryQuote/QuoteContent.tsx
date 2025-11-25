@@ -1,5 +1,8 @@
+import { Icon } from '@iconify-icon/react';
+import { useStore } from '@nanostores/react';
 import { statusModal } from '@stores/ModalStore';
 import { toastStore } from '@stores/StoreToast';
+import { isAvailable as isAvailableStore } from '@stores/UserStore';
 import { actions } from 'astro:actions';
 import React from 'react';
 import QuoteItem from './QuoteItem';
@@ -14,8 +17,7 @@ export interface QuoteContentProps {
 
 export function QuoteContent({ token, children, protocol, host }: QuoteContentProps) {
     const { quotes } = useDeliveryQuotesSocket({ token, protocol, host });
-    
-    if (quotes.length === 0) return <>{children}</>;
+    const isAvailable = useStore(isAvailableStore);
 
     const handleNoInterested = (id: string) => {
         
@@ -62,10 +64,17 @@ export function QuoteContent({ token, children, protocol, host }: QuoteContentPr
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {quotes.map((quote: any) => (
-                <QuoteItem key={quote.id} {...quote} onInterested={handleAcceptQuote} onNotInterested={handleNoInterested} onOffer={handleOffer} />
-            ))}
-        </div>
+        isAvailable ? (
+            quotes.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {quotes.map((quote: any) => <QuoteItem key={quote.id} {...quote} onInterested={handleAcceptQuote} onNotInterested={handleNoInterested} onOffer={handleOffer} />)}
+            </div> : <>{children}</>
+        ) : (
+            <div className="flex flex-col items-center justify-center p-4 text-center">
+                <Icon icon="solar:bar-chair-bold-duotone" width="65" height="65" />
+                <p className="text-lg font-semibold text-gray-700">
+                    Tu estado está en ocupado, por lo tanto no recibes solicitudes de domicilios
+                </p>
+            </div>
+        )
     );
 }

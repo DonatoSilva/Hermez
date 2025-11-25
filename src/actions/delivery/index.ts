@@ -2,6 +2,7 @@ import { toJSON } from "@scripts/formDataToJson";
 import { ActionError, defineAction } from "astro:actions";
 import { API_DELIVERY_REQUESTS, URL_LOCAL_BACKEND } from "astro:env/client";
 import { z } from "astro:schema";
+import { History } from "./history";
 
 export const Delivery = {
     addQuote: defineAction({
@@ -217,6 +218,51 @@ export const Delivery = {
             }
         }
     }),
+    rejectOffer: defineAction({
+        input: z.object({
+            offerId: z.string().uuid(),
+        }),
+        handler: async ({ offerId }, { locals }) => {
+            try {
+                const token = await locals.auth().getToken({
+                    template: "jwt-back-hermez",
+                });
+
+                if (!token) {
+                    throw new ActionError({
+                        code: "UNAUTHORIZED",
+                        message: "No se pudo obtener el token de autenticación",
+                    });
+                }
+
+                const response = await fetch(
+                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/offers/${offerId}/reject/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Error response:", errorData);
+                    throw new ActionError({
+                        code: "BAD_REQUEST",
+                        message: errorData.detail || "No se pudo rechazar la oferta",
+                    });
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error al rechazar la oferta:', error);
+                if (error instanceof ActionError) throw error;
+                throw new ActionError({ message: 'Error inesperado al rechazar la oferta', code: 'INTERNAL_SERVER_ERROR' });
+            }
+        }
+    }),
+
     getDeliveryTypes: defineAction({
         input: z.object({}),
         handler: async (input, { locals }) => {
@@ -257,4 +303,5 @@ export const Delivery = {
             }
         }
     }),
+    History
 }

@@ -4,15 +4,62 @@ import ContentItems from "@components/history/ContentItems.astro";
 import HistoryFilterSection from "@components/history/HistoryFilterSection.astro";
 import HistoryItem from "@components/history/historyItem/HistoryItem";
 import UserRegistrationForm from "@components/user/UserRegistrationForm.astro";
+import { Icon } from "astro-icon/components";
+import { actions } from "astro:actions";
+import type { DeliveryProps, typeDelivery } from "src/types/Delivery/DeliveryProps";
 import Layout from "../../layouts/Layout.astro";
 
 const { userId } = Astro.locals.auth();
 
 if (!userId) {
-  Astro.redirect("/sign-in");
+  return Astro.redirect("/sign-in");
 }
 
 const userExistsAPI = Astro.locals.userExistsAPI;
+
+const {data: rawHistory, error} = await Astro.callAction(actions.Delivery.History.getHistorys, {})
+const history = (rawHistory as DeliveryProps[]) || [];
+
+let groupedHistory: Record<string, DeliveryProps[]> = {};
+let groupOrder: string[] = [];
+const hasHistory = history.length > 0;
+
+if (hasHistory) {
+  // Sort history by completed_at desc
+  history.sort((a, b) => {
+      const dateA = new Date(a.completed_at || a.created_at).getTime();
+      const dateB = new Date(b.completed_at || b.created_at).getTime();
+      return dateB - dateA;
+  });
+
+  const getGroupLabel = (dateString: string | null | undefined) => {
+    if (!dateString) return "Sin fecha";
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const isSameDay = (d1: Date, d2: Date) =>
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+
+    if (isSameDay(date, today)) return "hoy";
+    if (isSameDay(date, yesterday)) return "ayer";
+    
+    return date.toLocaleDateString('es-CO', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  };
+
+  // Grouping
+  history.forEach(item => {
+      const label = getGroupLabel(item.completed_at || item.created_at);
+      if (!groupedHistory[label]) {
+          groupedHistory[label] = [];
+          groupOrder.push(label);
+      }
+      groupedHistory[label].push(item);
+  });
+}
 ---
 
 <Layout sizeLogo="md" title="Historia - Hermez" class="flex flex-col gap-4">
@@ -22,34 +69,41 @@ const userExistsAPI = Astro.locals.userExistsAPI;
         <HistoryFilterSection filterText="Historial de pedidos" />
         <AccumulatedAmountCard amount="$12.000" description="Monto acumulado" />
         <section class="flex gap-4 flex-col">
-          <h5 class="text-lg font-semibold">Historial de solicitudes</h5>
-          <p class="text-sm text-gray-600 dark:text-gray-400">hoy</p>
-          <ContentItems>
-            <HistoryItem
-              id="add32"
-              type="paquete"
-              price={"10000"}
-              address="Calle Falsa 123"
-              status="cancelado"
-              client:visible
-            />
-            <HistoryItem
-              id="add33"
-              type="documentos"
-              price={"10000"}
-              address="Calle Falsa 123"
-              status="cancelado"
-              client:visible
-            />
-            <HistoryItem
-              id="add34"
-              type="documentos"
-              price={"10000"}
-              address="Calle 5 #20-30"
-              status="cancelado"
-              client:visible
-            />
-          </ContentItems>
+          <h5 class="text-lg font-semibold">Historial de domicilios</h5>
+         {
+          error ? (
+            <div class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded-lg relative" role="alert">
+              <strong class="font-bold">¡Error!</strong>
+              <span class="block sm:inline">Error al cargar el historial.</span>
+            </div>
+          ) : (
+            hasHistory ? (
+              groupOrder.map(label => (
+                 <>
+                   <p class="text-sm text-gray-600 dark:text-gray-400 capitalize">{label}</p>
+                   <ContentItems>
+                     {groupedHistory[label].map((item: DeliveryProps) => (
+                     <HistoryItem
+                       id={item.id}
+                       type={item.category_id as keyof typeof typeDelivery}
+                       price={item.final_price.toString()}
+                       address={item.delivery_address}
+                       status={item.status}
+                       client:visible
+                     />
+                   ))}
+                 </ContentItems>
+               </>
+             ))
+          ) : (
+              <div class="flex flex-col items-center justify-center p-8 text-gray-500 dark:text-gray-400">
+                <Icon name="solar:clipboard-remove-bold-duotone" class="w-16 h-16 mb-4" />
+                <p class="text-lg font-medium">No hay historial de pedidos</p>
+                <p class="text-sm text-center mt-2">Cuando realices un pedido, aparecerá aquí.</p>
+              </div>
+          )
+         )
+        }
         </section>
       </main>
     ) : (

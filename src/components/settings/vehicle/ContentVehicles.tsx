@@ -151,11 +151,11 @@ export default function ContentVehicles({ emptyVehicle, currentVehicle }: { empt
     );
   }
 
-  console.log(allVehicles);
+  console.log(currentVehicleId);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {allVehicles?.map(v => (
-        <VehicleItem key={v.vehicleId} vehicle={v} onEdit={handleEdit} onDelete={handleDelete} onSelectVehicle={handleSelectVehicle} isSelected={currentVehicleId?.includes(v.licensePlate)}/>
+        <VehicleItem key={v.vehicleId} vehicle={v} onEdit={handleEdit} onDelete={handleDelete} onSelectVehicle={handleSelectVehicle} isSelected={currentVehicleId === v.vehicleId}/>
       ))}
     </div>
   );

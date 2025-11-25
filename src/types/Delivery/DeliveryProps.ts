@@ -2,19 +2,15 @@
 export const typeDelivery = {
     mercado: {
         label: "Mercado",
-        image: "/images/tiposEnvio/mercado.png",
+        image: "/images/tiposEnvio/mercado-min.png",
     },
-    comida: {
-        label: "Comida",
-        image: "/images/tiposEnvio/comida.png",
-    },
-    alimento: {
-        label: "Alimento",
-        image: "/images/tiposEnvio/alimento.png",
+    alimentos: {
+        label: "Alimentos",
+        image: "/images/tiposEnvio/alimentos-min.png",
     },
     persona: {
         label: "Persona",
-        image: "/images/tiposEnvio/persona.png",
+        image: "/images/tiposEnvio/persona-min.png",
     },
     documentos: {
         label: "Documentos",
@@ -56,15 +52,25 @@ export interface QuoteProps {
 }
 
 export interface DeliveryProps {
-    origin: string
-    pickup_address: string
-    delivery_address: string
-    vehicleType: string | null
-    category: string | null
-    notes: string
-    payment_method: "efectivo" | "nequi"
-    price: number
-    observations?: string[],
-    estimated_weight?: number | null, // Peso estimado
-    estimated_size?: string | null, // Tamaño estimado
+    id: string;
+    client_id: string;
+    delivery_person_id?: string | null;
+    pickup_address: string;
+    delivery_address: string;
+    category_id: string;
+    description?: string | null;
+    estimated_weight?: number | null;
+    estimated_size?: string | null;
+    final_price: number;
+    vehicle_id?: string | null;
+    status: "assigned" | "picked_up" | "in_transit" | "delivered" | "paid" | "cancelled";
+    created_at: string;
+    updated_at: string;
+    completed_at?: string | null;
+    cancelled_at?: string | null;
+    history_id: string;
+    // Fields from the original interface that might still be relevant for frontend but not directly mapped to Django model
+    payment_method?: "efectivo" | "nequi" | null; // Assuming this is part of the quote/offer, not the permanent delivery model
+    observations?: string[]; // Assuming this is client-side notes
+    origin?: string; // Assuming this is client-side data
 }

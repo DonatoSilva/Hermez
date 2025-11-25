@@ -61,7 +61,7 @@ const { current_vehicle, userid, is_available } = Astro.locals.dataUser!
       <div class="flex flex-row justify-between p-4 w-full md:max-w-md">
         <div class="flex flex-col justify-start items-start w-full">
           <span class="text-H-blue-900 font-bold">Estado:</span>
-          <span id="availabilityStatus" class="text-H-blue-700">{is_available ? "Disponible" : "Ocupado"}</span>
+          <span id="availabilityStatus" data-is-available={is_available} class="text-H-blue-700">{is_available ? "Disponible" : "Ocupado"}</span>
         </div>
         <Button id="changeAvailability" variant={"default"}
           >Cambiar<Icon
@@ -115,36 +115,7 @@ const { current_vehicle, userid, is_available } = Astro.locals.dataUser!
     }
   </div>
 </section>
-<script>
-  import { toastStore } from '@stores/StoreToast';
-import { actions } from 'astro:actions';
 
-  document.addEventListener('astro:page-load', () => {
-    const changeAvailability = document.getElementById('changeAvailability');
-    const availabilityStatus = document.getElementById('availabilityStatus');
-
-    changeAvailability?.addEventListener('click', async () => {
-      const { data, error } = await actions.User.toggleAvailability({});
-      
-      if (error) {
-        toastStore.set({
-          title: 'Error, al cambiar estado',
-          autoClose: true,
-          emoji: '❌',
-          visible: true,
-          message: error.message,
-          type: 'error',
-          autoCloseDelay: 2500,
-        })
-        return;
-      }
-
-      if (data && availabilityStatus) {
-        availabilityStatus.textContent = data.is_available ? 'Disponible' : 'Ocupado';
-      }
-    });
-  })
-</script>
 <Modal keyModal="quoteOffer" title="Lanzar oferta" client:load>
   <div class="flex flex-col gap-4 p-4">
     <InputField
@@ -180,12 +151,16 @@ import { actions } from 'astro:actions';
 <script>
 import { statusModal } from "@stores/ModalStore"
 import { toastStore } from "@stores/StoreToast"
+import { isAvailable as isAvailableStore } from "@stores/UserStore"
 import { actions } from "astro:actions"
 
   document.addEventListener('astro:page-load', () => {
     const cancelOffer = document.getElementById('cancel-offer')
     const sendOffer = document.getElementById('send-offer')
 
+    const availabilityStatus = document.getElementById('availabilityStatus')
+    const isAvailable = availabilityStatus?.getAttribute('data-is-available') === 'true'
+    isAvailableStore.set(isAvailable)
     const proposedPrice: HTMLInputElement = document.getElementById('proposed_price') as HTMLInputElement
       const message: HTMLInputElement = document.getElementById('message') as HTMLInputElement
 
@@ -239,5 +214,29 @@ import { actions } from "astro:actions"
         })
       }
     })
+
+    const changeAvailability = document.getElementById('changeAvailability');
+
+    changeAvailability?.addEventListener('click', async () => {
+      const { data, error } = await actions.User.toggleAvailability({});
+      
+      if (error) {
+        toastStore.set({
+          title: 'Error, al cambiar estado',
+          autoClose: true,
+          emoji: '❌',
+          visible: true,
+          message: error.message,
+          type: 'error',
+          autoCloseDelay: 2500,
+        })
+        return;
+      }
+
+      if (data && availabilityStatus) {
+        availabilityStatus.textContent = data.is_available ? 'Disponible' : 'Ocupado';
+        isAvailableStore.set(data.is_available);
+      }
+    });
   })
 </script>

@@ -6,8 +6,12 @@ export function useOfferByQuote({ token, quoteId, protocol, host }: { token?: st
     const [offer, setOffer] = useState<any[]>([]);
     const wsRef = useRef<WebSocket>(null);
 
-    const url = host == URL_LOCAL_FRONTEND ? URL_LOCAL_BACKEND : URL_TUNNEL_BACKEND;
-    const protocolWS = host == URL_LOCAL_FRONTEND ? 'ws' : 'wss'; /// en caso de que el protocolo sea http, se usara ws y si es https, se usara wss
+    const url_backend = URL_LOCAL_BACKEND.split('http://')[1]
+    const url_tunnel = URL_TUNNEL_BACKEND.split('https://')[1]
+    const url_local = URL_LOCAL_FRONTEND.split('http://')[1]
+
+    const url = host?.includes(url_local) ? url_backend : url_tunnel;
+    const protocolWS = host?.includes(url_local) ? 'ws' : 'wss'; /// en caso de que el protocolo sea http, se usara ws y si es https, se usara wss
     const urlWS = `${protocolWS}://${url}/ws/deliveries/quotes/${quoteId}/`;
 
     if (!token) {

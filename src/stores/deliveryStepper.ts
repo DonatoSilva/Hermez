@@ -5,6 +5,8 @@ import type { QuoteProps } from "src/types/Delivery/DeliveryProps"
 export const totalSteps = 3
 export const currentStep = atom<number>(1)
 
+export const totalOffers = atom<number>(0)
+
 
 export const titleStep = computed(currentStep, (s) => {
   switch (s) {

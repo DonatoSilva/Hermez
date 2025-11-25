@@ -11,7 +11,7 @@ interface User {
     role: 'client' | 'delivery' | null;
     is_online: boolean;
     is_available: boolean;
-    current_vehicle: string | null; // Assuming this refers to the vehicle's ID
+    current_vehicle: Record<string, any> | null; // Assuming this refers to the vehicle's ID
     first_name: string | null;
     last_name: string | null;
     email: string | null;

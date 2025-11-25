@@ -43,7 +43,7 @@ const { current_vehicle = null } = Astro.locals.dataUser!;
   </header>
 
   <div class="mt-4">
-    <ContentVehicles client:visible currentVehicle={current_vehicle}>
+    <ContentVehicles client:visible currentVehicle={current_vehicle?.vehicleId!}>
       <EmptyAddress
         slot="emptyVehicle"
         title="Sin vehículos registrados aún."
