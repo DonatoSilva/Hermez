@@ -5,12 +5,12 @@ import { typeDelivery } from "src/types/Delivery/DeliveryProps";
 import type { HistoryItemProps } from "src/types/history/HistoryItemProps";
 
 export const statusColors = {
-  assigned: "bg-yellow-500 text-white dark:text-yellow-900",
-  picked_up: "bg-orange-500 text-white dark:text-orange-900",
-  in_transit: "bg-blue-500 text-white dark:text-blue-900",
-  delivered: "bg-green-500 text-white dark:text-green-900",
-  paid: "bg-purple-500 text-white dark:text-purple-900",
-  cancelled: "bg-red-500 text-white dark:text-red-900",
+  assigned: {color: "bg-yellow-500 text-white dark:text-yellow-900", label: "Asignado"},
+  picked_up: {color: "bg-orange-500 text-white dark:text-orange-900", label: "Recogido"},
+  in_transit: {color: "bg-blue-500 text-white dark:text-blue-900", label: "En tránsito"},
+  delivered: {color: "bg-green-500 text-white dark:text-green-900", label: "Entregado"},
+  paid: {color: "bg-purple-500 text-white dark:text-purple-900", label: "Pagado"},
+  cancelled: {color: "bg-red-500 text-white dark:text-red-900", label: "Cancelado"},
 };
 
 
@@ -43,9 +43,9 @@ function HistoryItem({ price, address, status, type, id }: HistoryItemProps) {
           </span>
         </div>
         <div
-          className={`group-hover:shadow-lg dark:shadow-H-blue-700 transition-shadow duration-150 absolute top-0 right-0 px-3 py-1 rounded-bl-lg rounded-tr-lg text-sm font-medium ${statusColors[status]}`}
+          className={`group-hover:shadow-lg dark:shadow-H-blue-700 transition-shadow duration-150 absolute top-0 right-0 px-3 py-1 rounded-bl-lg rounded-tr-lg text-sm font-medium ${statusColors[status].color}`}
         >
-          {status}
+          {statusColors[status].label}
         </div>
       </div>
       <Modal keyModal={id} title="Detalles del pedido">

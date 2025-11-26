@@ -1,3 +1,4 @@
+import type { User } from '../User/UserProps';
 
 export const typeDelivery = {
     mercado: {
@@ -73,4 +74,56 @@ export interface DeliveryProps {
     payment_method?: "efectivo" | "nequi" | null; // Assuming this is part of the quote/offer, not the permanent delivery model
     observations?: string[]; // Assuming this is client-side notes
     origin?: string; // Assuming this is client-side data
+}
+
+// Delivery Details Response (for delivery history endpoint)
+export interface DeliveryData {
+    id: string;
+    client: User;
+    delivery_person: User | null;
+    pickup_address: string;
+    delivery_address: string;
+    category: string;
+    description: string;
+    estimated_weight: string;
+    estimated_size: string;
+    final_price: string;
+    vehicle: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+    completed_at: string | null;
+    cancelled_at: string | null;
+}
+
+export interface Quote {
+    id: string;
+    client: User;
+    pickup_address: string;
+    delivery_address: string;
+    category: string;
+    description: string;
+    observations: string[];
+    estimated_weight: string;
+    estimated_size: string;
+    client_price: string;
+    payment_method: string;
+    status: string;
+    history_id: string;
+    expires_at: string | null;
+}
+
+export interface HistoryItem {
+    id: string;
+    quote: Quote | null;
+    delivery: DeliveryData | null;
+    event_type: string;
+    description: string;
+    changed_by: User;
+    created_at: string;
+}
+
+export interface DeliveryResponse {
+    delivery: DeliveryData;
+    history: HistoryItem[];
 }

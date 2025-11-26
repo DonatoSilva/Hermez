@@ -43,9 +43,29 @@ export function BannerOffer({
     }
   };
 
-  const handleAccept = (offerId: string) => {
-    console.log('Aceptar oferta:', offerId);
-    // TODO: Implement accept logic
+  const handleAccept = async (offerId: string) => {
+    const { error: acceptError } = await actions.Delivery.aceptOffert({ offerId });
+
+    if (acceptError) {
+      toastStore.set({
+        message: acceptError.message,
+        type: "error",
+        emoji: "❌",
+        visible: true,
+        autoClose: true,
+        autoCloseDelay: 2500,
+      })
+      return;
+    }
+
+    toastStore.set({
+      message: "Oferta aceptada",
+      type: "success",
+      emoji: "✅",
+      visible: true,
+      autoClose: true,
+      autoCloseDelay: 2500,
+    })
   };
 
   const handleCancel = async (offerId: string) => {
@@ -87,7 +107,7 @@ export function BannerOffer({
           </p>
         </div>
       ) : (
-        <div className="absolute top-0 left-[27px] w-[346px] h-[280px]">
+        <div className="absolute top-0 left-[27px] w-[500px] h-[280px]">
           {[...offer, ...offer].map((off: any, index: number) => {
             const isActive = index === currentIndex;
             const offset = index - currentIndex;
@@ -107,7 +127,7 @@ export function BannerOffer({
             return (
               <div
                 key={off.id ?? index}
-                className="absolute top-0 left-0 w-full rounded-[10px] bg-white shadow-lg dark:bg-slate-800 overflow-hidden transition-all duration-500 ease-out"
+                className="absolute top-0 left-0 w-full max-h-[280px] -translate-x-1/6 rounded-[10px] bg-white hover:shadow-md dark:bg-slate-800 overflow-hidden transition-all duration-500 ease-out"
                 style={{
                   zIndex,
                   transform: `translateY(${translateY}px) scale(${scale})`,
@@ -186,19 +206,14 @@ export function BannerOffer({
                     <button
                       type="button"
                       onClick={() => handleCancel(off.id)}
-                      className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-slate-600 dark:hover:bg-slate-500 dark:text-white transition-colors"
+                      className="flex-1 px-4 cursor-pointer py-2.5 rounded-lg text-sm font-medium bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-slate-600 dark:hover:bg-slate-500 dark:text-white transition-colors"
                     >
                       Cancelar
                     </button>
                     <button
                       type="button"
                       onClick={() => handleAccept(off.id)}
-                      disabled={!off.can_accept}
-                      className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                        off.can_accept
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-slate-600 dark:text-gray-400'
-                      }`}
+                      className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors bg-H-blue-500 hover:bg-H-blue-700 text-white"
                     >
                       Aceptar oferta
                     </button>

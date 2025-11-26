@@ -303,5 +303,148 @@ export const Delivery = {
             }
         }
     }),
+    aceptOffert: defineAction({
+        input: z.object({
+            offerId: z.string().uuid(),
+        }),
+        handler: async ({ offerId }, { locals }) => {
+            try {
+                const token = await locals.auth().getToken({
+                    template: "jwt-back-hermez",
+                });
+
+                if (!token) {
+                    throw new ActionError({
+                        code: "UNAUTHORIZED",
+                        message: "No se pudo obtener el token de autenticación",
+                    });
+                }
+
+                const response = await fetch(
+                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/offers/${offerId}/accept/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new ActionError({
+                        code: "BAD_REQUEST",
+                        message: "No se pudo aceptar la oferta",
+                    });
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error al aceptar la oferta:', error);
+                if (error instanceof ActionError) throw error;
+                throw new ActionError({ message: 'Error inesperado al aceptar la oferta', code: 'INTERNAL_SERVER_ERROR' });
+            }
+        }
+    }),
+    updateDeliveryStatus: defineAction({
+        accept: 'form',
+        handler: async (formData, { locals }) => {
+            try {
+                const token = await locals.auth().getToken({
+                    template: "jwt-back-hermez",
+                });
+
+                if (!token) {
+                    throw new ActionError({
+                        code: "UNAUTHORIZED",
+                        message: "No se pudo obtener el token de autenticación",
+                    });
+                }
+
+                const deliveryId = formData.get('deliveryId') as string;
+                const status = formData.get('status') as string;
+
+                if (!deliveryId || !status) {
+                    throw new ActionError({
+                        code: "BAD_REQUEST",
+                        message: "ID de entrega y estado son requeridos",
+                    });
+                }
+
+                const response = await fetch(
+                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/deliveries/${deliveryId}/status/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ status }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Error response:", errorData);
+                    throw new ActionError({
+                        code: "BAD_REQUEST",
+                        message: errorData.detail || "No se pudo actualizar el estado de la entrega",
+                    });
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error al actualizar estado de entrega:', error);
+                if (error instanceof ActionError) throw error;
+                throw new ActionError({ message: 'Error inesperado al actualizar el estado', code: 'INTERNAL_SERVER_ERROR' });
+            }
+        }
+    }),
+    cancelDelivery: defineAction({
+        input: z.object({
+            deliveryId: z.string().uuid(),
+        }),
+        handler: async ({ deliveryId }, { locals }) => {
+            try {
+                const token = await locals.auth().getToken({
+                    template: "jwt-back-hermez",
+                });
+
+                if (!token) {
+                    throw new ActionError({
+                        code: "UNAUTHORIZED",
+                        message: "No se pudo obtener el token de autenticación",
+                    });
+                }
+
+                const response = await fetch(
+                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/deliveries/${deliveryId}/cancel/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Error response:", errorData);
+                    
+                    throw new ActionError({
+                        code: response.status === 404 ? "NOT_FOUND" : "BAD_REQUEST",
+                        message: errorData.error || errorData.detail || "No se pudo cancelar el domicilio",
+                    });
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error al cancelar domicilio:', error);
+                if (error instanceof ActionError) throw error;
+                throw new ActionError({ 
+                    message: 'Error inesperado al cancelar el domicilio', 
+                    code: 'INTERNAL_SERVER_ERROR' 
+                });
+            }
+        }
+    }),
     History
 }

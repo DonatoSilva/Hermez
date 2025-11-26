@@ -30,7 +30,7 @@ const dataUser = Astro.locals.dataUser;
       </div>
 
     ) : (
-      <section>
+      <section class="w-full max-w-6xl mx-auto flex flex-col gap-8">
         {
           userExistsAPI ? (
             isClient ? (

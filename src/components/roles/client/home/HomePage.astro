@@ -1,12 +1,20 @@
 ---
 import Banner from "@components/banner/Banner.astro";
 import Button from "@components/forms/elements/buttons/Button.astro";
-import HistoryItem from "@components/history/historyItem/HistoryItem";
-import ContentItems from "@components/history/ContentItems.astro";
 import Modal from "@components/modals/Modal.tsx";
 import BodyForm from "@components/forms/delivery requests/BodyForm.astro";
+import { SolicitudesSection } from "./SolicitudesSection";
+import { DomiciliosSection } from "./DomiciliosSection";
 
-import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
+const { userId } = Astro.locals.auth();
+
+if (!userId) {
+  return Astro.redirect("/sign-in");
+}
+
+const token = (await Astro.locals.auth().getToken({ template: "jwt-back-hermez" })) ?? "";
+const protocol = Astro.request.headers.get("protocol") || "http";
+const host = Astro.request.headers.get("host") || "localhost:4321";
 ---
 
 <Banner title="Nosotros podemos" className="gap-4">
@@ -26,20 +34,34 @@ import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
     class="min-w-26 w-full max-w-48 h-full object-cover z-0 transition-all md:max-w-62 blur-xs"
   />
 </Banner>
+<!-- Sección de Solicitudes -->
 <section
-  id="historyToday"
+  id="solicitudes"
   class="box-border flex flex-col gap-[15px] items-start justify-start overflow-clip py-2.5 w-full"
 >
   <div class="flex flex-row justify-between items-center w-full">
     <h3 class="font-normal text-H-black dark:text-white text-2xl text-nowrap">
       Solicitudes
     </h3>
+  </div>
+  <SolicitudesSection token={token} userId={userId} protocol={protocol} host={host} client:visible />
+</section>
+
+<!-- Sección de Domicilios en proceso -->
+<section
+  id="domiciliosEnProceso"
+  class="box-border flex flex-col gap-[15px] items-start justify-start overflow-clip py-2.5 w-full"
+>
+  <div class="flex flex-row justify-between items-center w-full">
+    <h3 class="font-normal text-H-black dark:text-white text-2xl text-nowrap">
+      Domicilios en proceso
+    </h3>
     <button
       id="btnHistoryToday"
       type="button"
       class="ml-4 flex items-center gap-1 px-3 py-2 text-H-blue-300 hover:text-H-blue-900 transition-colors transform-border duration-300 text-sm border border-H-blue-300 hover:border-H-blue-500 rounded-3xl cursor-pointer"
     >
-      Mas
+      Ver todos
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="w-5 h-5 ml-1"
@@ -52,27 +74,18 @@ import BodyDetailsItem from "@components/history/deliverysDetails/BodyDetails";
       </svg>
     </button>
   </div>
-  <ContentItems>
-    <HistoryItem
-      id="add32"
-      type="paquetes"
-      price="4000"
-      address="Cra 10 #20-30 ➝ Av. 5 #45-12"
-      status="En camino"
-      client:visible
-    />
-  </ContentItems>
-  <Modal keyModal="new-delivery" title="Solicita un domicilio" client:load>
-    <BodyForm />
-  </Modal>
+  <DomiciliosSection token={token} userId={userId} protocol={protocol} host={host} client:visible />
 </section>
+<Modal keyModal="new-delivery" title="Solicita un domicilio" client:load>
+  <BodyForm />
+</Modal>
+
 <script>
   import { navigate } from "astro:transitions/client";
 import { changeStatusModal, getStatusModal } from "src/stores/ModalStore";
 
   function main() {
-    const historyToday = document.getElementById("historyToday");
-    const btnHistoryToday = historyToday?.querySelector("#btnHistoryToday");
+    const btnHistoryToday = document?.querySelector("#btnHistoryToday");
     const newDeliveryModal = document?.querySelector("#newDeliveryModal");
 
     if (!btnHistoryToday) return;

@@ -11,6 +11,8 @@ import personaAburrida from "public/images/persona-aburrida.png";
 import sillaCasco from "public/images/silla-y-casco.png";
 import { QuoteContent } from "../deliveryQuote/QuoteContent";
 import { PersonStats } from "../PersonStats";
+import { ActiveDeliveriesWrapper } from "../activeDeliveries/ActiveDeliveriesWrapper";
+
 
 
 const frasesVacios = [
@@ -75,24 +77,26 @@ const { current_vehicle, userid, is_available } = Astro.locals.dataUser!
     </div>
     {
       current_vehicle ? (
-      <QuoteContent token={!token ? undefined : token} client:load protocol={protocol} host={host}>
-        <Banner title="No hay pedidos disponibles" className="min-w-full gap-4">
-          <p
-            slot="optional-content"
-            class="text-H-blue-100 text-balance text-base font-normal max-w-prose z-10"
-          >
-            {fraseVacio}
-          </p>
-          <Image
-            src={img}
-            slot="image"
-            class="min-w-26 w-full max-w-48 h-full object-cover z-0 transition-all md:max-w-62 blur-xs md:blur-none"
-            alt="Imagen decorativa para cuando no hay pedidos"
-            sizes="250px"
-            format="webp"
-          />
-        </Banner>
-      </QuoteContent>
+      <ActiveDeliveriesWrapper token={token} userId={userid} protocol={protocol} host={host} client:load>
+        <QuoteContent token={!token ? undefined : token} client:load protocol={protocol} host={host}>
+          <Banner title="No hay pedidos disponibles" className="min-w-full gap-4">
+            <p
+              slot="optional-content"
+              class="text-H-blue-100 text-balance text-base font-normal max-w-prose z-10"
+            >
+              {fraseVacio}
+            </p>
+            <Image
+              src={img}
+              slot="image"
+              class="min-w-26 w-full max-w-48 h-full object-cover z-0 transition-all md:max-w-62 blur-xs md:blur-none"
+              alt="Imagen decorativa para cuando no hay pedidos"
+              sizes="250px"
+              format="webp"
+            />
+          </Banner>
+        </QuoteContent>
+      </ActiveDeliveriesWrapper>
     ) : (
       <Banner title="No tienes un vehículo activo" className="min-w-full gap-4">
         <p

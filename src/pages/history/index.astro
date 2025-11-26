@@ -6,7 +6,7 @@ import HistoryItem from "@components/history/historyItem/HistoryItem";
 import UserRegistrationForm from "@components/user/UserRegistrationForm.astro";
 import { Icon } from "astro-icon/components";
 import { actions } from "astro:actions";
-import type { DeliveryProps, typeDelivery } from "src/types/Delivery/DeliveryProps";
+import type { DeliveryProps } from "src/types/Delivery/DeliveryProps";
 import Layout from "../../layouts/Layout.astro";
 
 const { userId } = Astro.locals.auth();
@@ -65,7 +65,7 @@ if (hasHistory) {
 <Layout sizeLogo="md" title="Historia - Hermez" class="flex flex-col gap-4">
   {
     userExistsAPI ? (
-      <main class="w-full flex flex-col gap-3">
+      <main class="w-full flex flex-col gap-8 max-w-6xl mx-auto">
         <HistoryFilterSection filterText="Historial de pedidos" />
         <AccumulatedAmountCard amount="$12.000" description="Monto acumulado" />
         <section class="flex gap-4 flex-col">
@@ -82,16 +82,19 @@ if (hasHistory) {
                  <>
                    <p class="text-sm text-gray-600 dark:text-gray-400 capitalize">{label}</p>
                    <ContentItems>
-                     {groupedHistory[label].map((item: DeliveryProps) => (
-                     <HistoryItem
-                       id={item.id}
-                       type={item.category_id as keyof typeof typeDelivery}
-                       price={item.final_price.toString()}
-                       address={item.delivery_address}
-                       status={item.status}
-                       client:visible
-                     />
-                   ))}
+                     {groupedHistory[label].map((item: DeliveryProps) => {
+                        console.log(item)
+                        return (
+                          <HistoryItem
+                            id={item.id}
+                            type={item.category.toLowerCase()}
+                            price={item.final_price.toString()}
+                            address={item.delivery_address}
+                            status={item.status}
+                            client:visible
+                          />
+                        )
+                     })}
                  </ContentItems>
                </>
              ))
