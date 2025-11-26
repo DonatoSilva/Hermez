@@ -44,7 +44,7 @@ export function BannerOffer({
   };
 
   const handleAccept = async (offerId: string) => {
-    const { error: acceptError } = await actions.Delivery.aceptOffert({ offerId });
+    const { data, error: acceptError } = await actions.Delivery.aceptOffert({ offerId });
 
     if (acceptError) {
       toastStore.set({
@@ -58,14 +58,19 @@ export function BannerOffer({
       return;
     }
 
-    toastStore.set({
-      message: "Oferta aceptada",
-      type: "success",
-      emoji: "✅",
-      visible: true,
-      autoClose: true,
-      autoCloseDelay: 2500,
-    })
+    
+    // Si la respuesta contiene delivery_id, redirigir al inicio
+    if (data?.delivery_id) {
+      toastStore.set({
+        message: "Oferta aceptada",
+        type: "success",
+        emoji: "✅",
+        visible: true,
+        autoClose: true,
+        autoCloseDelay: 2500,
+      })
+      window.location.href = "/";
+    }
   };
 
   const handleCancel = async (offerId: string) => {
@@ -213,7 +218,7 @@ export function BannerOffer({
                     <button
                       type="button"
                       onClick={() => handleAccept(off.id)}
-                      className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors bg-H-blue-500 hover:bg-H-blue-700 text-white"
+                      className="flex-1 px-4 cursor-pointer py-2.5 rounded-lg text-sm font-medium transition-colors bg-H-blue-500 hover:bg-H-blue-700 text-white"
                     >
                       Aceptar oferta
                     </button>
