@@ -346,8 +346,10 @@ export const Delivery = {
         }
     }),
     updateDeliveryStatus: defineAction({
-        accept: 'form',
-        handler: async (formData, { locals }) => {
+        input: z.object({
+            deliveryId: z.string().uuid(),
+        }),
+        handler: async ({ deliveryId }, { locals }) => {
             try {
                 const token = await locals.auth().getToken({
                     template: "jwt-back-hermez",
@@ -360,32 +362,29 @@ export const Delivery = {
                     });
                 }
 
-                const deliveryId = formData.get('deliveryId') as string;
-                const status = formData.get('status') as string;
-
-                if (!deliveryId || !status) {
+                if (!deliveryId) {
                     throw new ActionError({
                         code: "BAD_REQUEST",
-                        message: "ID de entrega y estado son requeridos",
+                        message: "ID de entrega es requerido",
                     });
                 }
 
+                // Endpoint de cambio automático de estado - no requiere body
                 const response = await fetch(
-                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/deliveries/${deliveryId}/status/`, {
-                    method: 'PATCH',
+                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/${deliveryId}/change_status/`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`,
                     },
-                    body: JSON.stringify({ status }),
                 });
 
                 if (!response.ok) {
                     const errorData = await response.json();
                     console.error("Error response:", errorData);
                     throw new ActionError({
-                        code: "BAD_REQUEST",
-                        message: errorData.detail || "No se pudo actualizar el estado de la entrega",
+                        code: response.status === 400 ? "BAD_REQUEST" : "INTERNAL_SERVER_ERROR",
+                        message: errorData.error || errorData.detail || "No se pudo actualizar el estado de la entrega",
                     });
                 }
 

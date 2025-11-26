@@ -51,16 +51,8 @@ export function ActiveDeliveriesWrapper({
     }
   }, [deliveries.length]);
 
-  const handleNextStatus = async (deliveryId: string, currentStatus: Delivery['status']) => {
-    const nextStatusInfo = STATUS_FLOW[currentStatus as keyof typeof STATUS_FLOW];
-    
-    if (!nextStatusInfo) return;
-
-    const formData = new FormData();
-    formData.set('deliveryId', deliveryId);
-    formData.set('status', nextStatusInfo.next);
-
-    const { data, error } = await actions.Delivery.updateDeliveryStatus(formData);
+  const handleNextStatus = async (deliveryId: string) => {
+    const { data, error } = await actions.Delivery.updateDeliveryStatus({ deliveryId });
 
     if (error) {
       toastStore.set({
@@ -208,7 +200,7 @@ export function ActiveDeliveriesWrapper({
           {nextStatusInfo && (
             <button
               type="button"
-              onClick={() => handleNextStatus(currentDelivery.id, currentDelivery.status)}
+              onClick={() => handleNextStatus(currentDelivery.id)}
               className="w-full bg-H-blue-500 hover:bg-H-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-3 shadow-md hover:shadow-lg"
             >
               <Icon icon={nextStatusInfo.icon} width={24} height={24} />
