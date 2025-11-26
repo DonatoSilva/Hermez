@@ -58,7 +58,7 @@ export interface DeliveryProps {
     delivery_person_id?: string | null;
     pickup_address: string;
     delivery_address: string;
-    category_id: string;
+    category: string;
     description?: string | null;
     estimated_weight?: number | null;
     estimated_size?: string | null;

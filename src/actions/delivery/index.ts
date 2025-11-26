@@ -404,6 +404,15 @@ export const Delivery = {
         }),
         handler: async ({ deliveryId }, { locals }) => {
             try {
+                const {userId} = await locals.auth()
+
+                if (!userId) {
+                    throw new ActionError({
+                        code: "UNAUTHORIZED",
+                        message: "No se pudo obtener el ID del usuario",
+                    });
+                }
+                
                 const token = await locals.auth().getToken({
                     template: "jwt-back-hermez",
                 });
@@ -416,7 +425,7 @@ export const Delivery = {
                 }
 
                 const response = await fetch(
-                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/deliveries/${deliveryId}/cancel/`, {
+                    `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/${deliveryId}/cancel/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -424,18 +433,42 @@ export const Delivery = {
                     },
                 });
 
+                // Verificar tipo de contenido antes de parsear
+                const contentType = response.headers.get('content-type');
+                const isJson = contentType?.includes('application/json');
+
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error("Error response:", errorData);
+                    let errorMessage = "No se pudo cancelar el domicilio";
+
+                    console.error("Error response:", response);
+                    
+                    if (isJson) {
+                        try {
+                            const errorData = await response.json();
+                            console.error("Error response:", errorData);
+                            errorMessage = errorData.error || errorData.detail || errorMessage;
+                        } catch (parseError) {
+                            console.error("Error parsing error response:", parseError);
+                        }
+                    } else {
+                        const textResponse = await response.text();
+                        console.error("Non-JSON error response:", textResponse.substring(0, 200));
+                    }
                     
                     throw new ActionError({
                         code: response.status === 404 ? "NOT_FOUND" : "BAD_REQUEST",
-                        message: errorData.error || errorData.detail || "No se pudo cancelar el domicilio",
+                        message: errorMessage,
                     });
                 }
 
-                const data = await response.json();
-                return data;
+                // Parsear respuesta exitosa
+                if (isJson) {
+                    const data = await response.json();
+                    return data;
+                } else {
+                    // Si no es JSON pero fue exitoso, devolver objeto vacío
+                    return { success: true };
+                }
             } catch (error) {
                 console.error('Error al cancelar domicilio:', error);
                 if (error instanceof ActionError) throw error;

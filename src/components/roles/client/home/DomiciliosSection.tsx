@@ -61,7 +61,7 @@ export function DomiciliosSection({ token, userId, protocol, host }: DomiciliosS
                     id={delivery.id}
                     type={delivery.delivery_type || 'paquetes'}
                     price={delivery.final_price || delivery.client_price}
-                    address={`${delivery.pickup_address?.address || ''} ➝ ${delivery.delivery_address?.address || ''}`}
+                    address={`${delivery.pickup_address || ''} ➝ ${delivery.delivery_address || ''}`}
                     status={delivery.status}
                 />
             ))}

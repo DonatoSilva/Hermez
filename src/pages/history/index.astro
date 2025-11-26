@@ -6,7 +6,7 @@ import HistoryItem from "@components/history/historyItem/HistoryItem";
 import UserRegistrationForm from "@components/user/UserRegistrationForm.astro";
 import { Icon } from "astro-icon/components";
 import { actions } from "astro:actions";
-import type { DeliveryProps } from "src/types/Delivery/DeliveryProps";
+import type { DeliveryProps, typeDelivery } from "src/types/Delivery/DeliveryProps";
 import Layout from "../../layouts/Layout.astro";
 
 const { userId } = Astro.locals.auth();
@@ -87,7 +87,7 @@ if (hasHistory) {
                         return (
                           <HistoryItem
                             id={item.id}
-                            type={item.category.toLowerCase()}
+                            type={item.category.toLowerCase() as keyof typeof typeDelivery}
                             price={item.final_price.toString()}
                             address={item.delivery_address}
                             status={item.status}

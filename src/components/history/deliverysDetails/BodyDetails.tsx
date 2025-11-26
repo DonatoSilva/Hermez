@@ -1,4 +1,5 @@
 import { CarOutlined, CheckCircleOutlined, ClockCircleOutlined, FileDoneOutlined, MessageOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
+import { toastStore } from '@stores/StoreToast';
 import { actions } from 'astro:actions';
 import { useEffect, useRef, useState } from 'react';
 import { changeStatusModal, getStatusModal } from 'src/stores/ModalStore';
@@ -71,8 +72,30 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
 
     const handlePress = () => {
         setIsPressing(true)
-        timeoutId.current = setTimeout(() => {
+        timeoutId.current = setTimeout(async () => {
             onClose()
+
+            const { data, error: errorCancel } = await actions.Delivery.cancelDelivery({deliveryId: delivery?.delivery.id || ''})
+            if (errorCancel) {
+                setError(true)
+
+                toastStore.set({
+                    visible: true,
+                    message: 'Error al cancelar el pedido',
+                    type: 'error',
+                    autoClose: true,
+                    autoCloseDelay: 2500,
+                })
+            }
+
+            toastStore.set({
+                visible: true,
+                message: 'Pedido cancelado correctamente',
+                emoji: '🫢',
+                type: 'success',
+                autoClose: true,
+                autoCloseDelay: 2500,
+            })
             setIsPressing(false)
 
             timeoutId.current = null
@@ -111,7 +134,7 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
     }
 
     if (error) {
-        return <p className='text-red-500 text-center py-4'>Error al cargar los detalles del pedido. Por favor, inténtalo de nuevo.</p>
+        return <p className='text-red-400 text-center py-2'>Error al cargar los detalles del pedido. Por favor, inténtalo de nuevo.</p>
     }
 
     if (loading || !delivery) {
@@ -271,9 +294,9 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
                         <button onClick={onClose} className="cursor-pointer flex-1 bg-H-blue-900 hover:bg-H-blue-700 text-white py-2 px-4 rounded-lg transition-colors font-medium">
                             Cerrar
                         </button>
-                        <button onMouseDown={handlePress} onMouseUp={handleRelease} onMouseLeave={handleRelease} className={`relative overflow-hidden bg-transparent cursor-pointer flex-1 border-2 border-red-500 text-red-500 py-2 px-4 rounded-lg transition-all font-medium ${styles["animate-container"]} ${isPressing === true ? styles["animate-fill-bar"] : isPressing === false ? styles["animate-fill-bar-reverse"] : ''}`}>
+                       { deliveryData.status !== 'cancelled' && deliveryData.status !== 'paid' && deliveryData.status !== 'delivered' && <button onMouseDown={handlePress} onMouseUp={handleRelease} onMouseLeave={handleRelease} className={`relative overflow-hidden bg-transparent cursor-pointer flex-1 border-2 border-red-500 text-red-500 py-2 px-4 rounded-lg transition-all font-medium ${styles["animate-container"]} ${isPressing === true ? styles["animate-fill-bar"] : isPressing === false ? styles["animate-fill-bar-reverse"] : ''}`}>
                             Cancelar Domicilio
-                        </button>
+                        </button>}
                     </div>
                 </div>
             </div>
