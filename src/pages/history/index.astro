@@ -10,6 +10,13 @@ import type { DeliveryProps, typeDelivery } from "src/types/Delivery/DeliveryPro
 import Layout from "../../layouts/Layout.astro";
 
 const { userId } = Astro.locals.auth();
+const queryParams = Astro.url.searchParams;
+
+const filter = {
+  status: queryParams.get("status") || "",
+  payment_method: queryParams.get("payment_method") || "",
+  month: queryParams.get("month") || ""
+};
 
 if (!userId) {
   return Astro.redirect("/sign-in");
@@ -17,7 +24,8 @@ if (!userId) {
 
 const userExistsAPI = Astro.locals.userExistsAPI;
 
-const {data: rawHistory, error} = await Astro.callAction(actions.Delivery.History.getHistorys, {})
+const isDriver = Astro.locals.userRole === "Domiciliary";
+const {data: rawHistory, error} = await Astro.callAction(actions.Delivery.History.getHistorys, {isDriver, filter})
 const history = (rawHistory as DeliveryProps[]) || [];
 
 let groupedHistory: Record<string, DeliveryProps[]> = {};
@@ -83,7 +91,6 @@ if (hasHistory) {
                    <p class="text-sm text-gray-600 dark:text-gray-400 capitalize">{label}</p>
                    <ContentItems>
                      {groupedHistory[label].map((item: DeliveryProps) => {
-                        console.log(item)
                         return (
                           <HistoryItem
                             id={item.id}

@@ -10,8 +10,7 @@ interface ProfileFormProps {
 const { isActive } = Astro.props as ProfileFormProps;
 
 const data = Astro.locals.dataUser || null;
-const { image_url, first_name, last_name, email, gender, phone, age, username = "", role } = data || {};
-console.log(data)
+const { image_url, first_name, last_name, email, gender, phone, age, username = "" } = data || {};
 ---
 
 <section class:list={["min-w-full", { active: isActive }]} id="section-profile">

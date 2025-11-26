@@ -34,7 +34,6 @@ export function useDeliveriesByUser({ token, userId, protocol, host }: UseDelive
             wsRef.current = new WebSocket(urlWS, [token]);
 
             wsRef.current.onopen = () => {
-                console.log('WebSocket deliveries conectado');
                 setError(null);
                 setIsLoading(false);
             };
@@ -80,7 +79,6 @@ export function useDeliveriesByUser({ token, userId, protocol, host }: UseDelive
             };
 
             wsRef.current.onclose = (ev) => {
-                console.log('WS deliveries cerrado', ev.code, ev.reason);
                 if (ev.code !== 1000) {
                     setError('Conexión cerrada inesperadamente');
                 }

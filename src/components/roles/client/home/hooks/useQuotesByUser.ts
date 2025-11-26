@@ -34,7 +34,6 @@ export function useQuotesByUser({ token, userId, protocol, host }: UseQuotesByUs
             wsRef.current = new WebSocket(urlWS, [token]);
 
             wsRef.current.onopen = () => {
-                console.log('WebSocket quotes conectado');
                 setError(null);
                 setIsLoading(false);
             };
@@ -70,13 +69,11 @@ export function useQuotesByUser({ token, userId, protocol, host }: UseQuotesByUs
             };
 
             wsRef.current.onerror = (err) => {
-                console.error('WS error', err);
                 setError('Error de conexión con el servidor');
                 setIsLoading(false);
             };
 
             wsRef.current.onclose = (ev) => {
-                console.log('WS quotes cerrado', ev.code, ev.reason);
                 if (ev.code !== 1000) {
                     setError('Conexión cerrada inesperadamente');
                 }

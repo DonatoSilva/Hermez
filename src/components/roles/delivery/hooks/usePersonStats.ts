@@ -43,7 +43,6 @@ export function usePersonStats({ token, personId }: UsePersonStatsProps) {
     wsRef.current = new WebSocket(url, [token]);
 
     wsRef.current.onopen = () => {
-      console.log('WebSocket connected to person stats');
       setLoading(false);
     };
 
@@ -55,24 +54,20 @@ export function usePersonStats({ token, personId }: UsePersonStatsProps) {
           setStats(data);
         }
 
-        // Manejo de actualizaciones en tiempo real si el backend las envía
         if (data.type === 'stats_updated') {
           setStats(data);
         }
       } catch (err) {
-        console.error('Error parsing WS message', err);
+        console.error(err);
       }
     };
 
     wsRef.current.onerror = (err) => {
-      console.error('WS error', err);
       setLoading(false);
     };
 
     wsRef.current.onclose = (ev) => {
-      console.log('WS closed', ev.code, ev.reason);
       setLoading(false);
-      // Opcional: reintentar conexión aquí
     };
 
     return () => {

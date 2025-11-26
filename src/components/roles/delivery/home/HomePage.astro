@@ -182,7 +182,6 @@ import { actions } from "astro:actions"
     
     sendOffer?.addEventListener('click', async () => {
       const form = new FormData()
-      console.log(statusModal.get());
       const {metaData} = statusModal.get()?.['quoteOffer'] || {metaData: {quote_id: ''}}
 
       form.set('quote_id', metaData?.quote_id as string )

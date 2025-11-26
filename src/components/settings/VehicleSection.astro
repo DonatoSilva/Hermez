@@ -18,10 +18,6 @@ const { data: vehicleTypes, error } = await Astro.callAction(
   new FormData()
 );
 
-if (error) {
-  console.log(error);
-}
-
 const { isActive } = Astro.props as VehicleSectionProps;
 const { current_vehicle = null } = Astro.locals.dataUser!;
 ---

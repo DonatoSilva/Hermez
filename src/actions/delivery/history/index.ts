@@ -4,8 +4,19 @@ import { z } from "astro:schema";
 
 export const History =  {
     getHistorys: defineAction({
-        input: z.object({}),
-        handler: async (_, { locals }) => {
+        input: z.object({
+            isDriver: z.boolean().optional().default(false),
+            filter: z.object({
+                status: z.string().optional().default(""),
+                payment_method: z.string().optional().default(""),
+                month: z.string().optional().default(""),
+            }).optional().default({
+                status: "",
+                payment_method: "",
+                month: "",
+            }),
+        }),
+        handler: async ({ isDriver, filter }, { locals }) => {
             const userId = await locals.auth().userId;
             
             if (!userId) {
@@ -26,8 +37,11 @@ export const History =  {
                 });
             }
 
+            const url = `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}`;
+            const filterParams = new URLSearchParams(filter);
+
             const response = await fetch(
-                `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/`, {
+                `${url}?${filterParams.toString()}${isDriver ? "&filter_by=delivery_person" : ""}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

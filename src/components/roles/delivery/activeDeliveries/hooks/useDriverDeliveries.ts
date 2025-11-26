@@ -87,17 +87,12 @@ export function useDriverDeliveries({
                     setDeliveries((prev) => prev.filter((d) => d.id !== data.data.id));
                 }
             } catch (err) {
-                console.error('Error parsing WS message', err);
             }
         };
 
-        wsRef.current.onerror = (err) => {
-            console.error('WS error', err);
-        };
+        wsRef.current.onerror = (err) => {};
 
-        wsRef.current.onclose = (ev) => {
-            console.log('WS closed', ev.code, ev.reason);
-        };
+        wsRef.current.onclose = (ev) => {};
 
         return () => {
             wsRef.current?.close();

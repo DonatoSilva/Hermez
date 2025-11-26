@@ -45,26 +45,38 @@
           <label
             class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
           >
-            <input type="radio" name="status" value="pending" class="hidden" />
-            <span class="dark:text-gray-300">Pendiente</span>
+            <input type="radio" name="status" value="assigned" class="hidden" />
+            <span class="dark:text-gray-300">Asignado</span>
           </label>
           <label
             class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
           >
-            <input type="radio" name="status" value="completed" class="hidden" />
-            <span class="dark:text-white">Completado</span>
+            <input type="radio" name="status" value="picked_up" class="hidden" />
+            <span class="dark:text-white">Recogido</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
+          >
+            <input type="radio" name="status" value="in_transit" class="hidden" />
+            <span class="dark:text-white">En tránsito</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
+          >
+            <input type="radio" name="status" value="delivered" class="hidden" />
+            <span class="dark:text-white">Entregado</span>
+          </label>
+          <label
+            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
+          >
+            <input type="radio" name="status" value="paid" class="hidden" />
+            <span class="dark:text-white">Pagado</span>
           </label>
           <label
             class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
           >
             <input type="radio" name="status" value="cancelled" class="hidden" />
             <span class="dark:text-white">Cancelado</span>
-          </label>
-          <label
-            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
-          >
-            <input type="radio" name="status" value="on-the-way" class="hidden" />
-            <span class="dark:text-white">En camino</span>
           </label>
           <label
             class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
@@ -82,20 +94,14 @@
           <label
             class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
           >
-            <input type="radio" name="payment" value="card" class="hidden" />
-            <span class="dark:text-white">Tarjeta</span>
+            <input type="radio" name="payment" value="nequi" class="hidden" />
+            <span class="dark:text-white">Nequi</span>
           </label>
           <label
             class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
           >
-            <input type="radio" name="payment" value="cash" class="hidden" />
+            <input type="radio" name="payment" value="efectivo" class="hidden" />
             <span class="dark:text-white">Efectivo</span>
-          </label>
-          <label
-            class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
-          >
-            <input type="radio" name="payment" value="transfer" class="hidden" />
-            <span class="dark:text-white">Transferencia</span>
           </label>
           <label
             class="flex items-center gap-2 px-2 py-1 bg-gray-200 text-H-blue-900 font-semibold text-sm rounded-md cursor-pointer has-checked:bg-H-blue-700 has-checked:text-white dark:bg-gray-700 dark:text-gray-200 dark:has-checked:bg-H-blue-600"
@@ -241,6 +247,8 @@
 </style>
 
 <script>
+  import { navigate } from "astro:transitions/client";
+
   const main = () => {
     const filterIcon = document.getElementById("filter-icon");
     const filterModal = document.getElementById("filter-modal") as HTMLDialogElement;
@@ -248,35 +256,52 @@
     const clearFiltersButton = document.getElementById("clear-filters");
     const applyFiltersButton = document.getElementById("apply-filters");
 
+    // Función para leer los parámetros de la URL y marcar los inputs correspondientes
+    const syncFiltersWithUrl = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      const status = urlParams.get('status');
+      const payment = urlParams.get('payment_method');
+      const month = urlParams.get('month');
+
+      // Resetear todos los radios primero
+      document.querySelectorAll('input[type="radio"]').forEach((input: any) => {
+        if (input.value === 'all' || input.value === '') {
+            input.checked = true;
+        } else {
+            input.checked = false;
+        }
+      });
+
+      if (status) {
+        const statusInput = document.querySelector(`input[name="status"][value="${status}"]`) as HTMLInputElement;
+        if (statusInput) statusInput.checked = true;
+      }
+
+      if (payment) {
+        const paymentInput = document.querySelector(`input[name="payment"][value="${payment}"]`) as HTMLInputElement;
+        if (paymentInput) paymentInput.checked = true;
+      }
+
+      if (month) {
+        const monthInput = document.querySelector(`input[name="month"][value="${month}"]`) as HTMLInputElement;
+        if (monthInput) monthInput.checked = true;
+      }
+    };
+
+    // Sincronizar al cargar
+    syncFiltersWithUrl();
+
     filterIcon?.addEventListener("click", () => {
       if (filterModal) {
+        syncFiltersWithUrl(); // Asegurarse de que esté sincronizado al abrir
         filterModal.showModal();
       }
     });
 
     clearFiltersButton?.addEventListener("click", () => {
       if (filterModal) {
-        const selectedStatus: HTMLInputElement | null = document.querySelector(
-          'input[name="status"][value=""]'
-        );
-        const selectedPayment: HTMLInputElement | null = document.querySelector(
-          'input[name="payment"][value=""]'
-        );
-        const selectedMonth: HTMLInputElement | null = document.querySelector(
-          'input[name="month"][value=""]'
-        );
-
-        if (selectedStatus) {
-          selectedStatus.checked = true;
-        }
-        if (selectedPayment) {
-          selectedPayment.checked = true;
-        }
-        if (selectedMonth) {
-          selectedMonth.checked = true;
-        }
-
-        /// Limpiamos los valores de los queryParams y resetamos los inputs a su valor por defecto
+        navigate(window.location.pathname);
         filterModal.close();
       }
     });
@@ -289,29 +314,35 @@
 
     applyFiltersButton?.addEventListener("click", () => {
       if (filterModal) {
-        const selectedStatus: HTMLInputElement | null = document.querySelector(
-          'input[name="status"]:checked'
-        );
-        const selectedPayment: HTMLInputElement | null = document.querySelector(
-          'input[name="payment"]:checked'
-        );
-        const selectedMonth: HTMLInputElement | null = document.querySelector(
-          'input[name="month"]:checked'
-        );
+        const selectedStatus = document.querySelector('input[name="status"]:checked') as HTMLInputElement;
+        const selectedPayment = document.querySelector('input[name="payment"]:checked') as HTMLInputElement;
+        const selectedMonth = document.querySelector('input[name="month"]:checked') as HTMLInputElement;
 
-        const urlSearchParams: Record<string, string> = {};
+        const urlSearchParams = new URLSearchParams(window.location.search);
 
-        if (selectedStatus?.value) {
-          urlSearchParams.status = selectedStatus.value;
-        }
-        if (selectedPayment?.value) {
-          urlSearchParams.payment = selectedPayment.value;
-        }
-        if (selectedMonth?.value) {
-          urlSearchParams.month = selectedMonth.value;
+        // Status
+        if (selectedStatus && selectedStatus.value !== 'all') {
+          urlSearchParams.set('status', selectedStatus.value);
+        } else {
+          urlSearchParams.delete('status');
         }
 
-        // logramos hacer la url de queryParams
+        // Payment Method
+        if (selectedPayment && selectedPayment.value !== '') {
+          urlSearchParams.set('payment_method', selectedPayment.value);
+        } else {
+          urlSearchParams.delete('payment_method');
+        }
+
+        // Month
+        if (selectedMonth && selectedMonth.value !== '') {
+          urlSearchParams.set('month', selectedMonth.value);
+        } else {
+          urlSearchParams.delete('month');
+        }
+
+        const newUrl = `${window.location.pathname}?${urlSearchParams.toString()}`;
+        navigate(newUrl);
         filterModal.close();
       }
     });

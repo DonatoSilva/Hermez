@@ -21,8 +21,6 @@ export default function ContentVehicles({ emptyVehicle, currentVehicle }: { empt
   const [initLoad, setInitLoad] = useState(true);
   const [currentVehicleId, setCurrentVehicleId] = useState(currentVehicle);
 
-  console.log(currentVehicleId);
-
   const allVehicles = useStore($allVehicles);
   const [vehiclesResp, loadVehicles, isLoading] = useActionState(withState(actions.User.Vehicle.get), {
     data: [], error: undefined
@@ -151,7 +149,6 @@ export default function ContentVehicles({ emptyVehicle, currentVehicle }: { empt
     );
   }
 
-  console.log(currentVehicleId);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {allVehicles?.map(v => (

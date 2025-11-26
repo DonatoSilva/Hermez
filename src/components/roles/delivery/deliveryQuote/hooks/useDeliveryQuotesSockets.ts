@@ -31,7 +31,6 @@ export function useDeliveryQuotesSocket({ token, protocol, host }: { token?: str
                 }
 
                 if (data.type === 'quote_created') {
-                    console.log(data);
                     setQuotes((prev: any[]) => [data.data, ...prev]);
                 }
 
@@ -42,21 +41,14 @@ export function useDeliveryQuotesSocket({ token, protocol, host }: { token?: str
                     );
                 }
             } catch (err) {
-                console.error('Error parsing WS message', err);
             }
         };
 
-        wsRef.current.onerror = (err) => {
-            console.error('WS error', err);
-        };
+        wsRef.current.onerror = (err) => {};
 
-        wsRef.current.onclose = (ev) => {
-            console.log('WS closed', ev.code, ev.reason);
-            // opcional: reintentar conexión aquí
-        };
+        wsRef.current.onclose = (ev) => {};
 
         return () => {
-            console.log('WS closed');
             wsRef.current?.close();
         };
     }, [url]);

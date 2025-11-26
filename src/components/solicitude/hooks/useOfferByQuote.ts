@@ -49,14 +49,9 @@ export function useOfferByQuote({ token, quoteId, protocol, host }: { token?: st
             }
         };
 
-        wsRef.current.onerror = (err) => {
-            console.error('WS error', err);
-        };
+        wsRef.current.onerror = (err) => {};
 
-        wsRef.current.onclose = (ev) => {
-            console.log('WS closed', ev.code, ev.reason);
-            // opcional: reintentar conexión aquí
-        };
+        wsRef.current.onclose = (ev) => {};
 
         return () => {
             wsRef.current?.close();

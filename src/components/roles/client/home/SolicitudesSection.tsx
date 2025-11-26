@@ -10,8 +10,6 @@ type SolicitudesSectionProps = {
 export function SolicitudesSection({ token, userId, protocol, host }: SolicitudesSectionProps) {
     const { quotes, isLoading, error } = useQuotesByUser({ token, userId, protocol, host });
 
-    console.log(quotes);
-
     // Skeleton de carga
     if (isLoading) {
         return (
