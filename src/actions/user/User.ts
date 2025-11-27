@@ -168,6 +168,51 @@ export const User = {
             }
         }
     }),
+    getReviewsUser: defineAction({
+        input: z.object({}),
+        handler: async ({ }, { locals }) => {
+            try {
+                const token = await locals.auth().getToken({
+                    template: "jwt-back-hermez",
+                });
+
+                if (token === null) {
+                    throw new ActionError({
+                        message: "Token de autenticación no encontrado",
+                        code: "UNAUTHORIZED",
+                    });
+                }
+
+                const response = await fetch(
+                    `${URL_LOCAL_BACKEND}/${API_USERS}/me/ratings/`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new ActionError({
+                        message: errorData.detail || 'Error al obtener las reseñas del usuario',
+                        code: 'BAD_REQUEST',
+                    });
+                }
+
+                const reviews = await response.json();
+                return reviews;
+            } catch (error) {
+                if (error instanceof ActionError) {
+                    throw error;
+                }
+                throw new ActionError({
+                    message: 'Error inesperado al obtener las reseñas del usuario',
+                    code: 'INTERNAL_SERVER_ERROR',
+                });
+            }
+        }
+    }),
     changePassword: defineAction({
         input: z.object({
             oldPassword: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres').optional(),

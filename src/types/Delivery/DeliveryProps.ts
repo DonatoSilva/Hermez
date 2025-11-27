@@ -88,7 +88,7 @@ export interface DeliveryData {
     estimated_weight: string;
     estimated_size: string;
     final_price: string;
-    vehicle: string;
+    vehicle_type: string;
     status: string;
     created_at: string;
     updated_at: string;

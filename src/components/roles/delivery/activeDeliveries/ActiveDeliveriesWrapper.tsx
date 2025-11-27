@@ -19,6 +19,9 @@ const STATUS_FLOW = {
   assigned: { next: 'picked_up', label: 'Recoger pedido', icon: 'mdi:package-check' },
   picked_up: { next: 'in_transit', label: 'En camino', icon: 'mdi:truck-fast' },
   in_transit: { next: 'delivered', label: 'Entregado', icon: 'mdi:check-circle' },
+  delivered: { next: null, label: 'Completado', icon: 'mdi:star' },
+  paid: { next: null, label: 'Pagado', icon: 'mdi:cash' },
+  cancelled: { next: null, label: 'Cancelado', icon: 'mdi:close-circle' },
 } as const;
 
 export function ActiveDeliveriesWrapper({
@@ -68,9 +71,10 @@ export function ActiveDeliveriesWrapper({
     }
 
     if (data) {
+      const newStatusInfo = STATUS_FLOW[data.new_status as keyof typeof STATUS_FLOW];
       toastStore.set({
         title: 'Estado actualizado',
-        message: `Entrega marcada como: ${nextStatusInfo.label}`,
+        message: `Entrega marcada como: ${newStatusInfo?.label || data.new_status}`,
         type: 'success',
         emoji: '✅',
         visible: true,
@@ -197,7 +201,7 @@ export function ActiveDeliveriesWrapper({
           </div>
 
           {/* Botón de acción */}
-          {nextStatusInfo && (
+          {nextStatusInfo && nextStatusInfo.next && (
             <button
               type="button"
               onClick={() => handleNextStatus(currentDelivery.id)}

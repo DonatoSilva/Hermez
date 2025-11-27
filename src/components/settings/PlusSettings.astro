@@ -2,6 +2,7 @@
 import Button from "@components/forms/elements/buttons/Button.astro";
 import InputField from "@components/forms/elements/inputs/InputField.astro";
 import Modal from "@components/modals/Modal";
+import ReviewsContent from "@components/settings/ReviewsContent";
 import { Icon } from "astro-icon/components";
 
 const currentUser = await Astro.locals.currentUser();
@@ -123,6 +124,12 @@ const { isActive } = Astro.props as PlusSettingsProps;
   </div>
 </Modal>
 
+<Modal title="Mis Reseñas" keyModal="show-reviews" client:load>
+  <div class="w-full max-w-4xl mx-auto p-4">
+    <ReviewsContent client:load />
+  </div>
+</Modal>
+
 <script>
   import { $userStore } from "@clerk/astro/client";
 import { isEmpty } from "@scripts/validateInput";
@@ -142,11 +149,23 @@ import { toastStore } from "src/stores/StoreToast";
     const confirmChangePasswordButton = document.getElementById("confirm-change-password");
     const closeChangePasswordButton = document.getElementById("close-change-password");
 
+    const showReviewsButton = document.getElementById("show-reviews");
+
     changePasswordButton?.addEventListener("click", () => {
       changeStatusModal(
         "change-password" as never,
         {
           ...getStatusModal("change-password" as never),
+          isOpen: true,
+        } as never
+      );
+    });
+
+    showReviewsButton?.addEventListener("click", () => {
+      changeStatusModal(
+        "show-reviews" as never,
+        {
+          ...getStatusModal("show-reviews" as never),
           isOpen: true,
         } as never
       );

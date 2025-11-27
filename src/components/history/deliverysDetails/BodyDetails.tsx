@@ -3,7 +3,7 @@ import { toastStore } from '@stores/StoreToast';
 import { actions } from 'astro:actions';
 import { useEffect, useRef, useState } from 'react';
 import { changeStatusModal, getStatusModal } from 'src/stores/ModalStore';
-import type { DeliveryResponse, HistoryItem } from 'src/types/Delivery/DeliveryProps';
+import { typeDelivery, type DeliveryResponse, type HistoryItem } from 'src/types/Delivery/DeliveryProps';
 import { typeVehicle } from 'src/types/Vehicle/VehicleProps';
 import { statusColors } from '../historyItem/HistoryItem';
 import styles from './styles/fill-Bar.module.css';
@@ -32,6 +32,8 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
                 if (errorDelivery) {
                     setError(true)
                 } else if (data) {
+
+                    console.log(data)
                     setDelivery(data as DeliveryResponse)
                 }
             } catch (err) {
@@ -144,7 +146,8 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
     const { delivery: deliveryData, history } = delivery
     const deliveryPerson = deliveryData.delivery_person
     const currentStatus = statusColors[deliveryData.status as keyof typeof statusColors] || { label: 'En espera', color: 'bg-amber-500' }
-    const {image, label} = typeVehicle[deliveryData.vehicle?.toLocaleLowerCase() as keyof typeof typeVehicle] || {image: "/images/domiciliarioConCajas-min.webp", label: ""}
+    const {image: imageVehicle, label: labelVehicle} = typeVehicle[deliveryData.vehicle_type?.toLocaleLowerCase() as keyof typeof typeVehicle] || {image: "/images/domiciliarioConCajas-min.webp", label: ""}
+    const {image: imageTypeDelivery, label: labelTypeDelivery} = typeDelivery[deliveryData.category?.toLocaleLowerCase() as keyof typeof typeDelivery] || {image: "/images/domiciliarioConCajas-min.webp", label: ""}
     return (
         <div ref={componentRef} className='w-full h-full flex flex-col gap-8 dark:text-white text-H-black'>
             {/* Main Content - Full Width */}
@@ -186,8 +189,8 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
                             <div className='text-center'>
                                 <img
                                     className='size-20 mx-auto'
-                                    src="/images/tiposEnvio/moto-min.png"
-                                    alt="Motorcycle icon"
+                                    src={imageVehicle}
+                                    alt={`${labelVehicle} icon`}
                                 />
                             </div>
                         </div>
@@ -263,8 +266,8 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
                         </div>
                         <div className="shrink-0">
                             <img
-                                src={image}
-                                alt={`imagen ilustrativa de ${label}`}
+                                src={imageTypeDelivery}
+                                alt={`imagen ilustrativa de ${labelTypeDelivery}`}
                                 className="w-16 h-16 object-contain"
                             />
                         </div>
