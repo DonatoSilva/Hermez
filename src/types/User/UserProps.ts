@@ -21,4 +21,6 @@ export interface User {
     is_available: boolean;
     current_vehicle: Vehicle | null;
     current_vehicle_id: string | null;
+    rating_average: number | null;
+    rating_count: number;
 }

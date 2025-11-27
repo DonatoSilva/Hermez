@@ -29,7 +29,11 @@ export function BannerOffer({
 
   useEffect(() => {
     totalOffers.set(offer.length);
-  }, [offer]);
+    // Fix: Adjust currentIndex if it's out of bounds after an offer is removed
+    if (currentIndex >= offer.length && offer.length > 0) {
+      setCurrentIndex(Math.max(0, offer.length - 1));
+    }
+  }, [offer, currentIndex]);
 
   const handleNext = () => {
     if (currentIndex < offer.length - 1) {
@@ -133,6 +137,12 @@ return (
             const blur = isActive ? 0 : Math.abs(offset) * 2;
             const opacity = isActive ? 1 : Math.max(0.3, 1 - Math.abs(offset) * 0.2);
 
+            // Rotation effect for the first 3 background cards
+            let rotate = 0;
+            if (offset > 0 && offset <= 3) {
+                rotate = offset % 2 === 0 ? -2 : 2;
+            }
+
             if (!isVisible) return null;
 
             return (
@@ -141,7 +151,7 @@ return (
                 className="absolute top-0 left-0 w-full max-h-[280px] rounded-[10px] bg-white hover:shadow-md dark:bg-slate-800 overflow-hidden transition-all duration-500 ease-out"
                 style={{
                   zIndex,
-                  transform: `translateY(${translateY}px) scale(${scale})`,
+                  transform: `translateY(${translateY}px) scale(${scale}) rotate(${rotate}deg)`,
                   filter: `blur(${blur}px)`,
                   opacity,
                   pointerEvents: isActive ? 'auto' : 'none',

@@ -14,7 +14,7 @@ export const statusColors = {
 };
 
 
-function HistoryItem({ price, address, status, type, id }: HistoryItemProps) {
+function HistoryItem({ price, address, status, type, id, isDriver }: HistoryItemProps) {
   const { image, label } = typeDelivery[type as keyof typeof typeDelivery] || {};
 
   return (
@@ -49,7 +49,7 @@ function HistoryItem({ price, address, status, type, id }: HistoryItemProps) {
         </div>
       </div>
       <Modal keyModal={id} title="Detalles del pedido">
-        <BodyDetailsItem id={id} />
+        <BodyDetailsItem id={id} isDriver={isDriver} />
       </Modal>
     </>
   );

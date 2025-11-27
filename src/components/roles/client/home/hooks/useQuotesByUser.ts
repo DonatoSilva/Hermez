@@ -59,7 +59,7 @@ export function useQuotesByUser({ token, userId, protocol, host }: UseQuotesByUs
                         );
                     }
 
-                    if (data.type === 'quote_deleted') {
+                    if (data.type === 'quote_deleted' || data.type === 'quote_expired') {
                         setQuotes((prev) => prev.filter((quote) => quote.id !== data.data.id));
                     }
                 } catch (err) {

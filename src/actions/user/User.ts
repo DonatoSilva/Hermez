@@ -213,6 +213,65 @@ export const User = {
             }
         }
     }),
+    createRating: defineAction({
+        input: z.object({
+            ratee_id: z.string().min(1, 'El ID del usuario a calificar es requerido'),
+            rating: z.number().int().min(0, 'La calificación mínima es 0').max(10, 'La calificación máxima es 10'),
+            comment: z.string().optional(),
+        }),
+        handler: async ({ ratee_id, rating, comment }, { locals }) => {
+            try {
+                const token = await locals.auth().getToken({
+                    template: "jwt-back-hermez",
+                });
+
+                if (token === null) {
+                    throw new ActionError({
+                        message: "Token de autenticación no encontrado",
+                        code: "UNAUTHORIZED",
+                    });
+                }
+
+                const payload: { ratee_id: string; rating: number; comment?: string } = {
+                    ratee_id,
+                    rating,
+                };
+
+                if (comment && comment.trim() !== '') {
+                    payload.comment = comment;
+                }
+
+                const response = await fetch(
+                    `${URL_LOCAL_BACKEND}/${API_USERS}/user-ratings/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new ActionError({
+                        message: errorData.detail || 'Error al crear la calificación',
+                        code: 'BAD_REQUEST',
+                    });
+                }
+
+                const ratingData = await response.json();
+                return ratingData;
+            } catch (error) {
+                if (error instanceof ActionError) {
+                    throw error;
+                }
+                throw new ActionError({
+                    message: 'Error inesperado al crear la calificación',
+                    code: 'INTERNAL_SERVER_ERROR',
+                });
+            }
+        }
+    }),
     changePassword: defineAction({
         input: z.object({
             oldPassword: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres').optional(),

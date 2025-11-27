@@ -7,4 +7,5 @@ export interface HistoryItemProps {
     address: string;
     status: keyof typeof statusColors;
     type: keyof typeof typeDelivery;
+    isDriver: boolean;
 }

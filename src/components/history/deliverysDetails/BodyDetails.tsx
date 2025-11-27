@@ -1,4 +1,6 @@
 import { CarOutlined, CheckCircleOutlined, ClockCircleOutlined, FileDoneOutlined, MessageOutlined, PhoneOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
+import Modal from '@components/modals/Modal';
+import RatingModalContent from '@components/rating/RatingModalContent';
 import { toastStore } from '@stores/StoreToast';
 import { actions } from 'astro:actions';
 import { useEffect, useRef, useState } from 'react';
@@ -10,9 +12,10 @@ import styles from './styles/fill-Bar.module.css';
 
 interface BodyDetailsProps {
     id: string;
+    isDriver: boolean;
 }
 
-const BodyDetails = ({ id }: BodyDetailsProps) => {
+const BodyDetails = ({ id, isDriver }: BodyDetailsProps) => {
     const [isPressing, setIsPressing] = useState<boolean | undefined>(undefined)
     const timeoutId = useRef<NodeJS.Timeout | null>(null)
     const CANCEL_TIMER = 2000
@@ -20,26 +23,28 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
     const [error, setError] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(true)
     const [delivery, setDelivery] = useState<DeliveryResponse | null>(null)
+    const [ratingSuccess, setRatingSuccess] = useState<boolean>(false)
     const componentRef = useRef<HTMLDivElement>(null)
     const hasLoadedRef = useRef<boolean>(false)
 
-    useEffect(() => {
-        const fetchDelivery = async () => {
-            try {
-                setLoading(true)
-                const { data, error: errorDelivery } = await actions.Delivery.History.getDeliveryHistory({delivery_id: id})
+    const fetchDelivery = async () => {
+        try {
+            setLoading(true)
+            const { data, error: errorDelivery } = await actions.Delivery.History.getDeliveryHistory({delivery_id: id})
 
-                if (errorDelivery) {
-                    setError(true)
-                } else if (data) {
-                    setDelivery(data as DeliveryResponse)
-                }
-            } catch (err) {
+            if (errorDelivery) {
                 setError(true)
-            } finally {
-                setLoading(false)
+            } else if (data) {
+                setDelivery(data as DeliveryResponse)
             }
+        } catch (err) {
+            setError(true)
+        } finally {
+            setLoading(false)
         }
+    }
+
+    useEffect(() => {
 
         // Lazy loading: only fetch when component is visible
         const observer = new IntersectionObserver(
@@ -137,12 +142,20 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
         return <p className='text-red-400 text-center py-2'>Error al cargar los detalles del pedido. Por favor, inténtalo de nuevo.</p>
     }
 
-    if (loading || !delivery) {
+    if (loading && !delivery) {
         return <div ref={componentRef} className='text-center py-8'><p>Cargando detalles...</p></div>
     }
 
+    if (!delivery) return null
+
     const { delivery: deliveryData, history } = delivery
     const deliveryPerson = deliveryData.delivery_person
+    const client = deliveryData.client
+    
+    // Determine which person to show based on role
+    const personToShow = isDriver ? client : deliveryPerson
+    const personLabel = isDriver ? 'Cliente' : 'Domiciliario'
+    
     const currentStatus = statusColors[deliveryData.status as keyof typeof statusColors] || { label: 'En espera', color: 'bg-amber-500' }
     const {image: imageVehicle, label: labelVehicle} = typeVehicle[deliveryData.vehicle_type?.toLocaleLowerCase() as keyof typeof typeVehicle] || {image: "/images/domiciliarioConCajas-min.webp", label: ""}
     const {image: imageTypeDelivery, label: labelTypeDelivery} = typeDelivery[deliveryData.category?.toLocaleLowerCase() as keyof typeof typeDelivery] || {image: "/images/domiciliarioConCajas-min.webp", label: ""}
@@ -163,23 +176,30 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
                         <div className='flex items-center justify-between mb-6'>
                             <div className='flex items-center gap-4'>
                                 <img
-                                    src={deliveryPerson?.image_url || "/images/domiciliarioConCajas-min.webp"}
+                                    src={personToShow?.image_url || "/images/domiciliarioConCajas-min.webp"}
                                     className='size-12 rounded-full border-2 border-H-blue-700'
-                                    alt="Delivery person profile"
+                                    alt={`${personLabel} profile`}
                                 />
                                 <div>
                                     <p className='text-lg font-bold'>
-                                        {deliveryPerson ? `${deliveryPerson.first_name} ${deliveryPerson.last_name}` : 'Sin asignar'}
+                                        {personToShow ? `${personToShow.first_name} ${personToShow.last_name}` : 'Sin asignar'}
                                     </p>
-                                    {deliveryPerson && (
+                                    {personToShow && (
                                         <div className="flex items-center gap-2">
                                             <div className="">
                                                 <span className="text-yellow-500">★</span>
-                                                <b className='ml-1 text-sm'>4.7</b>
+                                                <b className='ml-1 text-sm'>
+                                                    {personToShow.rating_average ? personToShow.rating_average.toFixed(1) : '--'}
+                                                </b>
                                             </div>
                                             <span className="text-sm text-gray-600 dark:text-gray-400">
-                                                127 viajes completados
+                                                {personToShow.rating_count || 0} calificaciones
                                             </span>
+                                            {ratingSuccess && (
+                                                <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full animate-pulse">
+                                                    ¡Calificación enviada!
+                                                </span>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -210,16 +230,16 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
                         <div className="grid grid-cols-2 gap-4">
                             <button
                                 className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                onClick={() => window.open(`tel:${deliveryPerson?.phone || ''}`)}
-                                disabled={!deliveryPerson}
+                                onClick={() => window.open(`tel:${personToShow?.phone || ''}`)}
+                                disabled={!personToShow}
                             >
                                 <PhoneOutlined className="text-xl" />
                                 <span className="font-medium">Llamar</span>
                             </button>
                             <button
                                 className="flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 text-white py-3 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                onClick={() => window.open(`sms:${deliveryPerson?.phone || ''}`)}
-                                disabled={!deliveryPerson}
+                                onClick={() => window.open(`sms:${personToShow?.phone || ''}`)}
+                                disabled={!personToShow}
                             >
                                 <MessageOutlined className="text-xl" />
                                 <span className="font-medium">Escribir</span>
@@ -230,17 +250,14 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
                             <button
                                 className="w-full mt-4 flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg transition-colors cursor-pointer"
                                 onClick={() => {
-                                    toastStore.set({
-                                        visible: true,
-                                        message: 'Funcionalidad de calificación próximamente',
-                                        type: 'info',
-                                        autoClose: true,
-                                        autoCloseDelay: 2500,
-                                    })
+                                    changeStatusModal(`rating-${id}` as never, {
+                                        ...getStatusModal(`rating-${id}` as never),
+                                        isOpen: true,
+                                    } as never);
                                 }}
                             >
                                 <StarOutlined className="text-xl" />
-                                <span className="font-medium">Calificar Domiciliario</span>
+                                <span className="font-medium">Calificar {personLabel}</span>
                             </button>
                         )}
                     </div>
@@ -393,6 +410,43 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
                         })}
                     </div>
                 </div>
+            )}
+
+            {/* Rating Modal */}
+            {/* Rating Modal */}
+            {personToShow && (
+                <Modal keyModal={`rating-${id}`} title={`Calificar ${personLabel}`}>
+                    <RatingModalContent
+                        rateeId={personToShow.userid}
+                        rateeName={`${personToShow.first_name} ${personToShow.last_name}`}
+                        onClose={() => {
+                            changeStatusModal(`rating-${id}` as never, {
+                                ...getStatusModal(`rating-${id}` as never),
+                                isOpen: false,
+                            } as never);
+                        }}
+                        onError={() => {
+                            toastStore.set({
+                                visible: true,
+                                message: 'Error al enviar la calificación',
+                                type: 'error',
+                                autoClose: true,
+                                autoCloseDelay: 3000,
+                            });
+                            changeStatusModal(`rating-${id}` as never, {
+                                ...getStatusModal(`rating-${id}` as never),
+                                isOpen: false,
+                            } as never);
+                        }}
+                        onSuccess={() => {
+                            // Refresh delivery data to update rating without reload
+                            fetchDelivery();
+                            setRatingSuccess(true);
+                            // Hide success message after 3 seconds
+                            setTimeout(() => setRatingSuccess(false), 3000);
+                        }}
+                    />
+                </Modal>
             )}
         </div>
     )

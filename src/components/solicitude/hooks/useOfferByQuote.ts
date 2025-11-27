@@ -29,7 +29,7 @@ export function useOfferByQuote({ token, quoteId, protocol, host }: { token?: st
                     setOffer(data.quotes[0].offers);
                 }
 
-                if (data.type === 'offer_deleted' || data.type === 'offer_rejected') {
+                if (data.type === 'offer_deleted' || data.type === 'offer_rejected' || data.type === 'offer_expired') {
                     setOffer((prev: any[]) => prev.filter((offer) => offer.id !== data.data.id));
                 }
 
