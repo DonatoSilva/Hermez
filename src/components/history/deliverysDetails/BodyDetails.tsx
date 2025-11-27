@@ -1,4 +1,4 @@
-import { CarOutlined, CheckCircleOutlined, ClockCircleOutlined, FileDoneOutlined, MessageOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
+import { CarOutlined, CheckCircleOutlined, ClockCircleOutlined, FileDoneOutlined, MessageOutlined, PhoneOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
 import { toastStore } from '@stores/StoreToast';
 import { actions } from 'astro:actions';
 import { useEffect, useRef, useState } from 'react';
@@ -32,8 +32,6 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
                 if (errorDelivery) {
                     setError(true)
                 } else if (data) {
-
-                    console.log(data)
                     setDelivery(data as DeliveryResponse)
                 }
             } catch (err) {
@@ -143,8 +141,6 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
         return <div ref={componentRef} className='text-center py-8'><p>Cargando detalles...</p></div>
     }
 
-    console.log(delivery)
-
     const { delivery: deliveryData, history } = delivery
     const deliveryPerson = deliveryData.delivery_person
     const currentStatus = statusColors[deliveryData.status as keyof typeof statusColors] || { label: 'En espera', color: 'bg-amber-500' }
@@ -229,6 +225,24 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
                                 <span className="font-medium">Escribir</span>
                             </button>
                         </div>
+
+                        {(deliveryData.status === 'paid' || deliveryData.status === 'delivered') && (
+                            <button
+                                className="w-full mt-4 flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg transition-colors cursor-pointer"
+                                onClick={() => {
+                                    toastStore.set({
+                                        visible: true,
+                                        message: 'Funcionalidad de calificación próximamente',
+                                        type: 'info',
+                                        autoClose: true,
+                                        autoCloseDelay: 2500,
+                                    })
+                                }}
+                            >
+                                <StarOutlined className="text-xl" />
+                                <span className="font-medium">Calificar Domiciliario</span>
+                            </button>
+                        )}
                     </div>
                     <div className='rounded-lg bg-H-blue-900 px-8 py-4 text-white cursor-crosshair hover:shadow-md shadow-gray-500 transition-shadow duration-500'>
                         <div className="flex items-start gap-4">

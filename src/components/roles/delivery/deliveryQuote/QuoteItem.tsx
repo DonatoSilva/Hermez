@@ -26,7 +26,6 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
   client,
   category,
   distance,
-  observations,
   onNotInterested,
   onInterested,
   onOffer,
@@ -56,6 +55,8 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
       onViewDetails(id);
     }
   }
+
+  console.log(category)
 
   return (
     <div className="relative border border-gray-200 rounded-lg p-3 flex flex-col gap-2 bg-white hover:shadow-sm w-full transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">

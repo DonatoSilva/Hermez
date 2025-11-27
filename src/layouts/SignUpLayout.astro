@@ -1,7 +1,7 @@
 ---
 import { SignUp } from "@clerk/astro/components";
-import Layout from "./Layout.astro";
 import { toastStore } from "src/stores/StoreToast";
+import Layout from "./Layout.astro";
 
 interface Props {
   title: string;
@@ -31,7 +31,7 @@ if (Astro.request.url) {
 }
 ---
 
-<Layout title={title} sizeLogo="sm" class="relative overflow-hidden">
+<Layout title={title} sizeLogo="sm" class="relative">
   <div
     class="relative z-10 flex flex-col items-center justify-center w-full max-w-5xl min-h-[600px] min-w-[320px] mx-auto gap-6 px-4 sm:px-6 md:px-8 lg:flex-row"
   >

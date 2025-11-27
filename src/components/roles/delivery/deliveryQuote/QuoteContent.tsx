@@ -77,14 +77,13 @@ export function QuoteContent({ token, children, protocol, host }: QuoteContentPr
         } as never);
     }
 
-console.log(localQuotes)
     return (
         isAvailable ? (
             <>
                 {localQuotes.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {localQuotes.map((quote: any) => (
                         <React.Fragment key={quote.id}>
-                            <QuoteItem {...quote} onInterested={handleAcceptQuote} onNotInterested={handleNoInterested} onOffer={handleOffer} onViewDetails={handleViewDetails} />
+                            <QuoteItem {...quote}  onInterested={handleAcceptQuote} onNotInterested={handleNoInterested} onOffer={handleOffer} onViewDetails={handleViewDetails} />
                             <Modal keyModal={quote.id} title="Detalles de la Cotización">
                                 <QuoteDetailsContent quote={quote} />
                             </Modal>

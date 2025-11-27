@@ -18,6 +18,9 @@ const filter = {
   month: queryParams.get("month") || ""
 };
 
+let priceTotal = 0;
+
+
 if (!userId) {
   return Astro.redirect("/sign-in");
 }
@@ -60,6 +63,7 @@ if (hasHistory) {
 
   // Grouping
   history.forEach(item => {
+      priceTotal += Number(item.final_price);
       const label = getGroupLabel(item.completed_at || item.created_at);
       if (!groupedHistory[label]) {
           groupedHistory[label] = [];
@@ -75,7 +79,7 @@ if (hasHistory) {
     userExistsAPI ? (
       <main class="w-full flex flex-col gap-8 max-w-6xl mx-auto">
         <HistoryFilterSection filterText="Historial de pedidos" />
-        <AccumulatedAmountCard amount="$12.000" description="Monto acumulado" />
+        <AccumulatedAmountCard amount={"$ " + priceTotal.toString()} description="Monto acumulado" />
         <section class="flex gap-4 flex-col">
           <h5 class="text-lg font-semibold">Historial de domicilios</h5>
          {

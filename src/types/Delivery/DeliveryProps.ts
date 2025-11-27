@@ -5,9 +5,9 @@ export const typeDelivery = {
         label: "Mercado",
         image: "/images/tiposEnvio/mercado-min.png",
     },
-    alimentos: {
+    comida: {
         label: "Alimentos",
-        image: "/images/tiposEnvio/alimentos-min.png",
+        image: "/images/tiposEnvio/alimento-min.png",
     },
     personas: {
         label: "Persona",
