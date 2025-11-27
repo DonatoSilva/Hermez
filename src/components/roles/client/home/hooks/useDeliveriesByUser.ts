@@ -50,7 +50,7 @@ export function useDeliveriesByUser({ token, userId, protocol, host }: UseDelive
                         setDeliveries((prev) => [data.data, ...prev]);
                     }
 
-                    if (data.type === 'delivery_updated') {
+                    if (data.type === 'delivery_updated' || data.type === 'delivery_status_changed') {
                         setDeliveries((prev) =>
                             prev.map((delivery) =>
                                 delivery.id === data.data.id ? data.data : delivery

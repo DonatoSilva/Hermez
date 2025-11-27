@@ -168,7 +168,7 @@ const host = Astro.request.headers.get("host") || "localhost:4321";
     )
   }
 
-  <Modal keyModal="new-price" title="Nueva tarifa">
+  <Modal keyModal="new-price" title="Nueva tarifa" client:load>
     <div class="flex flex-col gap-4 max-w-3xl mx-auto">
       <InputField
         id="price"

@@ -57,6 +57,7 @@ export function DomiciliosSection({ token, userId, protocol, host }: DomiciliosS
         <div className="w-full flex flex-col gap-3">
             {deliveries.map((delivery) => (
                 <HistoryItem
+                    isDriver={false}
                     key={delivery.id}
                     id={delivery.id}
                     type={delivery.delivery_type || 'paquetes'}
