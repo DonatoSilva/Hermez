@@ -2,8 +2,10 @@
 import FromToPoint from "@components/forms/delivery requests/ui/FromToPoint.astro";
 import Button from "@components/forms/elements/buttons/Button.astro";
 import InputField from "@components/forms/elements/inputs/InputField.astro";
+import Modal from "@components/modals/Modal";
 import { BannerOffer } from "@components/solicitude/BannerOffer";
 import Layout from "@layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
 import { actions } from "astro:actions";
 
 const { userId } = Astro.locals.auth();
@@ -59,6 +61,14 @@ const host = Astro.request.headers.get("host") || "localhost:4321";
         00:00
       </h2>
       <p class="text-center text-H-black dark:text-H-blue-100">Tiempo estimado de espera</p>
+      <Button
+        id="btn-extend-quote"
+        type="button"
+        variant="text"
+        className="mt-2 text-sm text-H-blue-700 dark:text-H-blue-300 underline hover:text-H-blue-900 dark:hover:text-white transition-colors flex items-center gap-2 justify-center"
+      >
+        Extender tiempo
+      </Button>
     </div>
     <div>
       <div
@@ -68,6 +78,7 @@ const host = Astro.request.headers.get("host") || "localhost:4321";
           Total ofertas
         </span>
         <b
+          id="total-offers"
           class="rounded-md text-sm border border-H-blue-700 text-H-blue-700 dark:text-H-blue-100 px-4 py-2"
         >
           0
@@ -81,26 +92,30 @@ const host = Astro.request.headers.get("host") || "localhost:4321";
           Por su tarifa, su solicitud tiene prioridad
         </p>
         <div class="flex flex-row items-center justify-center gap-4">
-          <button
+          <Button
             id="btn-less-money"
             type="button"
-            class="rounded-md text-sm bg-H-blue-700 text-white opacity-70 hover:opacity-100 cursor-pointer px-2 py-1"
+            className="rounded-md text-sm bg-H-blue-700 text-white opacity-70 hover:opacity-100 cursor-pointer px-2 py-1"
           >
             -500
-          </button>
-          <b class="rounded-md text-4xl text-H-black dark:text-H-blue-100 px-4 py-2 font-mono">
+          </Button>
+          <b
+            id="current-price"
+            data-price={client_price}
+            class="rounded-md text-4xl text-H-black dark:text-H-blue-100 px-4 py-2 font-mono"
+          >
             ${client_price.toString().split('.')[0].toLocaleString('es-CO')}
           </b>
-          <button
+          <Button
             id="btn-more-money"
             type="button"
-            class="rounded-md text-sm bg-H-blue-700 text-white opacity-70 hover:opacity-100 cursor-pointer px-2 py-1"
+            className="rounded-md text-sm bg-H-blue-700 text-white opacity-70 hover:opacity-100 cursor-pointer px-2 py-1"
           >
             +500
-          </button>
+          </Button>
         </div>
       </div>
-      <Button type="button" className="w-full max-w-3xl mx-auto">
+      <Button id="btn-new-price" type="button" className="w-full max-w-3xl mx-auto">
         Nueva tarifa
       </Button>
     </div>
@@ -114,7 +129,28 @@ const host = Astro.request.headers.get("host") || "localhost:4321";
         textLabel="Aceptar automaticamente la tarifa más baja"
       />
 
-      <FromToPoint pickupAddress={pickup_address} deliveryAddress={delivery_address} />
+      
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center justify-start gap-2">
+        <Icon name="solar:map-point-bold-duotone" size={35} />
+        <div>
+          <p class="text-sm text-gray-600">De</p>
+          <p class="text-base font-bold">
+            {pickup_address}
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center justify-start gap-2">
+        <Icon name="solar:map-point-bold" size={35} />
+        <div>
+          <p class="text-sm text-gray-600">A</p>
+          <p class="text-base font-bold">
+            {delivery_address}
+          </p>
+        </div>
+      </div>
+    </div>
+
       <Button
         id="btn-cancel-solicitude"
         type="button"
@@ -131,14 +167,42 @@ const host = Astro.request.headers.get("host") || "localhost:4321";
       </p>
     )
   }
+
+  <Modal keyModal="new-price" title="Nueva tarifa">
+    <div class="flex flex-col gap-4 max-w-3xl mx-auto">
+      <InputField
+        id="price"
+        type="number"
+        placeholder="Precio"
+        classLabel="flex flex-row-reverse items-center justify-end"
+        textLabel="Precio"
+      />
+      <div class="flex items-center justify-between gap-2">
+        <Button id="btn-close-modal-price">Cerrar</Button>
+        <Button id="btn-save-modal-price">Guardar</Button>
+      </div>
+    </div>
+  </Modal>
 </Layout>
 
 <script>
+import { totalOffers } from "@stores/deliveryStepper";
+import { statusModal } from "@stores/ModalStore";
 import { toastStore } from "@stores/StoreToast";
 import { actions } from "astro:actions";
 import { navigate } from "astro:transitions/client";
 
   document.addEventListener("astro:page-load", () => {
+    totalOffers.listen((value) => {
+      const bTotalOffers: HTMLElement | null = document.querySelector(
+        "#total-offers"
+      );
+
+      if (bTotalOffers) {
+        bTotalOffers.textContent = value.toString();
+      }
+    });
+    
     const solicitudeDetailsEl = document.querySelector(
       "#solicitude-details"
     ) as HTMLDivElement;
@@ -241,15 +305,22 @@ import { navigate } from "astro:transitions/client";
     /// Lógica del temporizador de expiración
     const expirateAt = solicitudeDetailsEl?.dataset?.expirate;
 
-    if (expirateAt) {
-      const expirateDate = new Date(expirateAt);
-      const now = new Date();
+    let interval: NodeJS.Timeout;
+    const btnNewPrice = document.querySelector("#btn-new-price") as HTMLButtonElement;
 
-      let diff = expirateDate.getTime() - now.getTime();
+    btnNewPrice.addEventListener("click", () => {
+      statusModal.setKey("new-price", {
+        isOpen: true,
+      });
+    });
 
-      const interval = setInterval(() => {
-        diff -= 1000;
-        
+    const startTimer = (expirationDate: Date) => {
+      clearInterval(interval);
+      
+      const updateTimer = () => {
+        const now = new Date();
+        let diff = expirationDate.getTime() - now.getTime();
+
         if (diff <= 0) {
           clearInterval(interval);
           toastStore.set({
@@ -264,14 +335,198 @@ import { navigate } from "astro:transitions/client";
           return;
         }
 
-
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
         if (solicitudeDetailsEl?.querySelector("h2")) {
           solicitudeDetailsEl!.querySelector("h2")!.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
         }
-      }, 1000);
+      };
+
+      updateTimer(); // Ejecutar inmediatamente
+      interval = setInterval(updateTimer, 1000);
+    };
+
+    if (expirateAt) {
+      startTimer(new Date(expirateAt));
     }
+
+    /// Lógica para extender el tiempo
+    const btnExtendQuote = document.querySelector("#btn-extend-quote") as HTMLButtonElement;
+    
+    btnExtendQuote?.addEventListener("click", async () => {
+      const quoteId = solicitudeDetailsEl?.getAttribute("data-quote-id");
+      
+      if (!quoteId) return;
+
+      // Estado de carga
+      btnExtendQuote.disabled = true;
+      btnExtendQuote.classList.add("cursor-not-allowed", "opacity-70");
+      const originalText = btnExtendQuote.innerHTML;
+      btnExtendQuote.innerHTML = `
+        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      `;
+
+      const { data, error } = await actions.Delivery.extendQuote({
+        quoteId,
+        minutes: 5
+      });
+
+      // Restaurar estado
+      btnExtendQuote.disabled = false;
+      btnExtendQuote.classList.remove("cursor-not-allowed", "opacity-70");
+      btnExtendQuote.innerHTML = originalText;
+
+      if (error) {
+        toastStore.set({
+          type: "error",
+          visible: true,
+          message: error.message,
+          autoClose: true,
+          autoCloseDelay: 5000,
+        });
+        return;
+      }
+
+      if (data) {
+        toastStore.set({
+          type: "success",
+          visible: true,
+          message: "Tiempo extendido correctamente (+5 min)",
+          autoClose: true,
+          autoCloseDelay: 3000,
+        });
+        
+        // Actualizar el temporizador con la nueva fecha de expiración
+        if (data.expires_at) {
+          startTimer(new Date(data.expires_at));
+        }
+      }
+    });
+    /// Lógica para ajustar el precio
+    const btnLessMoney = document.querySelector("#btn-less-money") as HTMLButtonElement;
+    const btnMoreMoney = document.querySelector("#btn-more-money") as HTMLButtonElement;
+    const currentPriceEl = document.querySelector("#current-price") as HTMLElement;
+    
+    let currentPrice = Number(currentPriceEl?.dataset?.price || 0);
+    
+    const debounce = (func: Function, wait: number) => {
+      let timeout: any;
+      return (...args: any[]) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    };
+
+    const updatePriceOnServer = debounce(async (newPrice: number) => {
+      const quoteId = solicitudeDetailsEl?.getAttribute("data-quote-id");
+      if (!quoteId) return;
+
+      const { data, error } = await actions.Delivery.updatePriceQuote({
+        quoteId,
+        client_price: newPrice,
+      });
+
+      if (error) {
+        toastStore.set({
+          type: "error",
+          visible: true,
+          message: "Error al actualizar el precio: " + error.message,
+          autoClose: true,
+          autoCloseDelay: 5000,
+        });
+      } else {
+         toastStore.set({
+          type: "success",
+          visible: true,
+          message: "Precio actualizado correctamente",
+          autoClose: true,
+          autoCloseDelay: 2000,
+        });
+      }
+    }, 250);
+
+    const updatePriceDisplay = () => {
+       if (currentPriceEl) {
+         currentPriceEl.textContent = `$${currentPrice.toLocaleString('es-CO')}`;
+         currentPriceEl.dataset.price = currentPrice.toString();
+       }
+       updatePriceOnServer(currentPrice);
+    };
+
+    btnLessMoney?.addEventListener("click", () => {
+      if (currentPrice - 500 >= 4000) {
+        currentPrice -= 500;
+        updatePriceDisplay();
+      }
+    });
+
+    btnMoreMoney?.addEventListener("click", () => {
+      currentPrice += 500;
+      updatePriceDisplay();
+    });
+
+    /// Lógica para el modal de nueva tarifa
+    const btnCloseModalPrice = document.querySelector("#btn-close-modal-price");
+    const btnSaveModalPrice = document.querySelector("#btn-save-modal-price");
+    const inputNewPrice = document.querySelector("#price") as HTMLInputElement;
+
+    btnCloseModalPrice?.addEventListener("click", () => {
+      statusModal.setKey("new-price", { isOpen: false });
+    });
+
+    btnSaveModalPrice?.addEventListener("click", async () => {
+      const newPrice = Number(inputNewPrice?.value);
+      const quoteId = solicitudeDetailsEl?.getAttribute("data-quote-id");
+
+      if (!quoteId) return;
+
+      if (!newPrice || newPrice < 4000) {
+         toastStore.set({
+          type: "error",
+          visible: true,
+          message: "El precio debe ser mayor o igual a $4.000",
+          autoClose: true,
+          autoCloseDelay: 5000,
+        });
+        return;
+      }
+
+      const { data, error } = await actions.Delivery.updatePriceQuote({
+        quoteId,
+        client_price: newPrice,
+      });
+
+      if (error) {
+        toastStore.set({
+          type: "error",
+          visible: true,
+          message: "Error al actualizar el precio: " + error.message,
+          autoClose: true,
+          autoCloseDelay: 5000,
+        });
+        return;
+      }
+
+      // Success
+      currentPrice = newPrice;
+      if (currentPriceEl) {
+         currentPriceEl.textContent = `$${currentPrice.toLocaleString('es-CO')}`;
+         currentPriceEl.dataset.price = currentPrice.toString();
+      }
+      
+      statusModal.setKey("new-price", { isOpen: false });
+      toastStore.set({
+          type: "success",
+          visible: true,
+          message: "Precio actualizado correctamente",
+          autoClose: true,
+          autoCloseDelay: 3000,
+      });
+      if(inputNewPrice) inputNewPrice.value = "";
+    });
   });
 </script>

@@ -114,8 +114,8 @@ import { toastStore } from "@stores/StoreToast";
 import { navigate } from "astro/virtual-modules/transitions-router.js";
 import { actions } from "astro:actions";
 import {
-deliveryData,
-resetStepper,
+  deliveryData,
+  resetStepper,
 } from "../../../../stores/deliveryStepper";
 
   document.addEventListener("astro:page-load", () => {
@@ -242,6 +242,19 @@ resetStepper,
     });
 
     btnSubmit?.addEventListener("click", async () => {
+      const btn = btnSubmit as HTMLButtonElement;
+      const originalText = btn.innerHTML;
+      
+      // Disable and show spinner
+      btn.disabled = true;
+      btn.classList.add("cursor-not-allowed", "opacity-70");
+      btn.innerHTML = `
+        <svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      `;
+
       const d = deliveryData.get();
       const errors: string[] = [];
 
@@ -265,6 +278,10 @@ resetStepper,
           errorsBox.innerHTML = `<ul>${errors.map((m) => `<li>• ${m}</li>`).join("")}</ul>`;
           errorsBox.classList.remove("hidden");
         }
+        // Restore button
+        btn.disabled = false;
+        btn.classList.remove("cursor-not-allowed", "opacity-70");
+        btn.innerHTML = originalText;
         return;
       }
 
@@ -272,7 +289,7 @@ resetStepper,
         ...d,
         payment_method: d.payment_method as "efectivo" | "nequi",
         vehicle_type: d.vehicle_type.id,
-        category: d.category.id as string,
+        category: d.category.id,
       };
 
       if (errorsBox) errorsBox.classList.add("hidden");
@@ -291,7 +308,11 @@ resetStepper,
           autoClose: true,
           autoCloseDelay: 3000,
         });
-
+        
+        // Restore button
+        btn.disabled = false;
+        btn.classList.remove("cursor-not-allowed", "opacity-70");
+        btn.innerHTML = originalText;
         return;
       }
 
@@ -320,6 +341,11 @@ resetStepper,
         autoClose: true,
         autoCloseDelay: 3000,
       });
+      
+      // Restore button
+      btn.disabled = false;
+      btn.classList.remove("cursor-not-allowed", "opacity-70");
+      btn.innerHTML = originalText;
     });
     render();
   });

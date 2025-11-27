@@ -98,9 +98,9 @@ export function BannerOffer({
     })
   };
 
-  return (
-    <div className="relative flex items-center justify-between pt-[92px] pb-[91px] w-[400px] h-[280px] mx-auto">
-      {!offer.length ? (
+  if (!offer.length) {
+    return (
+      <div className="relative flex items-center justify-between pt-[92px] pb-[91px] w-full max-w-[400px] h-[280px] mx-auto">
         <div className="flex absolute top-0 left-[27px] flex-col items-center justify-between rounded-[10px] p-[10px_12px] w-[346px] h-[238px] overflow-hidden bg-white/0">
           <img 
             src={imageSrc} 
@@ -111,9 +111,15 @@ export function BannerOffer({
             {text}
           </p>
         </div>
-      ) : (
-        <div className="absolute top-0 left-[27px] w-[500px] h-[280px]">
-          {[...offer, ...offer].map((off: any, index: number) => {
+      </div>
+    );
+  }
+
+return (
+    <div className="relative flex items-center justify-between pt-[92px] pb-[91px] w-full max-w-[400px] h-[280px] mx-auto">
+      
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[400px] h-[280px]">
+          { offer.map((off: any, index: number) => {
             const isActive = index === currentIndex;
             const offset = index - currentIndex;
             
@@ -132,7 +138,7 @@ export function BannerOffer({
             return (
               <div
                 key={off.id ?? index}
-                className="absolute top-0 left-0 w-full max-h-[280px] -translate-x-1/6 rounded-[10px] bg-white hover:shadow-md dark:bg-slate-800 overflow-hidden transition-all duration-500 ease-out"
+                className="absolute top-0 left-0 w-full max-h-[280px] rounded-[10px] bg-white hover:shadow-md dark:bg-slate-800 overflow-hidden transition-all duration-500 ease-out"
                 style={{
                   zIndex,
                   transform: `translateY(${translateY}px) scale(${scale})`,
@@ -211,9 +217,9 @@ export function BannerOffer({
                     <button
                       type="button"
                       onClick={() => handleCancel(off.id)}
-                      className="flex-1 px-4 cursor-pointer py-2.5 rounded-lg text-sm font-medium bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-slate-600 dark:hover:bg-slate-500 dark:text-white transition-colors"
+                      className="flex-1 px-4 cursor-pointer py-2.5 rounded-lg text-sm font-medium bg-red-200 hover:bg-red-300 text-gray-700 dark:bg-slate-600 dark:hover:bg-slate-500 dark:text-white transition-colors"
                     >
-                      Cancelar
+                      Rechazar
                     </button>
                     <button
                       type="button"
@@ -228,8 +234,6 @@ export function BannerOffer({
             );
           })}
         </div>
-      )}
-
       {/* Navigation buttons */}
       {offer.length > 1 && (
         <div className="relative flex items-center self-stretch justify-between w-full z-10">

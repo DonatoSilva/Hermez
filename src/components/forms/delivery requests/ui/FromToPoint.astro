@@ -7,6 +7,8 @@ interface FromToPointProps {
 }
 
 const { pickupAddress, deliveryAddress } = Astro.props as FromToPointProps;
+
+console.log(pickupAddress, deliveryAddress);
 ---
 
 <div class="flex flex-col gap-4">
@@ -15,7 +17,7 @@ const { pickupAddress, deliveryAddress } = Astro.props as FromToPointProps;
     <div>
       <p class="text-sm text-gray-600">De</p>
       <p id="sum-origin" class="text-base font-bold">
-        {pickupAddress ?? "Desconocido"}
+        {pickupAddress}
       </p>
     </div>
   </div>
@@ -24,7 +26,7 @@ const { pickupAddress, deliveryAddress } = Astro.props as FromToPointProps;
     <div>
       <p class="text-sm text-gray-600">A</p>
       <p id="sum-destination" class="text-base font-bold">
-        {deliveryAddress ?? "Desconocido"}
+        {deliveryAddress}
       </p>
     </div>
   </div>

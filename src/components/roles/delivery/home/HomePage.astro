@@ -131,15 +131,6 @@ const { current_vehicle, userid, is_available } = Astro.locals.dataUser!
       required={true}
     />
     
-    <InputField
-      id="message"
-      name="message"
-      as="textarea"
-      textLabel="Comentario"
-      placeholder="Añade un comentario sobre tu oferta"
-      rows={4}
-    />
-    
     <div class="flex flex-row gap-3 justify-end mt-2">
       <Button id="cancel-offer" variant="bordered" type="button">
         Cancelar
@@ -166,11 +157,9 @@ import { actions } from "astro:actions"
     const isAvailable = availabilityStatus?.getAttribute('data-is-available') === 'true'
     isAvailableStore.set(isAvailable)
     const proposedPrice: HTMLInputElement = document.getElementById('proposed_price') as HTMLInputElement
-      const message: HTMLInputElement = document.getElementById('message') as HTMLInputElement
 
       const cleanValues = () => {
         proposedPrice.value = ''
-        message.value = ''
       }
     
     cancelOffer?.addEventListener('click', () => {
@@ -186,7 +175,6 @@ import { actions } from "astro:actions"
 
       form.set('quote_id', metaData?.quote_id as string )
       form.set('proposed_price', proposedPrice?.value)
-      form.set('message', message?.value)
        
       const { data, error } = await actions.Delivery.addOfferByQuote(form)
 

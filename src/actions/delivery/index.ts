@@ -117,6 +117,110 @@ export const Delivery = {
             return data;
         }
     }),
+    extendQuote: defineAction({
+        input: z.object({
+            quoteId: z.string().uuid(),
+            minutes: z.number().int().positive(),
+        }),
+        handler: async ({ quoteId, minutes }, { locals }) => {
+
+            const token = await locals.auth().getToken({
+                template: "jwt-back-hermez",
+            });
+
+            if (!token) {
+                throw new ActionError({
+                    code: "UNAUTHORIZED",
+                    message: "No se pudo obtener el token de autenticación",
+                });
+            }
+
+            const response = await fetch(
+                `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/quotes/${quoteId}/extend-expiration/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    minutes: minutes,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error response:", errorData);
+
+                if (response.status === 400) {
+                    throw new ActionError({
+                        code: "BAD_REQUEST",
+                        message: errorData.detail || "No se pudo extender la cotización. Revise el estado o los minutos.",
+                    });
+                } else if (response.status === 401) {
+                    throw new ActionError({
+                        code: "UNAUTHORIZED",
+                        message: "No autorizado para extender la cotización.",
+                    });
+                } else if (response.status === 404) {
+                    throw new ActionError({
+                        code: "NOT_FOUND",
+                        message: "Cotización no encontrada.",
+                    });
+                } else {
+                    throw new ActionError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: errorData.detail || "No se pudo extender la cotización.",
+                    });
+                }
+            }
+
+            const data = await response.json();
+            return data;
+        }
+    }),
+    updatePriceQuote: defineAction({
+        input: z.object({
+            quoteId: z.string().uuid(),
+            client_price: z.number().positive(),
+        }),
+        handler: async ({ quoteId, client_price }, { locals }) => {
+            const token = await locals.auth().getToken({
+                template: "jwt-back-hermez",
+            });
+
+            if (!token) {
+                throw new ActionError({
+                    code: "UNAUTHORIZED",
+                    message: "No se pudo obtener el token de autenticación",
+                });
+            }
+
+            const response = await fetch(
+                `${URL_LOCAL_BACKEND}/${API_DELIVERY_REQUESTS}/quotes/${quoteId}/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    client_price: client_price,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error response:", errorData);
+
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: errorData.detail || "No se pudo actualizar el precio de la cotización",
+                });
+            }
+
+            const data = await response.json();
+            return data;
+        }
+    }),
     cancelQuote: defineAction({
         input: z.object({
             quoteId: z.string().uuid(),
@@ -262,7 +366,6 @@ export const Delivery = {
             }
         }
     }),
-
     getDeliveryTypes: defineAction({
         input: z.object({}),
         handler: async (input, { locals }) => {

@@ -9,7 +9,7 @@ export const typeDelivery = {
         label: "Alimentos",
         image: "/images/tiposEnvio/alimentos-min.png",
     },
-    persona: {
+    personas: {
         label: "Persona",
         image: "/images/tiposEnvio/persona-min.png",
     },
