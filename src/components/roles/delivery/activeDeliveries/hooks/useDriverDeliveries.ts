@@ -70,8 +70,8 @@ export function useDriverDeliveries({
                 // Actualización de estado de entrega
                 if (data.type === 'delivery.status' || data.type === 'delivery_status') {
                     setDeliveries((prev) => {
-                        // Si el estado es final (delivered o paid), remover de la lista
-                        if (data.data.status === 'delivered' || data.data.status === 'paid') {
+                        // Solo remover de la lista cuando el estado es 'paid' (estado final)
+                        if (data.data.status === 'paid') {
                             return prev.filter((d) => d.id !== data.data.id);
                         }
                         

@@ -143,6 +143,8 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
         return <div ref={componentRef} className='text-center py-8'><p>Cargando detalles...</p></div>
     }
 
+    console.log(delivery)
+
     const { delivery: deliveryData, history } = delivery
     const deliveryPerson = deliveryData.delivery_person
     const currentStatus = statusColors[deliveryData.status as keyof typeof statusColors] || { label: 'En espera', color: 'bg-amber-500' }
@@ -272,15 +274,23 @@ const BodyDetails = ({ id }: BodyDetailsProps) => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <h4 className='text-lg font-semibold '>Descripción</h4>
-                        <div className='flex items-center justify-between w-full'>
-                            <div className="flex items-center gap-2 w-full">
-                                <span className="text-gray-500 dark:text-gray-400">
-                                    {deliveryData.description || 'Sin descripción'}
-                                </span>
-                            </div>
+                    <div className="flex flex-col gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div>
+                            <h4 className='text-lg font-semibold mb-2'>Descripción</h4>
+                            <span className="text-gray-500 dark:text-gray-400">
+                                {deliveryData.description || 'Sin descripción'}
+                            </span>
                         </div>
+                        {deliveryData.observations && deliveryData.observations.length > 0 && (
+                            <div>
+                                <h4 className='text-lg font-semibold mb-2'>Observaciones</h4>
+                                <ul className="list-disc list-inside space-y-1">
+                                    {deliveryData.observations.map((obs: string, index: number) => (
+                                        <li key={index} className="text-sm text-gray-700 dark:text-gray-300">{obs}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                     <div className="rounded-lg bg-H-blue-900 p-4 text-white">
                         <div className="flex items-center justify-between mb-4">

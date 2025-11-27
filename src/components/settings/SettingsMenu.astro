@@ -7,9 +7,9 @@ interface SettingsMenuProps {
 const { sectionActivite, userRole } = Astro.props as SettingsMenuProps;
 ---
 
-<div class="w-full flex flex-col gap-2">
+<div class="w-full flex flex-col gap-2 md:gap-4">
   <h2 class="text-xl md:text-2xl font-semibold">Configuraciones</h2>
-  <div id="settings-submenu" class="flex gap-4 overflow-x-hidden">
+  <div id="settings-submenu" class="flex gap-2 md:gap-4 overflow-x-auto pb-2">
     <input
       type="radio"
       id="profile"

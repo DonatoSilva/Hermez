@@ -14,7 +14,8 @@ const { image_url, first_name, last_name, email, gender, phone, age, username = 
 ---
 
 <section class:list={["min-w-full", { active: isActive }]} id="section-profile">
-  <h5 class="text-lg font-semibold mb-3">Mi perfil</h5>
+ <main class="w-full">
+   <h5 class="text-lg font-semibold mb-3">Mi perfil</h5>
   <form
     class="w-full mx-auto grid grid-cols-1 gap-4 lg:grid-cols-2"
     aria-label="formulario-perfil"
@@ -99,6 +100,7 @@ const { image_url, first_name, last_name, email, gender, phone, age, username = 
       </div>
     </div>
   </form>
+ </main>
 </section>
 
 <script>

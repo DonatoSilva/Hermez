@@ -27,31 +27,25 @@ if (!sectionActivite || !taps.includes(sectionActivite)) {
 }
 ---
 
-<Layout sizeLogo="md" title="Configuración - Hermez" class="flex flex-col gap-4 overflow-x-hidden">
+<Layout sizeLogo="md" title="Configuración - Hermez" class="flex flex-col gap-4 overflow-x-hidden p-4 md:p-6">
   <SettingsMenu sectionActivite={sectionActivite} userRole={userRole} />
 
-  <main id="containerSectionsSetting" class="w-full min-h-fit flex flex-row scrollbar-hide">
+  <main id="containerSectionsSetting" class="w-full min-h-fit relative">
     <ProfileForm isActive={sectionActivite === "profile"} />
     {userRole === "Domiciliary" && <VehicleSection isActive={sectionActivite === "vehicles"} />}
     {userRole === "User" && <AddressSection isActive={sectionActivite === "locations"} />}
-    <PlusSettings />
+    <PlusSettings isActive={sectionActivite === "more"} />
   </main>
 </Layout>
 
 <style>
   #containerSectionsSetting {
     section {
-      opacity: 0;
-      transform: translateX(100%);
-      transition: all 0.3s ease-in-out;
-      visibility: hidden;
-      position: absolute;
-
+      display: none;
+      width: 100%;
+      
       &.active {
-        opacity: 1;
-        transform: translateX(0);
-        visibility: visible;
-        position: relative;
+        display: flex;
       }
     }
   }

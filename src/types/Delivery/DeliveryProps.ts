@@ -85,6 +85,7 @@ export interface DeliveryData {
     delivery_address: string;
     category: string;
     description: string;
+    observations: string[];
     estimated_weight: string;
     estimated_size: string;
     final_price: string;

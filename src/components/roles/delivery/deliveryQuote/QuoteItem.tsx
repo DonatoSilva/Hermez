@@ -11,9 +11,11 @@ export interface QuoteItemProps {
   category: string;
   distance: string;
   deliveryType: string;
+  observations?: string[];
   onNotInterested?: (id: string) => void;
   onInterested?: (id: string, client_price: number) => void;
   onOffer?: (id: string) => void;
+  onViewDetails?: (id: string) => void;
 }
 
 const QuoteItem: React.FC<QuoteItemProps> = ({
@@ -24,9 +26,11 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
   client,
   category,
   distance,
+  observations,
   onNotInterested,
   onInterested,
-  onOffer
+  onOffer,
+  onViewDetails
 }) => {
 
   const handleNotInterested = () => {
@@ -44,6 +48,12 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
   const handleOffer = () => {
     if (onOffer) {
       onOffer(id);
+    }
+  }
+
+  const handleViewDetails = () => {
+    if (onViewDetails) {
+      onViewDetails(id);
     }
   }
 
@@ -66,6 +76,12 @@ const QuoteItem: React.FC<QuoteItemProps> = ({
       <div className="flex flex-wrap justify-between items-center gap-2">
         <div className="text-sm text-gray-700 flex items-center gap-2 dark:text-gray-300"><Icon icon="solar:user-bold" width="24" height="24" /> <b>{client.username}</b></div>
         <div className="flex gap-2 ml-auto">
+          <button
+            onClick={handleViewDetails}
+            className="flex flex-row items-center justify-center gap-2.5 px-4 py-2 rounded-md transition-colors cursor-pointer bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            <Icon icon="solar:eye-bold" width="24" height="24" />
+          </button>
           <button
             onClick={handleNotInterested}
             className="flex flex-row items-center justify-center gap-2.5 px-4 py-2 rounded-md transition-colors cursor-pointer bg-transparent text-H-blue-700 dark:text-H-blue-300 border border-H-blue-300 hover:border-H-blue-500 hover:text-H-blue-100 dark:border-H-blue-500 dark:hover:text-H-blue-100 dark:hover:border-H-blue-300"

@@ -25,13 +25,16 @@ const orgSwitchUrl = (() => {
   const orgParam = role === "User" ? "?org=Domiciliary" : "?org=User";
   return baseUrl + (baseUrl.includes("?") ? "&" : "?") + orgParam.slice(1);
 })();
----
 
-<div class=`relative group ${visibility} ${className}`>
-  <div
-    class="group flex flex-row items-center gap-2 w-full py-2 px-4 bg-gray-100 dark:bg-gray-800 rounded-lg cursor-pointer"
+// Generar un ID único para este componente
+const uniqueId = `user-profile-${Math.random().toString(36).substr(2, 9)}`;
+---
+<div class=`relative ${visibility} ${className}`} id={uniqueId}>
+  <button
+    type="button"
+    class="user-profile-button flex flex-row items-center gap-2 w-full py-2 px-4 bg-gray-100 dark:bg-gray-800 rounded-lg cursor-pointer"
   >
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 w-full">
       <Avatar
         src={avatarUrl ?? "/images/default-avatar.png"}
         alt={username ?? "Usuario desconocido"}
@@ -43,7 +46,7 @@ const orgSwitchUrl = (() => {
     </div>
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="h-4 w-4 transform transition-transform duration-300 group-hover:rotate-180"
+      class="user-profile-arrow h-4 w-4 transform transition-transform duration-300"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -51,12 +54,12 @@ const orgSwitchUrl = (() => {
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"
       ></path>
     </svg>
-  </div>
+  </button>
 
   <div
-    class={`absolute right-0 z-50 ${
+    class={`user-profile-menu absolute right-0 z-50 ${
       position === "up" ? "bottom-full mb-2" : "top-full mt-2"
-    } w-full invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 bg-white dark:bg-gray-700 rounded-lg shadow-lg`}
+    } w-full invisible opacity-0 transition-all duration-300 bg-white dark:bg-gray-700 rounded-lg shadow-lg`}
   >
     <ul class="py-2">
       <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
@@ -75,3 +78,65 @@ const orgSwitchUrl = (() => {
     </ul>
   </div>
 </div>
+
+<script define:vars={{ uniqueId }}>
+  document.addEventListener('astro:page-load', () => {
+    const container = document.getElementById(uniqueId);
+    if (!container) return;
+
+    const button = container.querySelector('.user-profile-button');
+    const menu = container.querySelector('.user-profile-menu');
+    const arrow = container.querySelector('.user-profile-arrow');
+    
+    if (!button || !menu || !arrow) return;
+
+    let isOpen = false;
+
+    const toggleMenu = () => {
+      isOpen = !isOpen;
+      
+      if (isOpen) {
+        menu.classList.remove('invisible', 'opacity-0');
+        menu.classList.add('visible', 'opacity-100');
+        arrow.classList.add('rotate-180');
+      } else {
+        menu.classList.add('invisible', 'opacity-0');
+        menu.classList.remove('visible', 'opacity-100');
+        arrow.classList.remove('rotate-180');
+      }
+    };
+
+    const closeMenu = () => {
+      if (isOpen) {
+        isOpen = false;
+        menu.classList.add('invisible', 'opacity-0');
+        menu.classList.remove('visible', 'opacity-100');
+        arrow.classList.remove('rotate-180');
+      }
+    };
+
+    // Toggle al hacer click en el botón
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMenu();
+    });
+
+    // Cerrar al hacer click fuera del menú
+    document.addEventListener('click', (e) => {
+      if (!container.contains(e.target)) {
+        closeMenu();
+      }
+    });
+
+    // Hover para desktop (solo si no está en móvil)
+    if (window.matchMedia('(hover: hover)').matches) {
+      container.addEventListener('mouseenter', () => {
+        if (!isOpen) toggleMenu();
+      });
+      
+      container.addEventListener('mouseleave', () => {
+        closeMenu();
+      });
+    }
+  });
+</script>

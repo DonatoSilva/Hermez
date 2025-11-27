@@ -1,10 +1,12 @@
+import Modal from '@components/modals/Modal';
 import { Icon } from '@iconify-icon/react';
 import { useStore } from '@nanostores/react';
-import { statusModal } from '@stores/ModalStore';
+import { changeStatusModal, getStatusModal, statusModal } from '@stores/ModalStore';
 import { toastStore } from '@stores/StoreToast';
 import { isAvailable as isAvailableStore } from '@stores/UserStore';
 import { actions } from 'astro:actions';
 import React from 'react';
+import QuoteDetailsContent from './QuoteDetailsContent';
 import QuoteItem from './QuoteItem';
 import { useDeliveryQuotesSocket } from './hooks/useDeliveryQuotesSockets';
 
@@ -68,11 +70,28 @@ export function QuoteContent({ token, children, protocol, host }: QuoteContentPr
         })
     }
 
+    const handleViewDetails = (id: string) => {
+        changeStatusModal(id as never, {
+            ...getStatusModal(id as never),
+            isOpen: true,
+        } as never);
+    }
+
+console.log(localQuotes)
     return (
         isAvailable ? (
-            localQuotes.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {localQuotes.map((quote: any) => <QuoteItem key={quote.id} {...quote} onInterested={handleAcceptQuote} onNotInterested={handleNoInterested} onOffer={handleOffer} />)}
-            </div> : <>{children}</>
+            <>
+                {localQuotes.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {localQuotes.map((quote: any) => (
+                        <React.Fragment key={quote.id}>
+                            <QuoteItem {...quote} onInterested={handleAcceptQuote} onNotInterested={handleNoInterested} onOffer={handleOffer} onViewDetails={handleViewDetails} />
+                            <Modal keyModal={quote.id} title="Detalles de la Cotización">
+                                <QuoteDetailsContent quote={quote} />
+                            </Modal>
+                        </React.Fragment>
+                    ))}
+                </div> : <>{children}</>}
+            </>
         ) : (
             <div className="flex flex-col items-center justify-center p-4 text-center">
                 <Icon icon="solar:bar-chair-bold-duotone" width="65" height="65" />

@@ -19,7 +19,7 @@ const STATUS_FLOW = {
   assigned: { next: 'picked_up', label: 'Recoger pedido', icon: 'mdi:package-check' },
   picked_up: { next: 'in_transit', label: 'En camino', icon: 'mdi:truck-fast' },
   in_transit: { next: 'delivered', label: 'Entregado', icon: 'mdi:check-circle' },
-  delivered: { next: null, label: 'Completado', icon: 'mdi:star' },
+  delivered: { next: 'paid', label: 'Marcar como pagado', icon: 'mdi:cash-check' },
   paid: { next: null, label: 'Pagado', icon: 'mdi:cash' },
   cancelled: { next: null, label: 'Cancelado', icon: 'mdi:close-circle' },
 } as const;
