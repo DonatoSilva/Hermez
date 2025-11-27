@@ -35,9 +35,9 @@ export function useDeliveryQuotesSocket({ token, protocol, host }: { token?: str
                 }
 
 
-                if (data.type === 'quote_expired') {
+                if (data.type === 'quote_updated') {
                     setQuotes((prev: any[]) =>
-                        prev.filter((quote) => quote.id !== data.data.id)
+                        prev.map((quote) => (quote.id === data.data.id ? data.data : quote))
                     );
                 }
             } catch (err) {

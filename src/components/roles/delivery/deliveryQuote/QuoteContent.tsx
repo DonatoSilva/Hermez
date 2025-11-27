@@ -18,9 +18,14 @@ export interface QuoteContentProps {
 export function QuoteContent({ token, children, protocol, host }: QuoteContentProps) {
     const { quotes } = useDeliveryQuotesSocket({ token, protocol, host });
     const isAvailable = useStore(isAvailableStore);
+    const [localQuotes, setLocalQuotes] = React.useState<any[]>([]);
+
+    React.useEffect(() => {
+        setLocalQuotes(quotes);
+    }, [quotes]);
 
     const handleNoInterested = (id: string) => {
-        
+        setLocalQuotes(prev => prev.filter(q => q.id !== id));
     }
 
     const handleAcceptQuote = async (id: string, proposedPrice: number) => {
@@ -65,8 +70,8 @@ export function QuoteContent({ token, children, protocol, host }: QuoteContentPr
 
     return (
         isAvailable ? (
-            quotes.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {quotes.map((quote: any) => <QuoteItem key={quote.id} {...quote} onInterested={handleAcceptQuote} onNotInterested={handleNoInterested} onOffer={handleOffer} />)}
+            localQuotes.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {localQuotes.map((quote: any) => <QuoteItem key={quote.id} {...quote} onInterested={handleAcceptQuote} onNotInterested={handleNoInterested} onOffer={handleOffer} />)}
             </div> : <>{children}</>
         ) : (
             <div className="flex flex-col items-center justify-center p-4 text-center">
