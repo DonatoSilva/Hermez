@@ -1,4 +1,4 @@
-import { StarFilled, StarOutlined } from '@ant-design/icons';
+import { Icon } from '@iconify-icon/react';
 import { toastStore } from '@stores/StoreToast';
 import { actions } from 'astro:actions';
 import React, { useState } from 'react';
@@ -74,9 +74,9 @@ const RatingModalContent: React.FC<RatingModalContentProps> = ({ rateeId, rateeN
                     className="text-3xl transition-transform hover:scale-110 focus:outline-none"
                 >
                     {i <= displayRating ? (
-                        <StarFilled className="text-yellow-500" />
+                        <Icon icon="solar:star-bold-duotone" className="text-yellow-500" />
                     ) : (
-                        <StarOutlined className="text-gray-400 dark:text-gray-600" />
+                        <Icon icon="solar:star-bold-duotone" className="text-gray-400 dark:text-gray-600" />
                     )}
                 </button>
             );
@@ -112,6 +112,7 @@ const RatingModalContent: React.FC<RatingModalContentProps> = ({ rateeId, rateeN
                 </label>
                 <textarea
                     id="comment"
+                    name="comment"
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Comparte tu experiencia con este domiciliario..."

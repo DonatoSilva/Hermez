@@ -1,6 +1,6 @@
-import { CarOutlined, CheckCircleOutlined, ClockCircleOutlined, FileDoneOutlined, MessageOutlined, PhoneOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
 import Modal from '@components/modals/Modal';
 import RatingModalContent from '@components/rating/RatingModalContent';
+import { Icon } from '@iconify-icon/react';
 import { toastStore } from '@stores/StoreToast';
 import { actions } from 'astro:actions';
 import { useEffect, useRef, useState } from 'react';
@@ -118,14 +118,14 @@ const BodyDetails = ({ id, isDriver }: BodyDetailsProps) => {
     // Event type mappings for icons and colors
     const getEventIcon = (eventType: string) => {
         const iconMap: Record<string, { icon: any; color: string; bgColor: string }> = {
-            'quote_created': { icon: FileDoneOutlined, color: 'text-blue-500', bgColor: 'bg-blue-100' },
-            'offer_accepted': { icon: CheckCircleOutlined, color: 'text-green-500', bgColor: 'bg-green-100' },
-            'status_changed': { icon: ClockCircleOutlined, color: 'text-yellow-500', bgColor: 'bg-yellow-100' },
-            'assigned': { icon: UserOutlined, color: 'text-indigo-500', bgColor: 'bg-indigo-100' },
-            'in_transit': { icon: CarOutlined, color: 'text-purple-500', bgColor: 'bg-purple-100' },
-            'delivered': { icon: CheckCircleOutlined, color: 'text-emerald-500', bgColor: 'bg-emerald-100' },
+            'quote_created': { icon: "solar:file-done-bold-duotone", color: 'text-blue-500', bgColor: 'bg-blue-100' },
+            'offer_accepted': { icon: "solar:bill-check-bold-duotone", color: 'text-green-500', bgColor: 'bg-green-100' },
+            'status_changed': { icon: "solar:clock-circle-bold-duotone", color: 'text-yellow-500', bgColor: 'bg-yellow-100' },
+            'assigned': { icon: "solar:user-bold-duotone", color: 'text-indigo-500', bgColor: 'bg-indigo-100' },
+            'in_transit': { icon: "solar:scooter-bold-duotone", color: 'text-purple-500', bgColor: 'bg-purple-100' },
+            'delivered': { icon: "solar:verified-check-bold", color: 'text-emerald-500', bgColor: 'bg-emerald-100' },
         }
-        return iconMap[eventType] || { icon: ClockCircleOutlined, color: 'text-gray-500', bgColor: 'bg-gray-100' }
+        return iconMap[eventType] || { icon: "solar:clock-circle-bold-duotone", color: 'text-gray-500', bgColor: 'bg-gray-100' }
     }
 
     const formatTimestamp = (timestamp: string) => {
@@ -233,7 +233,7 @@ const BodyDetails = ({ id, isDriver }: BodyDetailsProps) => {
                                 onClick={() => window.open(`tel:${personToShow?.phone || ''}`)}
                                 disabled={!personToShow}
                             >
-                                <PhoneOutlined className="text-xl" />
+                                <Icon icon="solar:phone-bold-duotone" className="text-xl" />
                                 <span className="font-medium">Llamar</span>
                             </button>
                             <button
@@ -241,7 +241,7 @@ const BodyDetails = ({ id, isDriver }: BodyDetailsProps) => {
                                 onClick={() => window.open(`sms:${personToShow?.phone || ''}`)}
                                 disabled={!personToShow}
                             >
-                                <MessageOutlined className="text-xl" />
+                                <Icon icon="solar:chat-round-line-bold" className="text-xl" />
                                 <span className="font-medium">Escribir</span>
                             </button>
                         </div>
@@ -338,7 +338,7 @@ const BodyDetails = ({ id, isDriver }: BodyDetailsProps) => {
                         <button onClick={onClose} className="cursor-pointer flex-1 bg-H-blue-900 hover:bg-H-blue-700 text-white py-2 px-4 rounded-lg transition-colors font-medium">
                             Cerrar
                         </button>
-                       { deliveryData.status !== 'cancelled' && deliveryData.status !== 'paid' && deliveryData.status !== 'delivered' && <button onMouseDown={handlePress} onMouseUp={handleRelease} onMouseLeave={handleRelease} className={`relative overflow-hidden bg-transparent cursor-pointer flex-1 border-2 border-red-500 text-red-500 py-2 px-4 rounded-lg transition-all font-medium ${styles["animate-container"]} ${isPressing === true ? styles["animate-fill-bar"] : isPressing === false ? styles["animate-fill-bar-reverse"] : ''}`}>
+                        { deliveryData.status !== 'cancelled' && deliveryData.status !== 'paid' && deliveryData.status !== 'delivered' && <button onMouseDown={handlePress} onMouseUp={handleRelease} onMouseLeave={handleRelease} className={`relative overflow-hidden bg-transparent cursor-pointer flex-1 border-2 border-red-500 text-red-500 py-2 px-4 rounded-lg transition-all font-medium ${styles["animate-container"]} ${isPressing === true ? styles["animate-fill-bar"] : isPressing === false ? styles["animate-fill-bar-reverse"] : ''}`}>
                             Cancelar Domicilio
                         </button>}
                     </div>
@@ -352,7 +352,6 @@ const BodyDetails = ({ id, isDriver }: BodyDetailsProps) => {
                     <div className="relative">
                         {history.map((event: HistoryItem, index: number) => {
                             const eventConfig = getEventIcon(event.event_type)
-                            const Icon = eventConfig.icon
                             const isLast = index === history.length - 1
 
                             return (
@@ -364,7 +363,7 @@ const BodyDetails = ({ id, isDriver }: BodyDetailsProps) => {
 
                                     {/* Icon Circle */}
                                     <div className={`relative z-10 shrink-0 w-12 h-12 rounded-full ${eventConfig.bgColor} dark:bg-opacity-20 flex items-center justify-center`}>
-                                        <Icon className={`text-xl ${eventConfig.color}`} />
+                                        <Icon icon={eventConfig.icon} className={`text-2xl ${eventConfig.color}`} />
                                     </div>
 
                                     {/* Event Content */}

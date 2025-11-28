@@ -1,4 +1,4 @@
-import { StarFilled } from '@ant-design/icons';
+import { Icon } from '@iconify-icon/react';
 import { actions } from 'astro:actions';
 import { useEffect, useRef, useState } from 'react';
 
@@ -90,10 +90,10 @@ const ReviewsContent = () => {
         return (
             <div className="flex items-center gap-1">
                 {[...Array(10)].map((_, index) => (
-                    <StarFilled
+                    <Icon
                         key={index}
-                        className={`text-lg ${index < rating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'
-                            }`}
+                        icon="solar:star-bold-duotone"
+                        className={`text-lg ${index < rating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'}`}
                     />
                 ))}
             </div>
@@ -147,13 +147,20 @@ const ReviewsContent = () => {
                                 </p>
                             </div>
                         </div>
-                        {renderStars(review.rating)}
+                        {renderStars(Number(review.rating))}
                     </div>
                     
-                    {review.comment && (
+                    {review.comment ? (
                         <p className="text-sm text-gray-700 dark:text-gray-300 italic">
                             "{review.comment}"
                         </p>
+                    ) : (
+                        <div className="flex items-center gap-2">
+                            <Icon icon="solar:sad-square-bold-duotone" className="text-gray-400 dark:text-gray-600 text-2xl mb-1" />
+                            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                            Sin comentario.
+                        </p>
+                        </div>
                     )}
                     
                     <p className="text-xs text-gray-500 dark:text-gray-400 text-right">
